@@ -1,0 +1,88 @@
+{
+ "calib": {
+  "slope": -0.1366079426694536,
+  "intercept": 84.43826515377724,
+  "max_resid": 0.1642281277993689,
+  "px_per_unit": 7.32021857923497
+ },
+ "values": [
+  {
+   "model": "DenseNet",
+   "ratio_IS_over_AS": 70.71,
+   "read_err": 0.38,
+   "top_px": 101.0
+  },
+  {
+   "model": "DinoViT",
+   "ratio_IS_over_AS": 70.16,
+   "read_err": 0.38,
+   "top_px": 105.0
+  },
+  {
+   "model": "EVA02Large",
+   "ratio_IS_over_AS": 54.32,
+   "read_err": 0.38,
+   "top_px": 221.0
+  },
+  {
+   "model": "BitResNet",
+   "ratio_IS_over_AS": 47.21,
+   "read_err": 0.38,
+   "top_px": 273.0
+  },
+  {
+   "model": "ConvNext",
+   "ratio_IS_over_AS": 37.38,
+   "read_err": 0.38,
+   "top_px": 345.0
+  },
+  {
+   "model": "EfficientNet",
+   "ratio_IS_over_AS": 36.28,
+   "read_err": 0.38,
+   "top_px": 353.0
+  },
+  {
+   "model": "SwinLarge",
+   "ratio_IS_over_AS": 29.18,
+   "read_err": 0.38,
+   "top_px": 405.0
+  },
+  {
+   "model": "ResNet50",
+   "ratio_IS_over_AS": 24.81,
+   "read_err": 0.38,
+   "top_px": 437.0
+  },
+  {
+   "model": "VGG16",
+   "ratio_IS_over_AS": 24.26,
+   "read_err": 0.38,
+   "top_px": 441.0
+  },
+  {
+   "model": "VGG19",
+   "ratio_IS_over_AS": 19.89,
+   "read_err": 0.38,
+   "top_px": 473.0
+  },
+  {
+   "model": "DinoV2",
+   "ratio_IS_over_AS": 16.61,
+   "read_err": 0.38,
+   "top_px": 497.0
+  },
+  {
+   "model": "ResNext101",
+   "ratio_IS_over_AS": 13.88,
+   "read_err": 0.38,
+   "top_px": 517.0
+  },
+  {
+   "model": "DeiT",
+   "ratio_IS_over_AS": 9.51,
+   "read_err": 0.38,
+   "top_px": 549.0
+  }
+ ]
+}
