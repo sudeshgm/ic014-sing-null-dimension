@@ -1,0 +1,14 @@
+model,ratio_IS_over_AS,read_err,top_px
+DenseNet,70.71,0.38,101.0
+DinoViT,70.16,0.38,105.0
+EVA02Large,54.32,0.38,221.0
+BitResNet,47.21,0.38,273.0
+ConvNext,37.38,0.38,345.0
+EfficientNet,36.28,0.38,353.0
+SwinLarge,29.18,0.38,405.0
+ResNet50,24.81,0.38,437.0
+VGG16,24.26,0.38,441.0
+VGG19,19.89,0.38,473.0
+DinoV2,16.61,0.38,497.0
+ResNext101,13.88,0.38,517.0
+DeiT,9.51,0.38,549.0
