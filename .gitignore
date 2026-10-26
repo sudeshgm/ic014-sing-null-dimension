@@ -8,3 +8,4 @@ imagenet*/
 *.safetensors
 e1_feats/
 *nullfeat*.npz
+__pycache__/
