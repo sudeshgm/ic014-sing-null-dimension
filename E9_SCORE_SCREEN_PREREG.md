@@ -81,3 +81,8 @@ Robustness check (required for PASS, added now): a nonlinear plant f' = f + alph
 - **"Best 3 DEV singletons"** means the highest DEV mean tau among the 16 singletons S1–S10 and M1–M6.
 - **Kendall:** tau over the 8 models per trial and concept; the per-trial mean over concepts; a bootstrap CI over trials (1000 resamples, seed 0).
 - **Pipeline:** DEV, then the selection rule, then holdout plus the nonlinear holdout for the finalists only, all in one automated run with no human step between DEV and holdout.
+
+### Amendment 2a (2026-10-27 01:15 IST; implementation notes, before any DEV number; only a smoke test on concept 'blue', which is neither DEV nor HOLDOUT, has been run)
+- **sklearn is not installed, and installing it would be a download.** S9's KSG estimator is therefore implemented directly: Kraskov et al. 2004, algorithm 1, k = 5, max-norm, on standardised x and y, the same estimator as sklearn's mutual_info_regression without its jitter noise.
+- **For the nonlinear plant,** the score target g(s) is standardised before use (M1 needs a standardised s). The plant itself uses the raw g(s) = s^2 − 1.
+- **Code:** e9/analyze_e9.py, committed with this note.
