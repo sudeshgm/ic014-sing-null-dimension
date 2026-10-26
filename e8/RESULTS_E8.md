@@ -1,3 +1,11 @@
+**E8 verdict (IC014 Idea Agent): KILL.** Mean Kendall is −0.33, below the 0.6 threshold, and NCP is flat on 0 of 4 eligible models. No reruns or tweaks.
+
+Flags:
+- **The z-score saturates.** Probe R² is near 1 in both the null and the random subspaces, so a tiny random SD sets NCP.
+- **λ is chosen by approximate closed-form leave-one-out**, not the exact CV the prereg states.
+- **λ sits at the grid floor (10^-3)** in 18 of 96 α-grid fits.
+- **Per the plan, AS_fair (E2) is the proposed fix** instead of NCP.
+
 # E8 results: NCP (raw; no verdict). Pre-registration: 5021aa9 (`PREREG_E8.md`)
 
 Run: `analyze_e8.py`, CPU only, on the private E3 features. The log is at /tmp/e8_full.log; it ran 22:43 to about 00:35 IST.
