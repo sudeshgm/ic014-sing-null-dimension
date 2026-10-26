@@ -88,3 +88,11 @@ Order: E1 then E3 then E2 (the core story; ~4.5 GPU-h). A go/no-go after those t
 ## Venue
 Primary: ICML 2027 main track (deadline expected around late Jan 2027; to be confirmed), which suits a measurement/methodology paper and gives ~3 months. Alternative: CVPR 2027 if its deadline (expected mid-Nov 2026; to be confirmed) is reachable after the core trio, which is tight. Fallback: TMLR (rolling) if only the SING-specific findings survive.
 Licence: all research non-commercial (ImageNet, ResNeXt WSL, SWAG CC BY-NC).
+
+## E8. Replacement for SING: Null-space Concept Probe (NCP) (added 2026-10-26 at the user's request; ~0.5 GPU-h, 2 days CPU)
+Definition: for concept c, the leakage is the held-out R2 of a ridge probe from Pi_null f to the CLIP concept score s_c(x), minus the mean R2 of the same probe on random subspaces with matched d and matched energy rho (from the full feature space), reported as a z-score. There's no translator.
+Why: it gives the paper a constructive fix; it's size-fair by construction, free of translator conditioning, and works for any model.
+Runs after the core trio (needs E3's planted data).
+PASS: Kendall(NCP, planted ranking) >= 0.8 on E3, AND within-model NCP stays flat across d at fixed planted leakage (max/min <= 1.5).
+KILL: Kendall < 0.6. The paper then proposes AS_fair (E2) as the fix instead.
+Outline change: section 5 becomes "NCP: a size-fair replacement", with AS_fair as a baseline.
