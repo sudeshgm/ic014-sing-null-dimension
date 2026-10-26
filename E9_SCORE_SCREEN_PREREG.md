@@ -39,3 +39,45 @@ Added candidates:
 - M6 Scale-free alignment: E[t_c^T T P f s] / sqrt(E||T P f||^2).
 Combinations S11-S14 are now drawn from the best 3 DEV singletons among S1-S10 and M1-M6 (20 candidates in total).
 Robustness check (required for PASS, added now): a nonlinear plant f' = f + alpha sigma g(s_c) u_c with g(s) = s^2 - 1 (zero-mean, uncorrelated with s), on HOLDOUT concepts only. A finalist must also reach tau >= 0.6 there, judged against the alpha ranking, using |s|-based variants as registered: for M1/M2 replace s by g(s). Scores that by construction can't see nonlinear plants are reported, and the paper states this limitation.
+
+## AMENDMENT 2 (2026-10-27 00:50 IST, accepted by the IC014 Idea Agent; before any DEV number is computed)
+**Resolutions (stricter reading wherever there was a choice):**
+1. **M5** = AS_SING / sqrt(rho_null). SING's translators are linear, so "linearised SING" is AS_SING itself.
+2. **Random baselines for S1, S2 and S8** are energy-matched, as in E8/E3 AS_fair: a Haar basis with seed 10000+r; remove q_1..q_{k-1} and q_k scaled by sqrt(beta), with E||coef||^2 = E||B^T f'||^2. They cannot also be d-matched. S6 stays d-matched (the first d columns of the same Haar bases, 20 draws).
+3. **Flatness** must pass separately at alpha = 0.1 and at alpha = 1, each on at least 3 of the 4 null-dim-1048 models.
+   - The per-model ratio is the per-concept max/min across d of the mean over 5 seeds, averaged over the concepts.
+   - A min ≤ 0 means not flat.
+   - Holdout flatness uses the same alphas with the holdout concepts.
+4. **Holdout concepts.** The prereg's holdout set is water plus 3 drawn concepts, so 4 concepts. This matches the Idea Agent's "4 holdout concepts"; there is no discrepancy.
+   - The draw is np.random.default_rng(2026).choice(170, 3, replace=False) over the saved concept order minus red, striped and water.
+   - **Drawn: green, thin, knitted.**
+   - The holdout set is therefore {water, green, thin, knitted}, with 50 trials at seed 1.
+5. **Nonlinear plant g(s) = s^2 - 1.** Every score that takes s as input uses g(s) in place of s (S1–S3, S7–S10, M1–M4, M6). The AS-family scores (S4–S6, M5) are unchanged and reported as they are.
+6. **AS-family flatness.** On a d-dim sub-null subspace B, only B B^T f' is removed; rho and d are recomputed for B.
+7. **Defaults:**
+   - **Ridge (S1, S2, S7, S9, M3):** lambda by closed-form LOO on the train half, log grid 1e-3..1e5 (17 points), on standardised data.
+   - **S3:** covariance ridge = 1e-3 · tr(Sigma)/d.
+   - **S9:** the 1-D direction is the train-fit ridge. KSG MI uses sklearn mutual_info_regression with n_neighbors = 5 on the test half.
+   - **S11–S14:** model ranks within each trial and concept are averaged over the constituents.
+
+**Implementation details fixed now:**
+- **Plant (as E3):** f' = f + alpha·sigma·g(s)·u_c, with sigma the unplanted RMS norm and u_c = normalise(P_null A^+ t_c), always in the full null. B is the subspace scored: the full V_n, or V_n R[:, :d] with R Haar, seed 20000+j, j = 0..4.
+- **Split:** 50/50 train/test, permutation seed 0.
+- **Score difference:** every score is score(alpha) − score(0) at the same subspace and concept.
+- **S1:** (R2_B − mean R2_rand) / SD R2_rand over 20 draws (population SD).
+- **S2:** as S1, using Nystrom RBF features.
+  - 1000 landmarks from the train half (seed 0).
+  - Bandwidth: the median pairwise landmark distance.
+  - Features: K(x, L) K_LL^{-1/2}.
+- **S7:** held-out correlation between the ridge prediction and s. For a scalar s, the first canonical correlation is the multiple correlation.
+- **S8:** unbiased-HSIC linear CKA (Song et al. 2012), computed from features on all images, minus the mean over the 20 energy-matched random draws.
+- **S10:** Spearman(X · (B^T A^+ t_c), s), all images.
+- **M1:** uses c = B^T f' and E||f||^2 = sigma^2. M2's u_hat is the normalised (1/n) sum c_i s_i, and T is the translator linear part A, so the gain is |t^T A B u_hat| / (||A B||_F / sqrt(d)).
+- **M3:** held-out ridge R2, adjusted with n_test and p, as R2(s | Wf, c) − R2(s | Wf). Wf' = Wf exactly, because the plant is in the null.
+- **M4:** −0.5·log(1 − clip(M3, 0, 0.999999)), with M3 used as the partial R2.
+- **M6:** mean_i(t^T A B c_i s_i) / sqrt(mean_i ||A B c_i||^2).
+- **AS:** class-free; target t_c, as in E3. AS = mean_i |angle(T f', t) − angle(T(f' − B B^T f'), t)| in degrees.
+- **Flatness of combinations S11–S14** is the maximum of the constituents' ratios (stricter), because rank averages are not defined within a model.
+- **"Best 3 DEV singletons"** means the highest DEV mean tau among the 16 singletons S1–S10 and M1–M6.
+- **Kendall:** tau over the 8 models per trial and concept; the per-trial mean over concepts; a bootstrap CI over trials (1000 resamples, seed 0).
+- **Pipeline:** DEV, then the selection rule, then holdout plus the nonlinear holdout for the finalists only, all in one automated run with no human step between DEV and holdout.
