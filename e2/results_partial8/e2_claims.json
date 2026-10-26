@@ -1,0 +1,202 @@
+[
+ {
+  "id": "C1",
+  "claim": "DinoViT has the best IS/AS trade-off (highest ratio) of the 5 models",
+  "source": "Fig. 3b / Sec. 4.2 / abstract",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1",
+   "efficientnet"
+  ]
+ },
+ {
+  "id": "C2",
+  "claim": "ResNeXt101 has the lowest IS/AS ratio of the 5 models",
+  "source": "Fig. 3b caption",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1",
+   "efficientnet"
+  ]
+ },
+ {
+  "id": "C3",
+  "claim": "ResNet50 leaks more class semantics into its null space than DinoViT",
+  "source": "abstract / Fig. 1 / Fig. 4",
+  "sing": {
+   "resnet": 24.81,
+   "dinovit1": 70.16
+  },
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1"
+  ]
+ },
+ {
+  "id": "C4",
+  "claim": "DinoViT has the least class-relevant leakage among the examined networks",
+  "source": "Introduction",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1",
+   "efficientnet"
+  ]
+ },
+ {
+  "id": "C5",
+  "claim": "ResNeXt101 shows high AS (top-2 of the 5)",
+  "source": "Sec. 4.2",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1",
+   "efficientnet"
+  ]
+ },
+ {
+  "id": "C6",
+  "claim": "ResNet50 has larger and more variable per-class AS than DinoViT",
+  "source": "Fig. 4 / Sec. 4.3",
+  "sing": "qualitative",
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1"
+  ]
+ },
+ {
+  "id": "C7",
+  "claim": "DinoViT per-class |AS| is typically < 1",
+  "source": "Sec. 4.3",
+  "sing": "|AS| < 1 typical",
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1"
+  ]
+ },
+ {
+  "id": "C8",
+  "claim": "ResNet50 classes Porcupine and Sports-Car leak substantially more than other classes (>= 90th percentile)",
+  "source": "Fig. 4 caption",
+  "sing": "highlighted",
+  "AS_SING": {
+   "percentile_in_resnet": {
+    "porcupine": 0.83,
+    "sports_car": 0.636
+   }
+  },
+  "AS_SING_verdict": "reverses",
+  "AS_fair": {
+   "percentile_in_resnet": {
+    "porcupine": 0.65,
+    "sports_car": 0.713
+   }
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C9",
+  "claim": "No significant correlation between ResNet50 and DinoViT per-class AS orderings",
+  "source": "Sec. 4.3",
+  "sing": "no significant correlation",
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1"
+  ]
+ },
+ {
+  "id": "C10",
+  "claim": "DinoViT: Jellyfish has substantially larger AS than Arabian Camel (proxy: class-text AS, 10 imgs/class; SING used 30 concepts, ~1300 imgs)",
+  "source": "Fig. 5 / Sec. 4.3",
+  "sing": "qualitative",
+  "status": "not testable yet",
+  "missing": [
+   "dinovit1"
+  ]
+ },
+ {
+  "id": "C11",
+  "claim": "Table 1: DinoViT least steerable; ResNet50/EfficientNet/ResNeXt101 susceptible (proxy: null-removal AS, not IS=40 deg text-gradient steps)",
+  "source": "Table 1 / Sec. 4.4",
+  "sing": {
+   "resnet": 12.04,
+   "efficientnet": 12.38,
+   "bitresnet": 9.19,
+   "dinovit1": 5.0,
+   "resnext": 11.15
+  },
+  "status": "not testable yet",
+  "missing": [
+   "efficientnet",
+   "dinovit1"
+  ]
+ },
+ {
+  "id": "C12",
+  "claim": "Fig. 6b / supp. Fig. 12b 13-model IS/AS ordering (holds = Kendall tau > 0 and p < 0.05)",
+  "source": "13-model IS/AS bar plot (digitized in exp0 as Fig. 6b; supp. Fig. 12b)",
+  "sing": {
+   "densenet": 70.71,
+   "dinovit1": 70.16,
+   "eva02_large": 54.32,
+   "bitresnet": 47.21,
+   "convnext": 37.38,
+   "efficientnet": 36.28,
+   "swin_large": 29.18,
+   "resnet": 24.81,
+   "vgg16": 24.26,
+   "vgg19": 19.89,
+   "dinov2": 16.61,
+   "resnext": 13.88,
+   "deit": 9.51
+  },
+  "status": "not testable yet",
+  "missing": [
+   "vgg16",
+   "vgg19",
+   "dinovit1",
+   "efficientnet",
+   "swin_large"
+  ]
+ },
+ {
+  "id": "C13",
+  "claim": "EVA02 as target space preserves the 5-model ordering",
+  "source": "Sec. 4.2 / supp. Fig. 12a",
+  "sing": "same ordering",
+  "status": "not testable (no EVA02-space translators released)"
+ },
+ {
+  "id": "C14",
+  "claim": "Translator robustness: Pearson 0.972 between principal and translated-principal head accuracy",
+  "source": "Sec. 4.2 / supp. Fig. 12c",
+  "sing": 0.972,
+  "status": "not a comparative leakage claim; not tested"
+ }
+]
