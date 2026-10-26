@@ -6,3 +6,5 @@ imagenet*/
 *.jpeg
 *.pth
 *.safetensors
+e1_feats/
+*nullfeat*.npz
