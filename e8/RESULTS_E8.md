@@ -39,5 +39,5 @@ Run: `analyze_e8.py`, CPU only, on the private E3 features. The log is at /tmp/e
 - **Small-null models** (null dim 24/27) have one or two d values, so flatness is trivial there.
 - **Known ridge-implementation details:**
   - LOO-CV is computed in closed form on centred, standardised train data (the intercept is not refit per fold).
-  - λ hits the top of the grid (10^5) in no case. The chosen λ is in `e8_alpha_grid.csv`.
+  - λ never reaches the top of the grid (10^5), but sits at the bottom edge (10^-3) in 18 of 96 α-grid fits, so the grid may be too narrow there. The chosen λ is in `e8_alpha_grid.csv`.
   - The energy-matched random subspaces match energy, not d (as in E3's AS_fair). Their k_rand is in the CSV.
