@@ -59,3 +59,8 @@ C10 (DinoViT, jellyfish − camel, 95% CI):
 - **DinoViT:** our IS/|AS| is 20.95, against 70.16 in SING's Fig. 6b.
 - **C9 under AS_fair:** Spearman = −0.086, p = 0.006.
 - **C1/C2:** these are IS/AS-ratio claims, but they are tested here on |AS|. Our IS/|AS| ranking is in `results/e2_rankings.json`.
+
+## Caveats
+- **C10 is a proxy.** It uses class-text AS on 50 images per class. SING used 30 concepts and about 1300 images.
+- **C1, C2 and C11 are tested on |AS|.** C1 and C2 are IS/AS-ratio claims, and C11 is a steering claim (Table 1); both are approximated here.
+- **DenseNet's AS_fair is degenerate.** ρ_null = 1.8e-8, so a matched random subspace is about 0.004 of one direction and AS_fair is effectively 0/0.
