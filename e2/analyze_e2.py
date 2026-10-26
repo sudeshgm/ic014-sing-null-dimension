@@ -30,7 +30,7 @@ def ang_rows(Z, T):  # per-row target T (N,768)
     Zn = torch.nn.functional.normalize(Z, dim=-1)
     return torch.rad2deg(torch.acos(torch.clamp((Zn * T).sum(-1), -1, 1)))
 
-def analyse_model(d, Vn, TA, TC, draws):
+def analyse_model(d, Vn, TA, TC, draws, dc=None):
     F = torch.tensor(d['F']).float(); A = torch.tensor(d['A']).float(); Ab = torch.tensor(d['Ab']).float()
     y = torch.tensor(d['y']).long(); N, m = F.shape
     Z = F @ A.T + Ab; C = F @ Vn; Zt = Z - C @ (A @ Vn).T
@@ -39,6 +39,9 @@ def analyse_model(d, Vn, TA, TC, draws):
     a0c = ang_rows(Z, tc); ASc = a0c - ang_rows(Zt, tc)               # class-text AS per image
     a0 = ang(Z, TA); ASa = (a0 - ang(Zt, TA)).abs().mean(0)            # per concept mean |AS|
     IS = float(ang_rows(Z, torch.nn.functional.normalize(Zt, dim=-1)).mean())
+    if dc is not None:  # claim-class images (all 50/class): same V_n, same random bases, same k/beta as the 10k subset
+        Fc = torch.tensor(dc['F']).float(); yc = torch.tensor(dc['y']).long(); Zc = Fc @ A.T + Ab; tcc = TC[yc]
+        a0cc = ang_rows(Zc, tcc); ASc_c = (a0cc - ang_rows(Zc - (Fc @ Vn) @ (A @ Vn).T, tcc)).abs(); rcc = torch.zeros(len(Fc))
     rc, ra, ks = torch.zeros(N), torch.zeros(TA.shape[0]), []
     for r in range(draws):
         g = torch.Generator().manual_seed(10_000 + r)
@@ -49,8 +52,12 @@ def analyse_model(d, Vn, TA, TC, draws):
         beta = math.sqrt(max(Enull - prev, 0.0) / float((P[:, k] ** 2).mean()))
         coef = P[:, :k + 1].clone(); coef[:, k] *= beta
         Zr = Z - coef @ (A @ Q[:, :k + 1]).T
+        if dc is not None:
+            cc = (Fc @ Q[:, :k + 1]); cc[:, k] *= beta
+            rcc += (a0cc - ang_rows(Zc - cc @ (A @ Q[:, :k + 1]).T, tcc)).abs() / draws
         rc += (a0c - ang_rows(Zr, tc)).abs() / draws; ra += (a0 - ang(Zr, TA)).abs().mean(0) / draws; ks.append(k + beta)
-    return dict(N=N, m=m, null_dim=Vn.shape[1], rho=rho, k_rand=float(np.mean(ks)), y=y.numpy(),
+    claim = dict(y=yc.numpy(), AS=ASc_c.numpy(), rand=rcc.numpy()) if dc is not None else None
+    return dict(claim=claim, N=N, m=m, null_dim=Vn.shape[1], rho=rho, k_rand=float(np.mean(ks)), y=y.numpy(),
                 ASc_img=ASc.abs().numpy(), rand_img=rc.numpy(), absAS=float(ASc.abs().mean()), absAS_sd_img=float(ASc.abs().std()),
                 IS=IS, absAS_rand=float(rc.mean()), AS_fair=float(ASc.abs().mean() / rc.mean()),
                 concept_AS=ASa.numpy(), concept_rand=ra.numpy())
@@ -61,6 +68,8 @@ def rank(scores, high_good=False):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('out'); ap.add_argument('--feats', nargs='+', required=True); ap.add_argument('--sing-root', required=True)
+    ap.add_argument('--claim-feats', nargs='*', default=[], help='dirs with all-50-image claim-class features (extract_claimclasses_gpu.py)')
+    ap.add_argument('--boot', type=int, default=1000)
     ap.add_argument('--models', nargs='*', default=ALL); ap.add_argument('--draws', type=int, default=20)
     a = ap.parse_args()
     sys.path.insert(0, os.path.join(a.sing_root, 'src'))
@@ -80,7 +89,8 @@ def main():
         if fn is None: missing.append(name); continue
         d = np.load(fn); W = torch.tensor(d['W']).float()
         Vn = compute_projectors_from_weight(W.double()).v_null.float()
-        R[name] = analyse_model(d, Vn, TA, TC, a.draws)
+        cf = next((os.path.join(f, f'{name}_full.npz') for f in a.claim_feats if os.path.exists(os.path.join(f, f'{name}_full.npz'))), None)
+        R[name] = analyse_model(d, Vn, TA, TC, a.draws, np.load(cf) if cf else None)
         print(json.dumps({name: {k: R[name][k] for k in ['null_dim', 'rho', 'absAS', 'IS', 'AS_fair', 'k_rand']}}), flush=True)
     M = list(R)
     with open(os.path.join(a.out, 'e2_models.csv'), 'w', newline='') as fh:
@@ -96,13 +106,22 @@ def main():
         for n in M:
             for j, c in enumerate(cn):
                 w.writerow([n, c, float(R[n]['concept_AS'][j]), float(R[n]['concept_rand'][j]), float(R[n]['concept_AS'][j] / R[n]['concept_rand'][j])])
-    pc = {}
+    pc, IMG = {}, {}
+    for n in M:
+        y = R[n]['y']; IMG[n] = {}
+        for i, key in enumerate(['ASc_img', 'rand_img']):
+            IMG[n][i] = {int(c): R[n][key][y == c] for c in np.unique(y)}
+        if R[n]['claim'] is not None:
+            cl = R[n]['claim']
+            for c in np.unique(cl['y']): IMG[n][0][int(c)] = cl['AS'][cl['y'] == c]; IMG[n][1][int(c)] = cl['rand'][cl['y'] == c]
     with open(os.path.join(a.out, 'e2_perclass.csv'), 'w', newline='') as fh:
         w = csv.writer(fh); w.writerow(['model', 'class', 'n', 'AS_SING', 'absAS_rand', 'AS_fair'])
         for n in M:
             y = R[n]['y']; s = np.bincount(y, R[n]['ASc_img'], 1000); q = np.bincount(y, R[n]['rand_img'], 1000); cnt = np.bincount(y, minlength=1000)
-            ok = cnt > 0; pc[n] = (np.where(ok, s / np.maximum(cnt, 1), np.nan), np.where(ok, s / np.maximum(q, 1e-12), np.nan))
-            for c in np.where(ok)[0]: w.writerow([n, int(c), int(cnt[c]), float(pc[n][0][c]), float(q[c] / cnt[c]), float(pc[n][1][c])])
+            pc[n] = (np.full(1000, np.nan), np.full(1000, np.nan))
+            for c in IMG[n][0]:
+                s_, q_ = IMG[n][0][c], IMG[n][1][c]; pc[n][0][c] = s_.mean(); pc[n][1][c] = s_.sum() / max(q_.sum(), 1e-12)
+                w.writerow([n, c, len(s_), float(pc[n][0][c]), float(q_.mean()), float(pc[n][1][c])])
     S = {'AS_SING': {n: R[n]['absAS'] for n in M}, 'AS_fair': {n: R[n]['AS_fair'] for n in M},
          'IS_over_absAS': {n: R[n]['IS'] / R[n]['absAS'] for n in M},
          'AS_SING_concept_mean': {n: float(R[n]['concept_AS'].mean()) for n in M},
@@ -113,6 +132,12 @@ def main():
         rk['rankings_best_first'][key] = rank({n: good(key, n) for n in M}, True)
         if len(M) >= 3:
             t = kendalltau([good(key, n) for n in M], [FIG6B[n] for n in M]); rk['kendall_vs_fig6b'][key] = dict(tau=float(t.statistic), p=float(t.pvalue), n=len(M))
+    Mx = [n for n in M if n != 'densenet']; rk['without_densenet'] = dict(models=Mx, rankings_best_first={}, kendall_vs_fig6b={})
+    for key in ['AS_fair', 'AS_fair_concept_mean']:
+        rk['without_densenet']['rankings_best_first'][key] = rank({n: good(key, n) for n in Mx}, True)
+        if len(Mx) >= 3:
+            t = kendalltau([good(key, n) for n in Mx], [FIG6B[n] for n in Mx]); rk['without_densenet']['kendall_vs_fig6b'][key] = dict(tau=float(t.statistic), p=float(t.pvalue), n=len(Mx))
+    rk['note'] = 'primary tau = all models (kendall_vs_fig6b); without_densenet is secondary (DenseNet null energy ~0, AS_fair degenerate)'
     json.dump(rk, open(os.path.join(a.out, 'e2_rankings.json'), 'w'), indent=1)
     # ---- SING comparative claims: holds / reverses for our AS_SING and AS_fair (lower = less leakage) ----
     claims = []
@@ -122,7 +147,7 @@ def main():
         if miss: row.update(status='not testable yet', missing=miss)
         else:
             for key in ['AS_SING', 'AS_fair']:
-                v, ok = fn(key); row[key] = v; row[f'{key}_verdict'] = 'holds' if ok else 'reverses'
+                v, ok = fn(key); row[key] = v; row[f'{key}_verdict'] = ok if isinstance(ok, str) else ('holds' if ok else 'reverses')
         claims.append(row)
     sc = lambda key: S[key]
     def best_of(target, pool, key):
@@ -143,21 +168,42 @@ def main():
         return v, v['resnet']['mean'] > v['dinovit1']['mean'] and v['resnet']['sd'] > v['dinovit1']['sd']
     add('C6', 'ResNet50 has larger and more variable per-class AS than DinoViT', 'Fig. 4 / Sec. 4.3', 'qualitative', perclass_spread, ['resnet', 'dinovit1'])
     def under1(k):
-        i = 0 if k == 'AS_SING' else 1; fr = float(np.nanmean(pc['dinovit1'][i] < 1)); return dict(frac_classes_below_1=fr), fr > 0.5
+        i = 0 if k == 'AS_SING' else 1; vv = pc['dinovit1'][i]; vv = vv[~np.isnan(vv)]; fr = float(np.mean(vv < 1)); return dict(frac_classes_below_1=fr), fr > 0.5
     add('C7', 'DinoViT per-class |AS| is typically < 1', 'Sec. 4.3', '|AS| < 1 typical', under1, ['dinovit1'])
+    brng = np.random.default_rng(0)
+    def class_score(n, i, c, idx=None):
+        s_ = IMG[n][0][c] if idx is None else IMG[n][0][c][idx]
+        if i == 0: return float(s_.mean())
+        q_ = IMG[n][1][c] if idx is None else IMG[n][1][c][idx]; return float(s_.sum() / max(q_.sum(), 1e-12))
+    def boot_pct(n, i, c):  # rule (a): resample images within every class, 1000x; percentile of class c among all classes
+        cls = sorted(IMG[n][0]); out = []
+        for _ in range(a.boot):
+            v = {cc: class_score(n, i, cc, brng.integers(0, len(IMG[n][0][cc]), len(IMG[n][0][cc]))) for cc in cls}
+            arr = np.array(list(v.values())); out.append(100.0 * np.mean(arr <= v[c]))
+        return float(np.percentile(out, 2.5)), float(np.percentile(out, 97.5))
+    def verdict_ci(lo, hi, thr):  # holds if CI entirely >= thr, reverses if entirely < thr, else inconclusive
+        return 'holds' if lo >= thr else ('reverses' if hi < thr else 'inconclusive')
     def pct(k):
-        i = 0 if k == 'AS_SING' else 1; v = pc['resnet'][i]; o = {}
-        for c in ['porcupine', 'sports_car']: o[c] = float(np.nanmean(v <= v[CLS[c]]))
-        return dict(percentile_in_resnet=o), all(x >= 0.9 for x in o.values())
+        i = 0 if k == 'AS_SING' else 1; v = pc['resnet'][i]; o, verd = {}, []
+        for c in ['porcupine', 'sports_car']:
+            lo, hi = boot_pct('resnet', i, CLS[c]); vd = verdict_ci(lo, hi, 90.0)
+            vv = v[~np.isnan(v)]; o[c] = dict(percentile=float(100 * np.mean(vv <= v[CLS[c]])), ci95=[lo, hi], n_images=len(IMG['resnet'][0][CLS[c]]), verdict=vd); verd.append(vd)
+        return dict(percentile_in_resnet=o), ('reverses' if 'reverses' in verd else ('holds' if all(x == 'holds' for x in verd) else 'inconclusive'))
     add('C8', 'ResNet50 classes Porcupine and Sports-Car leak substantially more than other classes (>= 90th percentile)', 'Fig. 4 caption', 'highlighted', pct, ['resnet'])
     def nocorr(k):
         i = 0 if k == 'AS_SING' else 1; s = spearmanr(pc['resnet'][i], pc['dinovit1'][i], nan_policy='omit')
         return dict(spearman=float(s.statistic), p=float(s.pvalue)), s.pvalue >= 0.05
     add('C9', 'No significant correlation between ResNet50 and DinoViT per-class AS orderings', 'Sec. 4.3', 'no significant correlation', nocorr, ['resnet', 'dinovit1'])
     def jelly(k):
-        i = 0 if k == 'AS_SING' else 1; v = {c: float(pc['dinovit1'][i][CLS[c]]) for c in ['jellyfish', 'arabian_camel']}
-        return v, v['jellyfish'] > v['arabian_camel']
-    add('C10', 'DinoViT: Jellyfish has substantially larger AS than Arabian Camel (proxy: class-text AS, 10 imgs/class; SING used 30 concepts, ~1300 imgs)', 'Fig. 5 / Sec. 4.3', 'qualitative', jelly, ['dinovit1'])
+        i = 0 if k == 'AS_SING' else 1; J, Cm = CLS['jellyfish'], CLS['arabian_camel']
+        v = {c: float(pc['dinovit1'][i][CLS[c]]) for c in ['jellyfish', 'arabian_camel']}; diffs = []
+        for _ in range(a.boot):
+            nj, nc = len(IMG['dinovit1'][0][J]), len(IMG['dinovit1'][0][Cm])
+            diffs.append(class_score('dinovit1', i, J, brng.integers(0, nj, nj)) - class_score('dinovit1', i, Cm, brng.integers(0, nc, nc)))
+        lo, hi = float(np.percentile(diffs, 2.5)), float(np.percentile(diffs, 97.5))
+        v.update(diff_ci95=[lo, hi], n_images={c: len(IMG['dinovit1'][0][CLS[c]]) for c in ['jellyfish', 'arabian_camel']})
+        return v, verdict_ci(lo, hi, 0.0)
+    add('C10', 'DinoViT: Jellyfish has substantially larger AS than Arabian Camel (proxy: class-text AS on all 50 val imgs/class when --claim-feats given; SING used 30 concepts, ~1300 imgs)', 'Fig. 5 / Sec. 4.3', 'qualitative; holds/reverses by 95% bootstrap CI of the difference', jelly, ['dinovit1'])
     def t1(k):
         v = {n: sc(k)[n] for n in TABLE1}; t = kendalltau([v[n] for n in TABLE1], list(TABLE1.values()))
         return dict(values=v, kendall_vs_table1=float(t.statistic)), min(v, key=v.get) == 'dinovit1'
