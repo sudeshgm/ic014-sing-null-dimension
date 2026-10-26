@@ -15,3 +15,14 @@ E2 uses the AS_fair definition registered for E3, unchanged, at α = 0 (no plant
 
 `results_partial8/` is the same analysis on the 8 cached models only. Claims that need missing models show as "not testable yet".
 Smoke test: the 5 missing models were extracted on 12 fake images, and the analysis ran on all 13 fake models.
+
+## Fixed rules (from the Idea Agent, set before the full run)
+* 'Stands out' means the 90th percentile. Ordering claims need p < 0.05.
+* **(a)** Class-percentile claims (C8) use a 95% bootstrap CI of the class percentile. Images are resampled within every class, 1000×, seed 0. Verdicts:
+  * 'reverses' only if the whole CI is below 90
+  * 'holds' if the whole CI is at or above 90
+  * otherwise 'inconclusive'
+
+  C10 (jellyfish vs. Arabian camel) uses the same bootstrap on the difference, with the CI compared to 0.
+* **(b)** Claim classes (jellyfish 107, porcupine 334, Arabian camel 354, sports car 817) use all 50 val images. Get them with `extract_claimclasses_gpu.py` and pass them as `--claim-feats`. They use the same null basis, random bases and k/β as the 10k subset.
+* **(c)** `e2_rankings.json` also reports AS_fair rankings and τ without DenseNet. The primary τ stays on all models.
