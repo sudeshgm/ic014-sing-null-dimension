@@ -1,0 +1,355 @@
+[
+ {
+  "id": "C1",
+  "claim": "DinoViT has the best IS/AS trade-off (highest ratio) of the 5 models",
+  "source": "Fig. 3b / Sec. 4.2 / abstract",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "AS_SING": {
+   "dinovit1": 0.2937292456626892,
+   "resnet": 1.6764404773712158,
+   "resnext": 1.9990603923797607,
+   "efficientnet": 0.4428022503852844,
+   "bitresnet": 0.5568714141845703
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "dinovit1": 1.6319563388824463,
+   "resnet": 0.8554347157478333,
+   "resnext": 0.7065527439117432,
+   "efficientnet": 0.888846755027771,
+   "bitresnet": 0.042064595967531204
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C2",
+  "claim": "ResNeXt101 has the lowest IS/AS ratio of the 5 models",
+  "source": "Fig. 3b caption",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "AS_SING": {
+   "dinovit1": 0.2937292456626892,
+   "resnet": 1.6764404773712158,
+   "resnext": 1.9990603923797607,
+   "efficientnet": 0.4428022503852844,
+   "bitresnet": 0.5568714141845703
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "dinovit1": 1.6319563388824463,
+   "resnet": 0.8554347157478333,
+   "resnext": 0.7065527439117432,
+   "efficientnet": 0.888846755027771,
+   "bitresnet": 0.042064595967531204
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C3",
+  "claim": "ResNet50 leaks more class semantics into its null space than DinoViT",
+  "source": "abstract / Fig. 1 / Fig. 4",
+  "sing": {
+   "resnet": 24.81,
+   "dinovit1": 70.16
+  },
+  "AS_SING": {
+   "resnet": 1.6764404773712158,
+   "dinovit1": 0.2937292456626892
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "resnet": 0.8554347157478333,
+   "dinovit1": 1.6319563388824463
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C4",
+  "claim": "DinoViT has the least class-relevant leakage among the examined networks",
+  "source": "Introduction",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "AS_SING": {
+   "dinovit1": 0.2937292456626892,
+   "resnet": 1.6764404773712158,
+   "resnext": 1.9990603923797607,
+   "efficientnet": 0.4428022503852844,
+   "bitresnet": 0.5568714141845703
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "dinovit1": 1.6319563388824463,
+   "resnet": 0.8554347157478333,
+   "resnext": 0.7065527439117432,
+   "efficientnet": 0.888846755027771,
+   "bitresnet": 0.042064595967531204
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C5",
+  "claim": "ResNeXt101 shows high AS (top-2 of the 5)",
+  "source": "Sec. 4.2",
+  "sing": {
+   "dinovit1": 70.16,
+   "resnet": 24.81,
+   "resnext": 13.88,
+   "efficientnet": 36.28,
+   "bitresnet": 47.21
+  },
+  "AS_SING": {
+   "dinovit1": 0.2937292456626892,
+   "resnet": 1.6764404773712158,
+   "resnext": 1.9990603923797607,
+   "efficientnet": 0.4428022503852844,
+   "bitresnet": 0.5568714141845703
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "dinovit1": 1.6319563388824463,
+   "resnet": 0.8554347157478333,
+   "resnext": 0.7065527439117432,
+   "efficientnet": 0.888846755027771,
+   "bitresnet": 0.042064595967531204
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C6",
+  "claim": "ResNet50 has larger and more variable per-class AS than DinoViT",
+  "source": "Fig. 4 / Sec. 4.3",
+  "sing": "qualitative",
+  "AS_SING": {
+   "resnet": {
+    "mean": 1.6765323731154202,
+    "sd": 0.8671556459592139
+   },
+   "dinovit1": {
+    "mean": 0.2935779091902077,
+    "sd": 0.12317538077944319
+   }
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "resnet": {
+    "mean": 0.857304289072752,
+    "sd": 0.4185795747681132
+   },
+   "dinovit1": {
+    "mean": 1.6800062733590604,
+    "sd": 0.6215904517647309
+   }
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C7",
+  "claim": "DinoViT per-class |AS| is typically < 1",
+  "source": "Sec. 4.3",
+  "sing": "|AS| < 1 typical",
+  "AS_SING": {
+   "frac_classes_below_1": 1.0
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "frac_classes_below_1": 0.107
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C8",
+  "claim": "ResNet50 classes Porcupine and Sports-Car leak substantially more than other classes (>= 90th percentile)",
+  "source": "Fig. 4 caption",
+  "sing": "highlighted",
+  "AS_SING": {
+   "percentile_in_resnet": {
+    "porcupine": {
+     "percentile": 84.8,
+     "ci95": [
+      80.10000000000001,
+      87.7
+     ],
+     "n_images": 50,
+     "verdict": "reverses"
+    },
+    "sports_car": {
+     "percentile": 61.0,
+     "ci95": [
+      56.09750000000001,
+      66.2
+     ],
+     "n_images": 50,
+     "verdict": "reverses"
+    }
+   }
+  },
+  "AS_SING_verdict": "reverses",
+  "AS_fair": {
+   "percentile_in_resnet": {
+    "porcupine": {
+     "percentile": 68.4,
+     "ci95": [
+      64.4975,
+      71.5025
+     ],
+     "n_images": 50,
+     "verdict": "reverses"
+    },
+    "sports_car": {
+     "percentile": 67.2,
+     "ci95": [
+      63.597500000000004,
+      71.40249999999999
+     ],
+     "n_images": 50,
+     "verdict": "reverses"
+    }
+   }
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C9",
+  "claim": "No significant correlation between ResNet50 and DinoViT per-class AS orderings",
+  "source": "Sec. 4.3",
+  "sing": "no significant correlation",
+  "AS_SING": {
+   "spearman": -0.03298128308022693,
+   "p": 0.29744007401065037
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "spearman": -0.08647770247770249,
+   "p": 0.006212069726756178
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C10",
+  "claim": "DinoViT: Jellyfish has substantially larger AS than Arabian Camel (proxy: class-text AS on all 50 val imgs/class when --claim-feats given; SING used 30 concepts, ~1300 imgs)",
+  "source": "Fig. 5 / Sec. 4.3",
+  "sing": "qualitative; holds/reverses by 95% bootstrap CI of the difference",
+  "AS_SING": {
+   "jellyfish": 0.3463098108768463,
+   "arabian_camel": 0.45315155386924744,
+   "diff_ci95": [
+    -0.20489159151911734,
+    -0.009998925030231493
+   ],
+   "n_images": {
+    "jellyfish": 50,
+    "arabian_camel": 50
+   }
+  },
+  "AS_SING_verdict": "reverses",
+  "AS_fair": {
+   "jellyfish": 1.3814934492111206,
+   "arabian_camel": 2.3205854892730713,
+   "diff_ci95": [
+    -1.4033663094043731,
+    -0.45819422304630286
+   ],
+   "n_images": {
+    "jellyfish": 50,
+    "arabian_camel": 50
+   }
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C11",
+  "claim": "Table 1: DinoViT least steerable; ResNet50/EfficientNet/ResNeXt101 susceptible (proxy: null-removal AS, not IS=40 deg text-gradient steps)",
+  "source": "Table 1 / Sec. 4.4",
+  "sing": {
+   "resnet": 12.04,
+   "efficientnet": 12.38,
+   "bitresnet": 9.19,
+   "dinovit1": 5.0,
+   "resnext": 11.15
+  },
+  "AS_SING": {
+   "values": {
+    "resnet": 1.6764404773712158,
+    "efficientnet": 0.4428022503852844,
+    "bitresnet": 0.5568714141845703,
+    "dinovit1": 0.2937292456626892,
+    "resnext": 1.9990603923797607
+   },
+   "kendall_vs_table1": 0.19999999999999998
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "values": {
+    "resnet": 0.8554347157478333,
+    "efficientnet": 0.888846755027771,
+    "bitresnet": 0.042064595967531204,
+    "dinovit1": 1.6319563388824463,
+    "resnext": 0.7065527439117432
+   },
+   "kendall_vs_table1": 0.19999999999999998
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C12",
+  "claim": "Fig. 6b / supp. Fig. 12b 13-model IS/AS ordering (holds = Kendall tau > 0 and p < 0.05)",
+  "source": "13-model IS/AS bar plot (digitized in exp0 as Fig. 6b; supp. Fig. 12b)",
+  "sing": {
+   "densenet": 70.71,
+   "dinovit1": 70.16,
+   "eva02_large": 54.32,
+   "bitresnet": 47.21,
+   "convnext": 37.38,
+   "efficientnet": 36.28,
+   "swin_large": 29.18,
+   "resnet": 24.81,
+   "vgg16": 24.26,
+   "vgg19": 19.89,
+   "dinov2": 16.61,
+   "resnext": 13.88,
+   "deit": 9.51
+  },
+  "AS_SING": {
+   "tau": 0.8205128205128204,
+   "p": 1.346582943805166e-05,
+   "n": 13
+  },
+  "AS_SING_verdict": "holds",
+  "AS_fair": {
+   "tau": -0.17948717948717946,
+   "p": 0.4353804483839206,
+   "n": 13
+  },
+  "AS_fair_verdict": "reverses"
+ },
+ {
+  "id": "C13",
+  "claim": "EVA02 as target space preserves the 5-model ordering",
+  "source": "Sec. 4.2 / supp. Fig. 12a",
+  "sing": "same ordering",
+  "status": "not testable (no EVA02-space translators released)"
+ },
+ {
+  "id": "C14",
+  "claim": "Translator robustness: Pearson 0.972 between principal and translated-principal head accuracy",
+  "source": "Sec. 4.2 / supp. Fig. 12c",
+  "sing": 0.972,
+  "status": "not a comparative leakage claim; not tested"
+ }
+]
