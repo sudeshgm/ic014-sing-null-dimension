@@ -9,3 +9,5 @@ imagenet*/
 e1_feats/
 *nullfeat*.npz
 __pycache__/
+e3_feats/
+e3_private/
