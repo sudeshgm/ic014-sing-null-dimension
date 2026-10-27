@@ -1,6 +1,6 @@
 """IC014 E9 score screen. Spec: E9_SCORE_SCREEN_PREREG.md (+ amendments 1, 2). CPU only, on the private E3 features.
 One automated run: DEV (all 20 candidates), then the selection rule, then the finalists-only holdout (linear and nonlinear plant).
-Per-evaluation raw scores are checkpointed to --cache (jsonl) so an interrupted run resumes without recomputing."""
+Raw scores are checkpointed to --cache (jsonl) for resume."""
 import argparse, os, sys, json, csv, math, time, itertools, numpy as np, torch
 from scipy.stats import kendalltau, spearmanr, rankdata
 from scipy.special import digamma

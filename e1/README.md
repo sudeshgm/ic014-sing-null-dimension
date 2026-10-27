@@ -1,6 +1,6 @@
 # E1: energy vs dimension
-1. **GPU** `extract_null_gpu.py`: same 10k subset as Exp 1, 5 models (resnet, resnext, dinov2, eva02_large, vgg16). Writes `<out>/<model>_nullfeat.npz` with the null coordinates, T(f), ||f||², labels, V_null and A·V_null. **These files are private and ImageNet-derived: never commit or publish them** (they're gitignored).
-2. **CPU** `analyze_e1.py <feats_dir> <out_dir>`: energy PCs of the null coordinates (uncentered second moment), then:
+1. GPU pass (`extract_null_gpu.py`): same 10k subset as Exp 1, 5 models (resnet, resnext, dinov2, eva02_large, vgg16). Writes `<out>/<model>_nullfeat.npz` with the null coordinates, T(f), ||f||², labels, V_null and A·V_null. These files are private and ImageNet-derived (gitignored): do not commit or publish them.
+2. CPU analysis (`analyze_e1.py <feats_dir> <out_dir>`): energy PCs of the null coordinates (uncentered second moment), then:
    * (a) fixed d ∈ {24, 100, 280}: high / low / random (20 seeds);
    * (b) fixed ρ ∈ {0.5%, 2%, 8%} at d ∈ {24, 100, 280, 536}, built from top-k PCs + bottom PCs + one rotated vector, so ρ is hit exactly. Infeasible cells are marked.
 

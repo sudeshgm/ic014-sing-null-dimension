@@ -1,7 +1,7 @@
 # IC014 full-paper plan (PROPOSAL, awaiting user approval; nothing runs until approved)
 
-Working title: "Size Matters: Null-Space Interpretability Scores Measure Subspace Energy, Not Semantics"
-Thesis: scores that probe what a classifier ignores (its null space or other residual subspaces) are dominated by how much feature energy and how many dimensions they remove. Cross-model comparisons with these scores are confounded unless they are size-matched. SING is the case study, and the lesson is general.
+Working title: Size and null-space interpretability scores (draft).
+Thesis: scores that probe what a classifier ignores (null space or other residual subspaces) are dominated by how much feature energy and how many dimensions they remove. Cross-model comparisons stay confounded unless they are size-matched. SING is the case study; the same issue may hit related scores.
 
 Already established (short-note stage, RESULTS.md cfb4bfa):
 - Within a model, AS rises ~10x from d=24 to d=1048 (3 of 4 models).
@@ -34,13 +34,13 @@ Outcome rule (any decisive outcome is publishable):
 ## E2. Size-fair SING and whether SING's conclusions survive (~2 GPU-h, 1 day CPU)
 Q: Define AS_fair = AS at matched removed energy (or matched d, per E1), normalized by a random-subspace baseline of the same size drawn from the full feature space (a "non-null" control). Do SING's headline conclusions hold?
 Re-test, on the 13 models, (i) the model ranking, (ii) SING's per-class / per-concept claims in its main figures, (iii) the "DINO leaks least" claim.
-Why: this turns a critique into a corrected method; reviewers want to know what changes.
+Why: shows what changes once size is controlled; that is what a corrected method has to answer.
 PASS: Kendall tau(AS_fair, SING ranking) <= 0.5, or >= 1 headline claim reverses. KILL: tau >= 0.8 and no claim changes. The paper then becomes "the confound exists but is harmless here", which weakens it to TMLR.
 
 ## E3. Ground truth: planted leakage (~1 GPU-h, 1 day CPU) [most important for acceptance]
 Q: When we plant a known amount of semantic signal (a CLIP-text direction) into the null space of each model at controlled strengths, which metric recovers the true leakage ranking?
 Design: 8 models x 5 planted strengths; head logits are unchanged by construction (null space), so it's a valid model.
-Why: a known ground truth answers "which metric is right?" rather than just "they disagree".
+Why: a known ground truth lets us ask which metric recovers the planted ranking, instead of only noting that metrics disagree.
 PASS: Kendall(AS_fair, planted) >= 0.8 and Kendall(AS_SING, planted) <= 0.5. KILL: AS_SING >= 0.8 as well, which means SING already recovers the truth and the confound is cosmetic; downgrade.
 
 ## E4. Causal width manipulation on one backbone (~3 GPU-h)
@@ -56,7 +56,7 @@ Q: Across the same ~13-19 models, do these scores track subspace size/energy mor
 (3) Rezaei & Sabokrou null-space overfitting score (ground truth = train-test gap);
 (4) LEACE/INLP concept-erasure "residual leakage" probe accuracy vs number of removed dims.
 For each: partial Spearman of score with ground truth controlling for rho and d, and raw Spearman with rho.
-Why: this turns one-paper criticism into a general lesson for a main track.
+Why: tests whether the confound is SING-specific or shows up in related scores.
 PASS: >= 2 of 4 methods have |Spearman(score, rho or d)| >= 0.6, and fair normalization raises their correlation with ground truth by >= 0.15. KILL: 0 of 4 confounded, so the paper stays SING-specific (TMLR).
 
 ## E6. Translator conditioning (BiT) as a second failure mode (CPU, 0.5 day)
@@ -91,7 +91,7 @@ Licence: all research non-commercial (ImageNet, ResNeXt WSL, SWAG CC BY-NC).
 
 ## E8. Replacement for SING: Null-space Concept Probe (NCP) (added 2026-10-26 at the user's request; ~0.5 GPU-h, 2 days CPU)
 Definition: for concept c, the leakage is the held-out R2 of a ridge probe from Pi_null f to the CLIP concept score s_c(x), minus the mean R2 of the same probe on random subspaces with matched d and matched energy rho (from the full feature space), reported as a z-score. There's no translator.
-Why: it gives the paper a constructive fix; it's size-fair by construction, free of translator conditioning, and works for any model.
+Why: a constructive alternative that is size-fair by construction, avoids the translator, and applies to any model.
 Runs after the core trio (needs E3's planted data).
 PASS: Kendall(NCP, planted ranking) >= 0.8 on E3, AND within-model NCP stays flat across d at fixed planted leakage (max/min <= 1.5).
 KILL: Kendall < 0.6. The paper then proposes AS_fair (E2) as the fix instead.

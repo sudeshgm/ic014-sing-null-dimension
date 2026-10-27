@@ -41,7 +41,7 @@ Run: `analyze_e8.py`, CPU only, on the private E3 features. The log is at /tmp/e
 | densenet | 8.3 | 244.8 | 10.4 | 2.0 |
 
 ## Observations (raw)
-- **NCP is not monotone in α.** At α ≥ 0.1, both R²_null and R²_rand saturate near 1: the plant has energy α·σ in the full space, so energy-matched random subspaces also capture s_c. The z-score is then set by a tiny SD over the random draws (for example, 1e-6 for resnet at α = 1).
+- NCP vs α: At α ≥ 0.1, both R²_null and R²_rand saturate near 1: the plant has energy α·σ in the full space, so energy-matched random subspaces also capture s_c. The z-score is then set by a tiny SD over the random draws (for example, 1e-6 for resnet at α = 1).
 - **R² at α = 0.** R²_null is between 0.01 and 0.39 with no plant. CLIP concepts are linearly decodable from null coordinates; for large null spaces this is below the matched random subspaces, so NCP < 0.
 - **DenseNet:** at α = 0.01, NCP is 175–376, because its random subspaces are about 0.3 directions (ρ ≈ 0) and their R² is about 0.
 - **Small-null models** (null dim 24/27) have one or two d values, so flatness is trivial there.
