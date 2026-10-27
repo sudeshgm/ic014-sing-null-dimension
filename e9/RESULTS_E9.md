@@ -1,4 +1,4 @@
-**VERDICT: KILL.** No candidate passed DEV, so there were no finalists and the holdout was never run. M1 had DEV tau 0.976 but was flat on 0/4 models; S10 was the only flat candidate, at tau 0.395. No post-hoc reruns.
+Verdict: KILL. No candidate passed DEV, so there were no finalists and the holdout was never run. M1 had DEV tau 0.976 but was flat on 0/4 models; S10 was the only flat candidate, at tau 0.395. No post-hoc reruns.
 
 # E9 score screen: results (DEV only, E9 = KILL)
 

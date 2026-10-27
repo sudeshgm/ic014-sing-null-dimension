@@ -1,6 +1,7 @@
 # IC014 results: SING model comparison and null dimension
 
-## 1. DinoViT identity (Exp 0b; `exp0b/results/results_top1.json`, full ImageNet-val, 50k)
+## 1. DinoViT identity (Exp 0b)
+Source: `exp0b/results/results_top1.json`, full ImageNet-val (50k).
 | Candidate | native | r224 |
 |---|---|---|
 | torchvision ViT_L_16 IMAGENET1K_V1 | 79.670 | 79.692 |
@@ -55,15 +56,15 @@ d=24 comparison over 8 models:
 Boring baseline over 13 models: Spearman(ρ_full, |AS|_full) = 0.868 (p 1.2e-4); Spearman(ρ_full, Fig. 6b ratio) = −0.940 (p 1.9e-6).
 
 ## 4. Verdict (from the IC014 Idea Agent)
-**GO** under the pre-registered rule: r ≥ 3 on 3 of the 4 models and τ ≤ 0.5.
+GO under the pre-registered rule: r ≥ 3 on 3 of the 4 models and τ ≤ 0.5.
 
 ## 5. Caveats
-* **Energy and dimension are not separated.** AS vs ρ_d fits as well as AS vs d (R² ≈ 0.98 for both), because ρ_d is linear in d for random subspaces.
-* **Boring baseline.** The null-energy fraction ρ_full alone gives Spearman −0.94 against SING's ratio over 13 models.
-* **BiT anomaly (not a code bug)** (`exp1/diag_bit.py`, `exp1/results/diag_bit.json`; 100 Imagenette images on CPU):
+* Energy vs dimension. AS vs ρ_d fits as well as AS vs d (R² ≈ 0.98 for both), because ρ_d is linear in d for random subspaces. Exp 1 does not separate the two.
+* Boring baseline. The null-energy fraction ρ_full alone gives Spearman −0.94 against SING's ratio over 13 models.
+* BiT anomaly (`exp1/diag_bit.py`, `exp1/results/diag_bit.json`; 100 Imagenette images on CPU). Same code path as the other models; the collapse is translator conditioning:
   * The full null space and the random subspaces run through the same code: the same `v_null` from SING's projectors, the same pre-logit hook, and no normalization step. The random basis is `Vn @ qr(randn)`.
   * BiT's linear translator has a huge gain on the classifier null space: the top singular values of A·V_null are 284, 179 and 159, with a median of 0.16. The mean gain on principal directions is only 0.14. For ResNet50 the top singular value is 5.6.
   * Split the null space into 8 random orthogonal blocks. The translator shifts from the blocks sum exactly to the full-null shift (|Δz| 3.72 vs 3.72), but the blocks' root-sum-square is 285.6. For ResNet50 the same comparison gives 8.0 vs 9.3.
-  * So the full null component of real BiT features nearly cancels through the translator, and any partial subspace breaks that cancellation. BiT's AS(d < 1048) therefore reflects the translator's conditioning; it is real arithmetic, not a bug. The other models don't show this.
-* **DenseNet121.** ρ_full = 1.8e-8 and |AS| ≈ 2e-4: the features have essentially no energy in the head's null space.
-* **Subset count.** `subset_files.txt` shows 9999 lines in `wc -l` only because the script writes no trailing newline. n = 10,000 in every result row, and the per-image labels are exactly 10 per class.
+  * The full null component of real BiT features nearly cancels through the translator; any partial subspace breaks that cancellation. BiT's AS(d < 1048) therefore reflects the translator's conditioning. The other models do not show this.
+* DenseNet121. ρ_full = 1.8e-8 and |AS| ≈ 2e-4: the features have essentially no energy in the head's null space.
+* Subset count. `subset_files.txt` shows 9999 lines in `wc -l` only because the script writes no trailing newline. n = 10,000 in every result row, and the per-image labels are exactly 10 per class.

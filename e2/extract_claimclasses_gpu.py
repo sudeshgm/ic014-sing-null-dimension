@@ -1,7 +1,7 @@
 """IC014 E2 claim-class GPU pass: ALL 50 ImageNet-val images of each class named in a SING claim
 (jellyfish 107, porcupine 334, Arabian camel 354, sports car 817), for all 13 SING models plus CLIP, using exactly
 the E3 extractor (same <model>_full.npz format, clip_img.npz, subset_files.txt = file\\tlabel). 200 images total.
-Outputs are PRIVATE (ImageNet-derived): never commit/publish."""
+Outputs are ImageNet-derived and private; do not commit."""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'e3'))
 import extract_e3_gpu as e3
