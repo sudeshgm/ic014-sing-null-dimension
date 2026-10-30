@@ -1,0 +1,8 @@
+_v3_work/
+*.bak
+*.aux
+*.log
+*.out
+*.blg
+*.bbl
+*.synctex.gz
