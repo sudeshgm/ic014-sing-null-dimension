@@ -1,0 +1,259 @@
+{
+ "AS_SING": {
+  "C1": {
+   "effect": 0.14907297492027283,
+   "ci95": [
+    0.14173633828759194,
+    0.15636301636695862
+   ],
+   "verdict": "holds"
+  },
+  "C2": {
+   "effect": 0.32261979579925537,
+   "ci95": [
+    0.3023877203464508,
+    0.34168966114521027
+   ],
+   "verdict": "holds"
+  },
+  "C3": {
+   "effect": 1.3827112913131714,
+   "ci95": [
+    1.3721101731061935,
+    1.394447350502014
+   ],
+   "verdict": "holds"
+  },
+  "C4": {
+   "effect": -0.2934839129447937,
+   "ci95": [
+    -0.2977967098355293,
+    -0.2890818819403648
+   ],
+   "verdict": "reverses"
+  },
+  "C5": {
+   "effect": 1.4421889781951904,
+   "ci95": [
+    1.4232759952545166,
+    1.4615624785423278
+   ],
+   "verdict": "holds"
+  },
+  "C6_mean": {
+   "effect": 1.3829544653320314,
+   "ci95": [
+    1.3722963675956725,
+    1.3949599229393006
+   ],
+   "verdict": "holds"
+  },
+  "C6_sd": {
+   "effect": 0.743980267524171,
+   "ci95": [
+    0.7282115649248079,
+    0.7525313399354336
+   ],
+   "verdict": "holds"
+  },
+  "C11": {
+   "effect": 0.14907297492027283,
+   "ci95": [
+    0.14173633828759194,
+    0.15636301636695862
+   ],
+   "verdict": "holds"
+  },
+  "C12": {
+   "effect": 0.8205128205128204,
+   "ci95": [
+    0.8205128205128204,
+    0.8205128205128204
+   ],
+   "verdict": "holds"
+  },
+  "C8_porcupine": {
+   "effect": -5.200000000000003,
+   "ci95": [
+    -9.699999999999989,
+    -2.4000000000000057
+   ],
+   "verdict": "reverses"
+  },
+  "C8_sports_car": {
+   "effect": -29.0,
+   "ci95": [
+    -34.099999999999994,
+    -23.799999999999997
+   ],
+   "verdict": "reverses"
+  },
+  "C9_spearman": {
+   "effect": -0.03298128308022693,
+   "ci95": [
+    -0.056246488204927406,
+    0.009275734803562002
+   ],
+   "verdict": "holds"
+  },
+  "C10": {
+   "effect": -0.1068417358398438,
+   "ci95": [
+    -0.20550925827026367,
+    0.0007949295043945026
+   ],
+   "verdict": "not confirmed",
+   "flag": "possible re-implementation discrepancy (fails under both scores in E2)"
+  },
+  "C7": {
+   "effect": 0.5,
+   "ci95": [
+    0.497,
+    0.5
+   ],
+   "verdict": "holds"
+  },
+  "C6": {
+   "verdict": "holds"
+  },
+  "C8": {
+   "verdict": "reverses",
+   "flag": "possible re-implementation discrepancy (fails under both scores in E2)"
+  }
+ },
+ "AS_fair": {
+  "C1": {
+   "effect": -1.589892029762268,
+   "ci95": [
+    -1.6140522480010986,
+    -1.564200261235237
+   ],
+   "verdict": "reverses"
+  },
+  "C2": {
+   "effect": -0.925403892993927,
+   "ci95": [
+    -0.9502106562256813,
+    -0.8994687587022782
+   ],
+   "verdict": "reverses"
+  },
+  "C3": {
+   "effect": -0.7765217423439026,
+   "ci95": [
+    -0.8032599672675133,
+    -0.7510948523879051
+   ],
+   "verdict": "reverses"
+  },
+  "C4": {
+   "effect": -1.589892029762268,
+   "ci95": [
+    -1.6140522480010986,
+    -1.564200261235237
+   ],
+   "verdict": "reverses"
+  },
+  "C5": {
+   "effect": -0.18229413032531738,
+   "ci95": [
+    -0.19361843019723893,
+    -0.17190510481595994
+   ],
+   "verdict": "reverses"
+  },
+  "C6_mean": {
+   "effect": -0.8227020425040259,
+   "ci95": [
+    -0.8528200000672117,
+    -0.8012966164846979
+   ],
+   "verdict": "reverses"
+  },
+  "C6_sd": {
+   "effect": -0.20301090187967935,
+   "ci95": [
+    -0.36042972018682584,
+    -0.2935125247074626
+   ],
+   "verdict": "reverses"
+  },
+  "C11": {
+   "effect": -1.589892029762268,
+   "ci95": [
+    -1.6140522480010986,
+    -1.564200261235237
+   ],
+   "verdict": "reverses"
+  },
+  "C12": {
+   "effect": -0.17948717948717946,
+   "ci95": [
+    -0.2051282051282051,
+    -0.12820512820512817
+   ],
+   "verdict": "reverses"
+  },
+  "C8_porcupine": {
+   "effect": -21.599999999999994,
+   "ci95": [
+    -25.39999999999999,
+    -18.697500000000005
+   ],
+   "verdict": "reverses"
+  },
+  "C8_sports_car": {
+   "effect": -22.799999999999997,
+   "ci95": [
+    -26.6,
+    -18.59750000000001
+   ],
+   "verdict": "reverses"
+  },
+  "C9_spearman": {
+   "effect": -0.08647770247770249,
+   "ci95": [
+    -0.10071685911685913,
+    -0.031619169719169726
+   ],
+   "verdict": "contradicted"
+  },
+  "C10": {
+   "effect": -0.9390928741528772,
+   "ci95": [
+    -1.4330351717886154,
+    -0.43429572127251675
+   ],
+   "verdict": "reverses",
+   "flag": "possible re-implementation discrepancy (fails under both scores in E2)"
+  },
+  "C6": {
+   "verdict": "reverses"
+  },
+  "C8": {
+   "verdict": "reverses",
+   "flag": "possible re-implementation discrepancy (fails under both scores in E2)"
+  },
+  "C7": {
+   "verdict": "N/A (AS_fair is unitless)"
+  }
+ },
+ "C13": "untestable (no EVA02-space translators released)",
+ "C14": "untestable / not a comparative leakage claim",
+ "n_reverses_AS_SING": [
+  "C4",
+  "C8"
+ ],
+ "n_reverses_AS_fair": [
+  "C1",
+  "C10",
+  "C11",
+  "C12",
+  "C2",
+  "C3",
+  "C4",
+  "C5",
+  "C6",
+  "C8"
+ ]
+}
