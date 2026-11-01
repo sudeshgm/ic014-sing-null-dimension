@@ -1,5 +1,5 @@
-"""Exp 0 stats: rank correlations of Fig. 6b IS/AS ratio vs null dimension (seed 0, 10k permutations).
-Fig. 6b reports only the IS/AS ratio, so AS and IS individually cannot be read from it (see README)."""
+"""Exp 0 stats: rank correlation between the Fig. 6b IS/AS ratio and null dimension (seed 0, 10k permutations).
+Fig. 6b only shows the IS/AS ratio, so neither AS nor IS can be read off it separately (see README)."""
 import json, csv, numpy as np
 from scipy.stats import spearmanr, kendalltau
 MAP={'DenseNet':'densenet','DinoViT':'dinovit1','EVA02Large':'eva02_large','BitResNet':'bitresnet','ConvNext':'convnext',
@@ -33,7 +33,7 @@ base=[m for m in allm if m!='dinovit1']
 for drop in base:
     loo2.append(block([m for m in base if m!=drop],'noDinoViT_LOO_drop_'+drop))
 res['leave_one_out_noDinoViT']=loo2
-# derived: AS-direction proxy. Ratio IS/AS is inversely related to AS only if IS were constant; not computed.
+# no AS-direction proxy here: IS/AS would only be inversely related to AS if IS were constant, so we skip it.
 json.dump(res,open(f'stats{SUFFIX}.json','w'),indent=1)
 with open(f'stats{SUFFIX}.csv','w') as f:
     w=csv.DictWriter(f,fieldnames=list(res['ratio_vs_nulldim'][0])); w.writeheader()

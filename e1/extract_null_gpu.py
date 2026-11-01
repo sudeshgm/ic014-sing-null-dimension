@@ -7,8 +7,8 @@ Per model writes <out>/<model>_nullfeat.npz (PRIVATE: ImageNet-derived; never co
   y      (N,)    int16    ground-truth label
   Vn     (m, nd) float32  null basis (SING projectors, tol 1e-5)  [weights-derived]
   AVn    (768, nd) float32 translator weight @ V_null              [weights-derived]
-Since SING's default translators are linear, T(f - V_null U U^T c) = z - (c U)(AVn U)^T exactly; all subspace
-selection, AS and IS then run on CPU (e1/analyze_e1.py)."""
+SING's default translators are linear, so T(f - V_null U U^T c) = z - (c U)(AVn U)^T holds exactly. That means
+subspace selection, AS and IS can all be done afterwards on CPU (e1/analyze_e1.py)."""
 import argparse, os, sys, time, json, numpy as np, torch
 from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'exp1'))
