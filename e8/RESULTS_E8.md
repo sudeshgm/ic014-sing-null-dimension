@@ -1,14 +1,14 @@
 **E8 verdict (IC014 Idea Agent): KILL.** Mean Kendall is −0.33, below the 0.6 threshold, and NCP is flat on 0 of 4 eligible models. No reruns or tweaks.
 
 Flags:
-- **The z-score saturates.** Probe R² is near 1 in both the null and the random subspaces, so a tiny random SD sets NCP.
+- **The z-score saturates.** Probe R² is close to 1 in the null and in the random subspaces alike, so NCP ends up set by a tiny random SD.
 - **λ is chosen by approximate closed-form leave-one-out**, not the exact CV the prereg states.
 - **λ sits at the grid floor (10^-3)** in 18 of 96 α-grid fits.
 - **Per the plan, AS_fair (E2) is the proposed fix** instead of NCP.
 
 # E8 results: NCP (raw; no verdict). Pre-registration: 5021aa9 (`PREREG_E8.md`)
 
-Run: `analyze_e8.py`, CPU only, on the private E3 features. The log is at /tmp/e8_full.log; it ran 22:43 to about 00:35 IST.
+Run: `analyze_e8.py`, CPU only, on the private E3 features. The log is at /tmp/e8_full.log. The run went from 22:43 to about 00:35 IST.
 
 ## Kendall τ(NCP, planted α) over 8 models, 50 trials (E3 protocol)
 - **Concept-averaged mean τ:** −0.331, 95% bootstrap CI [−0.392, −0.273]. The per-trial 2.5–97.5 percentiles are [−0.759, 0.042].
@@ -41,11 +41,11 @@ Run: `analyze_e8.py`, CPU only, on the private E3 features. The log is at /tmp/e
 | densenet | 8.3 | 244.8 | 10.4 | 2.0 |
 
 ## Observations (raw)
-- NCP vs α: At α ≥ 0.1, both R²_null and R²_rand saturate near 1: the plant has energy α·σ in the full space, so energy-matched random subspaces also capture s_c. The z-score is then set by a tiny SD over the random draws (for example, 1e-6 for resnet at α = 1).
-- **R² at α = 0.** R²_null is between 0.01 and 0.39 with no plant. CLIP concepts are linearly decodable from null coordinates; for large null spaces this is below the matched random subspaces, so NCP < 0.
-- **DenseNet:** at α = 0.01, NCP is 175–376, because its random subspaces are about 0.3 directions (ρ ≈ 0) and their R² is about 0.
-- **Small-null models** (null dim 24/27) have one or two d values, so flatness is trivial there.
+- NCP vs α: at α ≥ 0.1, R²_null and R²_rand both saturate near 1. The plant has energy α·σ in the full space, so energy-matched random subspaces pick up s_c as well, and the z-score is then set by a tiny SD over the random draws (for example, 1e-6 for resnet at α = 1).
+- **R² at α = 0.** With no plant, R²_null is between 0.01 and 0.39, so CLIP concepts can be decoded linearly from the null coordinates. For large null spaces this R² is below that of the matched random subspaces, which gives NCP < 0.
+- **DenseNet:** at α = 0.01 NCP is 175–376. Its random subspaces amount to about 0.3 directions (ρ ≈ 0), and their R² is about 0.
+- **Small-null models** (null dim 24/27) only have one or two d values, so flatness is trivial for them.
 - **Known ridge-implementation details:**
   - LOO-CV is computed in closed form on centred, standardised train data (the intercept is not refit per fold).
-  - λ never reaches the top of the grid (10^5), but sits at the bottom edge (10^-3) in 18 of 96 α-grid fits, so the grid may be too narrow there. The chosen λ is in `e8_alpha_grid.csv`.
-  - The energy-matched random subspaces match energy, not d (as in E3's AS_fair). Their k_rand is in the CSV.
+  - λ never reaches the top of the grid (10^5). It does sit at the bottom edge (10^-3) in 18 of 96 α-grid fits, so the grid may be too narrow at that end. The chosen λ is listed in `e8_alpha_grid.csv`.
+  - As in E3's AS_fair, the random subspaces are matched on energy, not on d. Their k_rand is in the CSV.

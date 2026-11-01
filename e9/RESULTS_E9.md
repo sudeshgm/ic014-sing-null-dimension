@@ -1,11 +1,11 @@
-Verdict: KILL. No candidate passed DEV, so there were no finalists and the holdout was never run. M1 had DEV tau 0.976 but was flat on 0/4 models; S10 was the only flat candidate, at tau 0.395. No post-hoc reruns.
+Verdict: KILL. No candidate passed DEV, so there were no finalists and the holdout was never run. M1 reached DEV tau 0.976 but was flat on 0/4 models. S10 was the only flat candidate, and its tau was 0.395. No post-hoc reruns.
 
 # E9 score screen: results (DEV only, E9 = KILL)
 
 Run: `e9/analyze_e9.py`, one automated pass, linear plant, DEV concepts red and striped, 8 models.
 Selection rule (prereg step 2): DEV mean Kendall tau >= 0.8 AND flatness (max/min ratio <= 1.5) on >= 3/4 null-dim-1048 models at both alpha = 0.1 and alpha = 1.
 
-Outcome: no candidate qualifies, so there are no finalists, the holdout was never touched, and E9 = KILL by the preregistered rule.
+Outcome: no candidate qualifies. With no finalists the holdout was never touched, and E9 = KILL by the preregistered rule.
 Top-3 singletons by DEV tau: M1, M2, S9 (combinations S11-S14 built from them).
 
 | cand | parts | tau mean | 95% CI | tau red | tau striped | n_flat a=0.1 | n_flat a=1 | flat |
@@ -31,6 +31,6 @@ Top-3 singletons by DEV tau: M1, M2, S9 (combinations S11-S14 built from them).
 | S13 | M2+S9 | 0.618 | [0.570, 0.662] | 0.647 | 0.588 | 0/4 | 0/4 | False |
 | S14 | M1+M2+S9 | 0.776 | [0.744, 0.806] | 0.793 | 0.759 | 0/4 | 0/4 | False |
 
-Why nothing qualifies: the five candidates with tau >= 0.6 (M1 0.976, S11 0.792, S12 0.781, S14 0.776, S13 0.618) are flat on 0/4 models at both alphas; M1 is the only one above 0.8 and it fails flatness. The only candidate passing flatness is S10 (3/4 and 4/4), with tau 0.395.
+Why nothing qualifies: the five candidates with tau >= 0.6 (M1 0.976, S11 0.792, S12 0.781, S14 0.776, S13 0.618) are flat on 0/4 models at both alphas. M1 is the only one above 0.8, and it fails flatness. S10 is the only candidate that passes flatness (3/4 and 4/4), but its tau is 0.395.
 
 Files: `e9/results/e9_dev.json` (full DEV output incl. raw flatness ratios), `e9/results/e9_dev_table.csv`. No features committed.

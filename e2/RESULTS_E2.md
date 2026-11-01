@@ -3,9 +3,9 @@
 **Setup**
 - Features:
   - E3 cache (8 models) plus E2 (5 models) on the same 10k subset (`subset_files.txt` identical)
-  - claim-class set: 200 images, all 50 val images each of classes 107, 334, 354 and 817, for 13 models plus CLIP. Its first 10 images per class reproduce the 10k-subset features exactly (max diff 0).
+  - claim-class set: 200 images (all 50 val images of each of classes 107, 334, 354 and 817), for 13 models plus CLIP. The first 10 images per class reproduce the 10k-subset features exactly (max diff 0).
 - The features are private and not in this repo.
-- AS_fair uses the definition registered for E3, at α=0, with 20 random subspaces. Target is the class text.
+- AS_fair follows the definition registered for E3, at α=0, with 20 random subspaces. The target is the class text.
 - The bootstrap uses 1000 resamples over images.
 
 ## Kendall τ vs the Fig. 6b IS/AS ordering (exp0 digitization)
@@ -24,7 +24,7 @@
 - **AS_fair without DenseNet:** bitresnet, resnext, vgg16, dinov2, vgg19, swin_large, resnet, efficientnet, convnext, deit, dinovit1, eva02
 
 ## Claims
-The per-claim table with values and CIs is in `results/e2_claims.md` and `results/e2_claims.json`. Per-model values are in `results/e2_models.csv`.
+The full per-claim table, with values and CIs, is in `results/e2_claims.md` and `results/e2_claims.json`; per-model values are in `results/e2_models.csv`.
 | id | claim | source | AS_SING | AS_fair |
 |---|---|---|---|---|
 | C1 | DinoViT has the best IS/AS trade-off (highest ratio) of the 5 models | Fig. 3b / Sec. 4.2 / abstract | holds | reverses |
@@ -54,13 +54,13 @@ C10 (DinoViT, jellyfish − camel, 95% CI):
 - AS_fair: 1.381 − 2.321, CI [−1.403, −0.458]
 
 ## Notes (raw)
-- **DenseNet:** null energy ρ=1.8e-8, so a matched random subspace is about 0.004 of one direction and AS_fair is degenerate.
-- **BiT:** AS_fair = 0.042, because random subspaces move |AS| by 13.2°.
+- **DenseNet:** the null energy is ρ=1.8e-8. A matched random subspace is then about 0.004 of one direction, and AS_fair is degenerate.
+- **BiT:** AS_fair = 0.042, since random subspaces already move |AS| by 13.2°.
 - **DinoViT:** our IS/|AS| is 20.95, against 70.16 in SING's Fig. 6b.
 - **C9 under AS_fair:** Spearman = −0.086, p = 0.006.
-- **C1/C2:** these are IS/AS-ratio claims, but they are tested here on |AS|. Our IS/|AS| ranking is in `results/e2_rankings.json`.
+- **C1/C2:** these are IS/AS-ratio claims, but we test them on |AS|. Our IS/|AS| ranking is in `results/e2_rankings.json`.
 
 ## Caveats
-- **C10 is a proxy.** It uses class-text AS on 50 images per class. SING used 30 concepts and about 1300 images.
-- **C1, C2 and C11 are tested on |AS|.** C1 and C2 are IS/AS-ratio claims, and C11 is a steering claim (Table 1); both are approximated here.
-- **DenseNet's AS_fair is degenerate.** ρ_null = 1.8e-8, so a matched random subspace is about 0.004 of one direction and AS_fair is effectively 0/0.
+- **C10 is a proxy.** We use class-text AS on 50 images per class, whereas SING used 30 concepts and about 1300 images.
+- **C1, C2 and C11 are tested on |AS|.** C1 and C2 are IS/AS-ratio claims and C11 is a steering claim (Table 1), so in both cases we only approximate them.
+- **DenseNet's AS_fair is degenerate.** With ρ_null = 1.8e-8, a matched random subspace is about 0.004 of one direction, which makes AS_fair effectively 0/0.

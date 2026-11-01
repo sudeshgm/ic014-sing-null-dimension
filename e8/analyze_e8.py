@@ -1,4 +1,4 @@
-"""IC014 E8: Null-space Concept Probe (NCP). The spec is in e8/PREREG_E8.md. CPU only, using the private E3 features.
+"""IC014 E8: Null-space Concept Probe (NCP), as specified in e8/PREREG_E8.md. Runs on CPU from the private E3 features.
 Outputs (small): e8_trials.csv, e8_flat.csv, e8_summary.json, e8_alpha_grid.csv."""
 import argparse, os, sys, json, csv, math, time, numpy as np, torch
 from scipy.stats import kendalltau

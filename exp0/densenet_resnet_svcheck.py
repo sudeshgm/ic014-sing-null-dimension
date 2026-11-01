@@ -1,4 +1,4 @@
-"""Tolerance sensitivity of the two borderline heads (float32 as in SING vs float64)."""
+"""How the rank of the two borderline heads (DenseNet121, ResNet50) moves with the SVD tolerance, float32 (what SING uses) vs float64."""
 import torch, torchvision, json
 out={}
 for n,f in [('densenet121',torchvision.models.densenet121),('resnet50',torchvision.models.resnet50)]:

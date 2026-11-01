@@ -34,36 +34,36 @@ Workshop submission
 
 \begin{abstract}
 \vspace{-0.3em}
-SING~\citep{sing2026} ranks classifiers by how much class-relevant semantics leak into the linear head's null space, and reports that a ``DinoViT'' pretrained with DINO leaks least.
+SING~\citep{sing2026} ranks classifiers by how much class-relevant semantics leak into the linear head's null space. Its standout result is that a ``DinoViT'' pretrained with DINO leaks least.
 We audit that claim.
-First, every public ViT-L/16 checkpoint consistent with SING's code or wrappers is supervised or SWAG-supervised; none matches the reported 84.0\% top-1, and none is DINO.
-Second, within a fixed model, SING's absolute-shift score $|$AS$|$ grows by a factor of $\approx\!10$ as the removed null subspace grows from $d{=}24$ to $d{=}1048$ on 3 of 4 models; at matched $d{=}24$ the ranking already disagrees with SING's published order (Kendall $\tau{=}0.29$).
-A pooled log-linear fit finds $|$AS$| \propto \rho^{0.43}$ in removed feature energy $\rho$, close to a simple $\sqrt{\rho}$ geometric prediction, but the energy-vs-dimension separation is mixed rather than decisive.
-We define a size-fair score $\mathrm{AS}_{\mathrm{fair}}$ that divides null removal by an energy-matched random-subspace baseline.
-On all 13 SING models, $\mathrm{AS}_{\mathrm{SING}}$ reproduces the published Fig.~6b ordering ($\tau{=}0.82$), while $\mathrm{AS}_{\mathrm{fair}}$ breaks it ($\tau{=}{-}0.18$); two class-level claims reverse with bootstrap CIs.
+Every public ViT-L/16 checkpoint consistent with SING's code or wrappers turns out to be supervised or SWAG-supervised; none matches the reported 84.0\% top-1, and none is DINO.
+Within a fixed model, SING's absolute-shift score $|$AS$|$ grows by a factor of $\approx\!10$ as the removed null subspace grows from $d{=}24$ to $d{=}1048$ on 3 of 4 models. Even at matched $d{=}24$, the ranking disagrees with SING's published order (Kendall $\tau{=}0.29$).
+A pooled log-linear fit gives $|$AS$| \propto \rho^{0.43}$ in removed feature energy $\rho$, close to a simple $\sqrt{\rho}$ geometric prediction, but the separation of energy from dimension is mixed rather than decisive.
+We define a size-fair score, $\mathrm{AS}_{\mathrm{fair}}$, which divides null removal by an energy-matched random-subspace baseline.
+On all 13 SING models, $\mathrm{AS}_{\mathrm{SING}}$ reproduces the published Fig.~6b ordering ($\tau{=}0.82$) and $\mathrm{AS}_{\mathrm{fair}}$ breaks it ($\tau{=}{-}0.18$); two class-level claims reverse with bootstrap CIs.
 Planted-leakage recovery is weak for both scores.
-We recommend reporting $\rho$ and $\mathrm{AS}_{\mathrm{fair}}$ alongside raw AS whenever null-space scores are used to compare architectures.
+When null-space scores are used to compare architectures, we recommend reporting $\rho$ and $\mathrm{AS}_{\mathrm{fair}}$ alongside raw AS.
 \vspace{-0.3em}
 \end{abstract}
 
 \section{Introduction}
 \vspace{-0.2em}
-A linear classifier on features $f\in\mathbb{R}^m$ has a null space of dimension $m{-}c$ (for $c$ classes) that does not change the logits.
-SING~\citep{sing2026} argues that class-relevant content in that null space is ``leakage'': the head could have used it, but did not.
-Their Absolute Shift (AS) measures how much a CLIP-aligned~\citep{clip2021} translation of $f$ moves when the null component is removed, and they use AS (and the IS/AS ratio) to rank 13 ImageNet models, highlighting a ViT labeled ``DinoViT'' as least leaky~\citep{dino2021}.
+A linear classifier on features $f\in\mathbb{R}^m$ has a null space of dimension $m{-}c$ (for $c$ classes) that leaves the logits unchanged.
+SING~\citep{sing2026} treats class-relevant content in that null space as ``leakage'': information the head could have used, but did not.
+Its Absolute Shift (AS) measures how far a CLIP-aligned~\citep{clip2021} translation of $f$ moves once the null component is removed. SING uses AS (and the IS/AS ratio) to rank 13 ImageNet models and singles out a ViT labeled ``DinoViT'' as the least leaky~\citep{dino2021}.
 
-Null-space analyses are also used for OOD detection~\citep{vim2022,cook2020} and overfitting scores~\citep{rezaei2023}.
-Across architectures, however, both the null dimension $d{=}m{-}\mathrm{rank}(W)$ and the null energy fraction
+Null-space analyses also appear in OOD detection~\citep{vim2022,cook2020} and in overfitting scores~\citep{rezaei2023}.
+Across architectures, though, the null dimension $d{=}m{-}\mathrm{rank}(W)$ and the null energy fraction
 $\rho = \mathbb{E}\|V_nV_n^\top f\|^2/\mathbb{E}\|f\|^2$
-vary by orders of magnitude.
-If AS largely tracks how much energy is removed, cross-model comparisons of ``semantics'' are confounded by size.
+both vary by orders of magnitude.
+If AS mostly tracks how much energy is removed, then cross-model comparisons of ``semantics'' are confounded by size.
 
 \paragraph{Contributions.}
-(1)~We show that SING's ``DinoViT'' is not identifiable as DINO: every matching candidate is supervised, and none reproduces 84.0\% top-1.
-(2)~Within-model AS$(d)$ curves give a $\approx\!10\times$ rise from $d{=}24$ to $d{=}1048$ on ResNet50, ResNeXt101 and DINOv2-L; BiT~\citep{bit2020} is an exception explained by translator cancellation.
-(3)~Energy and dimension are hard to separate: a pooled fit yields exponent $a{=}0.43$ on $\rho$ vs.\ a $\sqrt{\rho}$ prediction of $0.5$, but fixed-$\rho$ flatness is not clean.
-(4)~On 13 models, size-fair $\mathrm{AS}_{\mathrm{fair}}$ destroys SING's published ranking ($\tau{:}\,0.82\to{-}0.18$) and reverses several claims, with stated caveats.
-We propose $\mathrm{AS}_{\mathrm{fair}}$ as a reporting correction, not as a new ground-truth leakage oracle.
+(1)~We find no way to identify SING's ``DinoViT'' as DINO: every matching candidate is supervised, and none reproduces 84.0\% top-1.
+(2)~Within-model AS$(d)$ curves rise by $\approx\!10\times$ from $d{=}24$ to $d{=}1048$ on ResNet50, ResNeXt101 and DINOv2-L. BiT~\citep{bit2020} is the exception, and translator cancellation explains it.
+(3)~Energy and dimension are hard to separate. A pooled fit gives exponent $a{=}0.43$ on $\rho$, against $0.5$ from a $\sqrt{\rho}$ prediction, but flatness at fixed $\rho$ is not clean.
+(4)~On 13 models, the size-fair $\mathrm{AS}_{\mathrm{fair}}$ breaks SING's published ranking ($\tau{:}\,0.82\to{-}0.18$) and reverses several claims, subject to the caveats we state.
+We offer $\mathrm{AS}_{\mathrm{fair}}$ as a reporting correction, not as a new ground-truth leakage oracle.
 
 \section{Background and the DinoViT identity}
 \vspace{-0.2em}
@@ -74,16 +74,16 @@ We write $\mathrm{AS}_{\mathrm{SING}}$ for the image-averaged $|$AS$|$ under ful
 
 \paragraph{Exp~0b: ``DinoViT'' is not DINO.}
 SING reports DinoViT at 84.0\% ImageNet top-1 (Supp.\ Table~2).
-The released \texttt{models.yaml} loads a timm AugReg ViT-L/16; the supplement's wrapper uses torchvision ViT attribute names.
-We evaluated five public ViT-L/16 candidates on the full 50k validation set (native and force-224):
+The released \texttt{models.yaml} loads a timm AugReg ViT-L/16, while the wrapper in the supplement uses torchvision ViT attribute names.
+We ran five public ViT-L/16 candidates on the full 50k validation set (native and force-224):
 torchvision IMAGENET1K\_V1 (79.67\%),
 timm AugReg (85.85\%),
 SWAG linear~\citep{swag2022} (85.14\%),
 SWAG E2E (88.07\%),
 and HF \texttt{google/vit-large-patch16-224} (81.98\%).
-None lies in $84.0\pm0.3$ (Fig.~\ref{fig:exp0b}).
-Every candidate is supervised or SWAG weakly supervised; DINO never released a ViT-L with a 1000-way head~\citep{dino2021}.
-The headline attribution to self-supervised DINO therefore does not hold for any identifiable checkpoint.
+None falls in $84.0\pm0.3$ (Fig.~\ref{fig:exp0b}).
+All of them are supervised or SWAG weakly supervised, and DINO never released a ViT-L with a 1000-way head~\citep{dino2021}.
+So the headline attribution to self-supervised DINO does not hold for any checkpoint we can identify.
 
 \begin{figure}[t]
 \centering
@@ -95,13 +95,13 @@ The headline attribution to self-supervised DINO therefore does not hold for any
 \end{figure}
 
 \paragraph{Exp~0 (re-analysis).}
-Digitizing SING Supp.\ Fig.~6b IS/AS bars and correlating against measured null dimension gives Spearman $-0.46$ ($p{=}0.12$) over 13 models (DenseNet null dim $=27$ at tol $10^{-5}$).
-Null energy alone is more predictive: Spearman$(\rho_{\mathrm{full}},\mathrm{IS}/\mathrm{AS})={-}0.94$ ($p{=}1.9{\times}10^{-6}$).
-DeiT3-L~\citep{deit3} has null dim $24$ yet the worst ratio---dimension alone cannot explain the ranking, which motivates a within-model test.
+We digitized the IS/AS bars in SING Supp.\ Fig.~6b and correlated them with measured null dimension over 13 models. This gives Spearman $-0.46$ ($p{=}0.12$), with DenseNet null dim $=27$ at tol $10^{-5}$.
+Null energy on its own predicts much better: Spearman$(\rho_{\mathrm{full}},\mathrm{IS}/\mathrm{AS})={-}0.94$ ($p{=}1.9{\times}10^{-6}$).
+DeiT3-L~\citep{deit3} has null dim $24$ yet the worst ratio. Dimension alone cannot explain the ranking, and that is why we turn to a within-model test.
 
 \section{Within-model size dependence (Exp~1)}
 \vspace{-0.2em}
-On a fixed 10k ImageNet-val subset (10 images/class), we remove random $d$-dimensional subspaces of each model's own null space ($d\in\{24,48,100,280,536,1048\}$, 20 seeds for $d{<}d_{\mathrm{null}}$) for ResNet50, ResNeXt101, BiT-R50x1 and DINOv2-L (all $d_{\mathrm{null}}{=}1048$), using SING's released translators.
+We fix a 10k ImageNet-val subset (10 images/class) and remove random $d$-dimensional subspaces of each model's own null space ($d\in\{24,48,100,280,536,1048\}$, 20 seeds for $d{<}d_{\mathrm{null}}$). The models are ResNet50, ResNeXt101, BiT-R50x1 and DINOv2-L (all $d_{\mathrm{null}}{=}1048$), with SING's released translators.
 
 \begin{figure}[t]
 \centering
@@ -133,27 +133,27 @@ BiT-R50x1  & 0.060 & $[0.057,0.063]$ & 0.512 & 0.512 \\
 \end{table}
 
 Fig.~\ref{fig:exp1} and Table~\ref{tab:exp1} show $r{=}\mathrm{AS}(1048)/\mathrm{AS}(24)\approx10$ on 3 of 4 models.
-At matched $d{=}24$ over 8 models, Kendall $\tau$ vs.\ the Fig.~6b order is $0.29$ ($p{=}0.40$) for $|$AS$|$.
+With $d{=}24$ matched across 8 models, Kendall $\tau$ against the Fig.~6b order is $0.29$ ($p{=}0.40$) for $|$AS$|$.
 Both pre-registered GO conditions hold.
 
 \paragraph{BiT anomaly.}
-BiT's full-null AS collapses ($r{=}0.06$) while partial subspaces give large AS ($\sim$9--13$^\circ$).
-Diagnostics show extreme singular values of $A V_n$ (top $284$ vs.\ $5.6$ for ResNet50): orthogonal null blocks nearly cancel through the translator when summed, so full-null AS understates BiT's per-direction sensitivity.
-This is translator conditioning, not a code bug.
+BiT's full-null AS collapses ($r{=}0.06$), even though partial subspaces give large AS ($\sim$9--13$^\circ$).
+The singular values of $A V_n$ are extreme (top $284$ vs.\ $5.6$ for ResNet50). When the orthogonal null blocks are summed, they nearly cancel through the translator, so full-null AS understates how sensitive BiT is per direction.
+This comes from translator conditioning; it is not a code bug.
 
 \paragraph{Caveat.}
-For random subspaces, $\rho_d$ is nearly linear in $d$, so $R^2$ vs.\ $d$ and vs.\ $\rho_d$ are identical ($\approx0.98$).
-Exp~1 alone cannot tell energy from dimension.
+For random subspaces $\rho_d$ is nearly linear in $d$, which makes $R^2$ vs.\ $d$ and vs.\ $\rho_d$ identical ($\approx0.98$).
+Exp~1 by itself cannot tell energy from dimension.
 
 \section{Energy vs.\ dimension (E1): a mixed result}
 \vspace{-0.2em}
 \paragraph{Geometry.}
-If a linear translator maps a removed feature component of relative energy $\rho$ into CLIP space, the first-order angular displacement scales with the removed magnitude $\|\Pi f\|\propto\sqrt{\rho}$ when the residual is small relative to $\|T(f)\|$.
-This predicts $|$AS$|\propto\rho^{1/2}$ at fixed geometry---an exponent of $0.5$.
+Suppose a linear translator maps a removed feature component of relative energy $\rho$ into CLIP space. When the residual is small relative to $\|T(f)\|$, the first-order angular displacement scales with the removed magnitude $\|\Pi f\|\propto\sqrt{\rho}$.
+That predicts $|$AS$|\propto\rho^{1/2}$ at fixed geometry, i.e.\ an exponent of $0.5$.
 
 \paragraph{Design.}
-On ResNet50, ResNeXt101, DINOv2-L, VGG16 and EVA02-L we (a)~compare high-energy vs.\ low-energy null PCs at fixed $d\in\{24,100,280\}$ and (b)~hit fixed $\rho\in\{0.5\%,2\%,8\%\}$ at several $d$ by mixing top/bottom PCs.
-Pooled fit over 76 feasible cells:
+On ResNet50, ResNeXt101, DINOv2-L, VGG16 and EVA02-L we (a)~compare high-energy with low-energy null PCs at fixed $d\in\{24,100,280\}$, and (b)~hit fixed $\rho\in\{0.5\%,2\%,8\%\}$ at several $d$ by mixing top and bottom PCs.
+The pooled fit over 76 feasible cells,
 \[
 \log|\mathrm{AS}| \;=\; a\log\rho \;+\; b\log d \;+\; c_{\mathrm{model}},
 \]
@@ -168,36 +168,36 @@ gives $a{=}0.431$ $[0.430,0.433]$, $b{=}0.010$ $[0.008,0.012]$, $R^2{=}0.93$ (Fi
 \vspace{-0.6em}
 \end{figure}
 
-High/low energy ratios at fixed $d$ exceed $3\times$ on all 4 evaluable models (e.g.\ ResNet $11$--$22\times$, ResNeXt $\approx10\times$, DINOv2 $3.7$--$5.1\times$, VGG16 $6$--$10\times$).
-Fixed-$\rho$ max/min across $d$, however, exceeds $1.5$ on several cells (ResNet up to $2.29$ at $\rho{=}0.5\%$).
-EVA02-L ($d_{\mathrm{null}}{=}24$) is not evaluable beyond its full-null cell.
-\textbf{We therefore call E1 mixed, not decisive:} energy dominates the fit and matches $\sqrt{\rho}$ to within $\approx0.07$ in the exponent, but the pre-registered ENERGY-DRIVEN flatness rule is not cleanly met.
+At fixed $d$, the high/low energy ratio is above $3\times$ on all 4 evaluable models (e.g.\ ResNet $11$--$22\times$, ResNeXt $\approx10\times$, DINOv2 $3.7$--$5.1\times$, VGG16 $6$--$10\times$).
+At fixed $\rho$, however, the max/min across $d$ is above $1.5$ in several cells (ResNet up to $2.29$ at $\rho{=}0.5\%$).
+For EVA02-L ($d_{\mathrm{null}}{=}24$), nothing beyond the full-null cell can be evaluated.
+\textbf{We therefore call E1 mixed, not decisive.} Energy dominates the fit and its exponent is within $\approx0.07$ of $\sqrt{\rho}$, but the pre-registered ENERGY-DRIVEN flatness rule is not cleanly met.
 
 \section{A size-fair score}
 \vspace{-0.2em}
-Define the energy-matched random baseline: draw a Haar subspace of the full feature space that removes exactly the same energy $\mathbb{E}\|\Pi f\|^2$ as the null projector, and let $\mathrm{AS}_{\mathrm{rand}}$ be its mean $|$AS$|$ (20 draws).
+For the energy-matched random baseline, we draw a Haar subspace of the full feature space that removes exactly the same energy $\mathbb{E}\|\Pi f\|^2$ as the null projector, and take $\mathrm{AS}_{\mathrm{rand}}$ as its mean $|$AS$|$ (20 draws).
 Then
 \[
 \mathrm{AS}_{\mathrm{fair}} \;=\; \frac{\mathrm{AS}_{\mathrm{null}}}{\mathrm{AS}_{\mathrm{rand}}}.
 \]
-Values near $1$ mean the null is no more shifting than a random subspace of equal energy; values $\gg1$ mean concentrated null leakage.
-This is the E3-registered definition, reused at $\alpha{=}0$ for the E2 audit.
+A value near $1$ means the null shifts AS no more than a random subspace of equal energy would. Values $\gg1$ mean the leakage is concentrated in the null.
+This is the definition registered for E3, and we reuse it at $\alpha{=}0$ for the E2 audit.
 
 \section{Planted leakage (E3)}
 \vspace{-0.2em}
-We plant a CLIP concept direction (\texttt{red}/\texttt{striped}/\texttt{water}) into each of 8 models' null spaces at log-uniform $\alpha\in[0.01,1]$ over 50 trials, leaving logits unchanged (max $|\Delta\mathrm{logit}|\le2.3{\times}10^{-5}$).
-Kendall $\tau$ vs.\ the planted-$\alpha$ ranking, concept-averaged:
-$\mathrm{AS}_{\mathrm{SING}}$ $0.386$ $[0.324,0.447]$;
+We plant a CLIP concept direction (\texttt{red}/\texttt{striped}/\texttt{water}) into the null spaces of 8 models at log-uniform $\alpha\in[0.01,1]$ over 50 trials. The logits stay unchanged (max $|\Delta\mathrm{logit}|\le2.3{\times}10^{-5}$).
+Kendall $\tau$ against the planted-$\alpha$ ranking, averaged over concepts, is
+$\mathrm{AS}_{\mathrm{SING}}$ $0.386$ $[0.324,0.447]$ and
 $\mathrm{AS}_{\mathrm{fair}}$ $0.071$ $[0.004,0.138]$.
-Neither recovers planted strength well; $\mathrm{AS}_{\mathrm{fair}}$ is near chance.
-Per-concept means are similar (red $0.386/0.070$, striped $0.403/0.061$, water $0.369/0.083$).
-Raw observations: DeiT3-L signed AS is negative at every $\alpha$ and $|$AS$|$ shrinks as $\alpha$ grows; BiT $\mathrm{AS}_{\mathrm{SING}}$ reaches $17$--$20^\circ$ at $\alpha{=}1$ while its $\mathrm{AS}_{\mathrm{fair}}$ at $\alpha{=}0$ is only $0.045$--$0.063$; $\mathrm{AS}_{\mathrm{fair}}$ is non-monotonic in $\alpha$ for EVA02-L and ConvNeXt-B.
-We report this honestly: size-fairness and planted-ranking recovery are different goals.
-$\mathrm{AS}_{\mathrm{fair}}$ is proposed only as a size correction for cross-model AS comparisons, not as a calibrated leakage oracle.
+Neither score recovers planted strength well, and $\mathrm{AS}_{\mathrm{fair}}$ is close to chance.
+The per-concept means are similar (red $0.386/0.070$, striped $0.403/0.061$, water $0.369/0.083$).
+Some raw observations. DeiT3-L signed AS is negative at every $\alpha$, and its $|$AS$|$ shrinks as $\alpha$ grows. BiT $\mathrm{AS}_{\mathrm{SING}}$ reaches $17$--$20^\circ$ at $\alpha{=}1$, while its $\mathrm{AS}_{\mathrm{fair}}$ at $\alpha{=}0$ is only $0.045$--$0.063$. For EVA02-L and ConvNeXt-B, $\mathrm{AS}_{\mathrm{fair}}$ is non-monotonic in $\alpha$.
+We report this result as it came out: size-fairness and recovering a planted ranking are different goals.
+We propose $\mathrm{AS}_{\mathrm{fair}}$ only as a size correction for comparing AS across models. It is not a calibrated leakage oracle.
 
 \section{Audit of SING's 13-model claims (E2)}
 \vspace{-0.2em}
-Using the same 10k subset plus a 200-image claim-class set (all 50 val images of jellyfish, porcupine, Arabian camel, sports car), we recompute $\mathrm{AS}_{\mathrm{SING}}$ and $\mathrm{AS}_{\mathrm{fair}}$ for all 13 released translators.
+On the same 10k subset, plus a 200-image claim-class set (all 50 val images of jellyfish, porcupine, Arabian camel and sports car), we recompute $\mathrm{AS}_{\mathrm{SING}}$ and $\mathrm{AS}_{\mathrm{fair}}$ for all 13 released translators.
 
 \begin{figure}[t]
 \centering
@@ -218,26 +218,26 @@ Using the same 10k subset plus a 200-image claim-class set (all 50 val images of
 \end{figure}
 
 \paragraph{Ranking.}
-Vs.\ digitized Fig.~6b IS/AS order:
-$\tau(\mathrm{AS}_{\mathrm{SING}}){=}0.821$ ($p{=}1.3{\times}10^{-5}$);
+Against the digitized Fig.~6b IS/AS order,
+$\tau(\mathrm{AS}_{\mathrm{SING}}){=}0.821$ ($p{=}1.3{\times}10^{-5}$) and
 $\tau(\mathrm{AS}_{\mathrm{fair}}){=}{-}0.179$ ($p{=}0.435$).
-Without DenseNet: $\tau(\mathrm{AS}_{\mathrm{fair}}){=}{-}0.364$.
-Mean over 173 SING concepts: $\tau{=}0.641$ vs.\ $-0.026$.
-Our setup reproduces SING when using $\mathrm{AS}_{\mathrm{SING}}$; disagreement appears only after size correction (Figs.~\ref{fig:e2rank}--\ref{fig:e2sc}).
+Leaving out DenseNet gives $\tau(\mathrm{AS}_{\mathrm{fair}}){=}{-}0.364$.
+Averaged over the 173 SING concepts, $\tau{=}0.641$ vs.\ $-0.026$.
+With $\mathrm{AS}_{\mathrm{SING}}$ our setup reproduces SING. The disagreement only appears after the size correction (Figs.~\ref{fig:e2rank}--\ref{fig:e2sc}).
 
 \paragraph{Claim reversals.}
-Under $\mathrm{AS}_{\mathrm{fair}}$, claims C1--C7, C9, C11, C12 reverse relative to $\mathrm{AS}_{\mathrm{SING}}$ (DinoViT no longer least leaky; ResNeXt no longer among the worst).
+Under $\mathrm{AS}_{\mathrm{fair}}$, claims C1--C7, C9, C11 and C12 reverse relative to $\mathrm{AS}_{\mathrm{SING}}$: DinoViT is no longer the least leaky, and ResNeXt is no longer among the worst.
 Two claims reverse under \emph{both} scores, with bootstrap CIs:
 \begin{itemize}
-\item \textbf{C8} (ResNet porcupine / sports-car $\ge$90th percentile): porcupine percentile $84.8$ $[80.1,87.7]$ ($\mathrm{AS}_{\mathrm{SING}}$), $68.4$ $[64.5,71.5]$ ($\mathrm{AS}_{\mathrm{fair}}$); sports car $61.0$ $[56.1,66.2]$ and $67.2$ $[63.6,71.4]$.
-\item \textbf{C10} (DinoViT jellyfish $\gg$ camel): jellyfish$-$camel CI $[{-}0.205,{-}0.010]$ ($\mathrm{AS}_{\mathrm{SING}}$) and $[{-}1.403,{-}0.458]$ ($\mathrm{AS}_{\mathrm{fair}}$)---the sign is opposite SING's claim.
+\item \textbf{C8} (ResNet porcupine / sports-car $\ge$90th percentile): the porcupine percentile is $84.8$ $[80.1,87.7]$ under $\mathrm{AS}_{\mathrm{SING}}$ and $68.4$ $[64.5,71.5]$ under $\mathrm{AS}_{\mathrm{fair}}$; for sports car it is $61.0$ $[56.1,66.2]$ and $67.2$ $[63.6,71.4]$.
+\item \textbf{C10} (DinoViT jellyfish $\gg$ camel): the jellyfish$-$camel CI is $[{-}0.205,{-}0.010]$ under $\mathrm{AS}_{\mathrm{SING}}$ and $[{-}1.403,{-}0.458]$ under $\mathrm{AS}_{\mathrm{fair}}$, so the sign is the opposite of SING's claim.
 \end{itemize}
 
-\paragraph{Caveats (must-state).}
-(i)~C1/C2 are IS/AS-ratio claims tested here on $|$AS$|$; C11 is a steering claim proxied by null-removal AS; C10 uses class-text AS on 50 images/class (SING used $\approx$30 concepts / $\approx$1300 images).
-(ii)~DenseNet has $\rho_{\mathrm{null}}{=}1.8{\times}10^{-8}$, so $\mathrm{AS}_{\mathrm{fair}}$ is degenerate.
-(iii)~C13 (EVA02 as target space) is untestable: no EVA02-space translators were released.
-(iv)~Our DinoViT IS/$|$AS$|$ is $20.95$ vs.\ $70.16$ in Fig.~6b---absolute ratios differ, but $\mathrm{AS}_{\mathrm{SING}}$ ranking still agrees.
+\paragraph{Caveats.}
+(i)~C1/C2 are IS/AS-ratio claims, which we test here on $|$AS$|$. C11 is a steering claim, proxied by null-removal AS. C10 uses class-text AS on 50 images/class, whereas SING used $\approx$30 concepts / $\approx$1300 images.
+(ii)~DenseNet has $\rho_{\mathrm{null}}{=}1.8{\times}10^{-8}$, so its $\mathrm{AS}_{\mathrm{fair}}$ is degenerate.
+(iii)~C13 (EVA02 as target space) cannot be tested, because no EVA02-space translators were released.
+(iv)~Our DinoViT IS/$|$AS$|$ is $20.95$, against $70.16$ in Fig.~6b. The absolute ratios differ, but the $\mathrm{AS}_{\mathrm{SING}}$ ranking still agrees.
 
 \begin{table}[t]
 \centering
@@ -268,47 +268,47 @@ C13 & EVA02 target-space order & untestable & untestable \\
 \vspace{-0.8em}
 \end{table}
 
-Under $\mathrm{AS}_{\mathrm{fair}}$, DinoViT ranks near the \emph{worst} end (12th of 13 by class $\mathrm{AS}_{\mathrm{fair}}$; EVA02 worst), whereas under $\mathrm{AS}_{\mathrm{SING}}$ it ranks 3rd.
-BiT becomes best under $\mathrm{AS}_{\mathrm{fair}}$ ($0.042$) precisely because random subspaces of matched energy move AS by $13.2^\circ$---the translator-cancellation regime of Exp~1.
-DenseNet's near-zero $\rho$ makes $\mathrm{AS}_{\mathrm{fair}}$ numerically unstable; we therefore also report $\tau$ without it (${-}0.364$).
+Under $\mathrm{AS}_{\mathrm{fair}}$, DinoViT lands near the \emph{worst} end (12th of 13 by class $\mathrm{AS}_{\mathrm{fair}}$; EVA02 is worst). Under $\mathrm{AS}_{\mathrm{SING}}$ it ranks 3rd.
+BiT becomes the best model under $\mathrm{AS}_{\mathrm{fair}}$ ($0.042$), and the reason is that random subspaces of matched energy move its AS by $13.2^\circ$. This is the same translator-cancellation regime we saw in Exp~1.
+DenseNet's near-zero $\rho$ makes $\mathrm{AS}_{\mathrm{fair}}$ numerically unstable, so we also report $\tau$ without it (${-}0.364$).
 
 \section{Discussion}
 \vspace{-0.2em}
-SING's within-model AS is a useful probe of translator-mediated null content, but as a \emph{cross-model} score it conflates semantics with how large and energetic the null is.
-The boring baseline already hinted at this: over 13 models, Spearman$(\rho_{\mathrm{full}},|$AS$|_{\mathrm{full}}){=}0.87$ and Spearman$(\rho_{\mathrm{full}},\mathrm{IS}/\mathrm{AS}){=}{-}0.94$.
-The DinoViT label is additionally unsupported by any public checkpoint.
+Within a single model, SING's AS is a useful probe of null content as seen through the translator. As a \emph{cross-model} score, however, it mixes up semantics with how large and how energetic the null is.
+The boring baseline already pointed this way: over 13 models, Spearman$(\rho_{\mathrm{full}},|$AS$|_{\mathrm{full}}){=}0.87$ and Spearman$(\rho_{\mathrm{full}},\mathrm{IS}/\mathrm{AS}){=}{-}0.94$.
+On top of that, no public checkpoint supports the DinoViT label.
 
 \paragraph{What $\mathrm{AS}_{\mathrm{fair}}$ is and is not.}
-It is a reporting correction: divide null AS by an energy-matched random baseline so that models are not rewarded for having a small or low-energy null.
-It is \emph{not} a validated ground-truth leakage measure---E3 shows that neither score recovers planted $\alpha$ rankings at the pre-registered $\tau\ge0.8$ bar, and $\mathrm{AS}_{\mathrm{fair}}$ is worse at that particular task.
+It is a reporting correction. Dividing null AS by an energy-matched random baseline stops models from being rewarded for having a small or low-energy null.
+It is \emph{not} a validated ground-truth measure of leakage. E3 shows that neither score recovers planted $\alpha$ rankings at the pre-registered $\tau\ge0.8$ bar, and $\mathrm{AS}_{\mathrm{fair}}$ does worse at that particular task.
 We do not claim any replacement score beyond this size correction.
 
 \paragraph{Recommendations.}
-For any null-space leakage comparison:
+For any comparison of null-space leakage:
 \begin{enumerate}
-\item Name the exact checkpoint and measured top-1 (avoid unverifiable labels such as ``DinoViT'').
+\item Name the exact checkpoint and its measured top-1, and avoid labels that cannot be verified, such as ``DinoViT''.
 \item Report $d_{\mathrm{null}}$ and $\rho_{\mathrm{null}}$ next to the score.
 \item Report $\mathrm{AS}_{\mathrm{fair}}$ (or another energy-matched baseline) beside raw AS.
-\item Flag translator condition numbers when full-null and block-wise AS disagree (BiT).
-\item Prefer within-model interventions (subspace size, planted signal) over cross-architecture league tables when $d$ and $\rho$ vary widely.
+\item When full-null and block-wise AS disagree (as for BiT), flag the translator's condition number.
+\item When $d$ and $\rho$ vary widely, prefer within-model interventions (subspace size, planted signal) to league tables across architectures.
 \end{enumerate}
 
 \paragraph{Limitations.}
 E1 is mixed rather than decisive on energy vs.\ dimension.
-E3 shows $\mathrm{AS}_{\mathrm{fair}}$ does not recover planted $\alpha$.
-Several E2 claims use proxies (C1/C2/C10/C11); DenseNet's $\mathrm{AS}_{\mathrm{fair}}$ is degenerate; C13 is untestable.
-ImageNet-derived features restrict redistribution.
-We did not retrain translators, evaluate a true DINO ViT-B/16~\citep{dino2021}, or extend the size audit to ViM~\citep{vim2022} / Cook~\citep{cook2020} / Rezaei~\citep{rezaei2023} scores~\citep{makonnen2025}.
+E3 shows that $\mathrm{AS}_{\mathrm{fair}}$ does not recover planted $\alpha$.
+Several E2 claims rely on proxies (C1/C2/C10/C11), DenseNet's $\mathrm{AS}_{\mathrm{fair}}$ is degenerate, and C13 cannot be tested.
+Because the features are derived from ImageNet, their redistribution is restricted.
+We did not retrain translators or evaluate a true DINO ViT-B/16~\citep{dino2021}. Nor did we extend the size audit to the ViM~\citep{vim2022}, Cook~\citep{cook2020} or Rezaei~\citep{rezaei2023} scores~\citep{makonnen2025}.
 
 \section{Conclusion}
 \vspace{-0.2em}
-SING's AS ranking of 13 classifiers is reproducible with the released translators, but size-confounded: correcting for null energy with $\mathrm{AS}_{\mathrm{fair}}$ breaks the published order ($\tau{:}\,0.82\to{-}0.18$) and reverses multiple claims, while the ``DinoViT'' result cannot be attributed to DINO.
-Until a calibrated leakage oracle exists, cross-model null-space comparisons should report $\rho$ and a size-fair baseline alongside raw AS.
+With the released translators, SING's AS ranking of 13 classifiers is reproducible, but it is confounded by size. Correcting for null energy with $\mathrm{AS}_{\mathrm{fair}}$ breaks the published order ($\tau{:}\,0.82\to{-}0.18$) and reverses multiple claims, and the ``DinoViT'' result cannot be pinned on DINO either.
+Until there is a calibrated leakage oracle, cross-model null-space comparisons should report $\rho$ and a size-fair baseline next to raw AS.
 
 \vspace{0.4em}
 \noindent\textbf{Reproducibility.}
-Analysis code and aggregated tables: \url{https://github.com/sudeshgm/ic014-sing-null-dimension}.
-ImageNet features are private.
+Analysis code and aggregated tables are at \url{https://github.com/sudeshgm/ic014-sing-null-dimension}.
+The ImageNet features are private.
 
 {\small
 \bibliographystyle{plainnat}
