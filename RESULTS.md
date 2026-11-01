@@ -68,3 +68,31 @@ GO under the pre-registered rule: r ≥ 3 on 3 of the 4 models and τ ≤ 0.5.
   * For real BiT features, the full null component nearly cancels out through the translator, and any partial subspace breaks that cancellation. So BiT's AS(d < 1048) reflects how the translator is conditioned. None of the other models shows this.
 * DenseNet121. ρ_full = 1.8e-8 and |AS| ≈ 2e-4, i.e. the features have essentially no energy in the head's null space.
 * Subset count. `wc -l` reports 9999 lines for `subset_files.txt` only because the script writes no trailing newline. Every result row has n = 10,000, and the per-image labels are exactly 10 per class.
+
+## 6. Round 2 (response to `review_20261101_v1`; criteria in `PREREG_R2.md`)
+All numbers come from `r2/results/`; CIs are 95%. Unless noted, bootstraps resample models (2000×, seed 0), and LOO is leave-one-model-out.
+* **KILL-R did not fire.** Fix 2 and D-weak hold under both random-control families, D-strong does not, so the allowed wording is "differs from", not "reverses".
+* **Energy explains the published order.** τ vs Supp. Fig. 12b over 13 models: ρ alone 0.821 [0.56, 1]; AS_SING 0.821 [0.56, 1]; M1 (post hoc) 0.667 [0.29, 0.94].
+* **Fix 3, size-fair scores (all 13).** τ for each normaliser:
+
+  | Normaliser | τ | 95% CI |
+  |---|---|---|
+  | AS/ρ^0.25 | 0.72 | [0.40, 1] |
+  | AS/ρ^0.43 | 0.33 | [−0.15, 0.77] |
+  | AS/ρ^0.5 | 0.26 | [−0.24, 0.71] |
+  | AS/ρ | −0.41 | [−0.86, 0.15] |
+  | AS/d | 0.05 | [−0.54, 0.59] |
+  | AS_fair A | −0.18 | [−0.78, 0.35] |
+  | AS_fair B | −0.41 | [−0.83, 0.11] |
+  | AS_fair C | −0.13 | [−0.63, 0.42] |
+
+  Screened set (no DenseNet/BiT): AS_fair A −0.56 [−1, 0.00], B −0.60 [−0.89, −0.23], C −0.27 [−0.72, 0.29]. File: `fix3_normalisers.csv`.
+* **Fix 4.** Spearman(AS_fair, ρ): −0.26 [−0.96, 0.41] over all 13, and −0.79 [−1, −0.23] screened. AS_fair over-corrects, so we do not claim it "removes the trend".
+* **Fix 5, tolerance (failed).** The minimum adjacent-tolerance τ falls below the pre-registered 0.9 for AS_fair (0.87 all-13; 0.82 screened) and for AS_SING (0.87 all-13; 0.96 screened). Null dim (0.96) and ρ (0.92) pass. The degeneracy screen excludes DenseNet and BiT.
+* **Fix 6, E1 CIs.** a = 0.431. Cell bootstrap gives [0.388, 0.485], cluster bootstrap [0.382, 0.464], LOMO 0.408–0.452, and per-model a 0.38–0.46. The CI for b covers 0.
+* **Fix 7, symmetric E3.** α0-subtracted: AS_SING 0.386 [0.324, 0.448] and AS_fair 0.109 [0.046, 0.171]. Without DenseNet: 0.343 and 0.135.
+* **Fix 8, claims.** See `fix8_claims_ci.csv`. Under AS_SING, C4 and C8 reverse, C10 is not confirmed, and the rest hold. C12 under AS_fair is not confirmed.
+* **Fix 9, flatness.** The oracle score itself has a max/min ratio of 3.55 (full null) and 3.48 (fixed 24-d), so the registered rule (≤ 1.5) is ill-posed. Under the revised rule (score/oracle ratio ≤ 1.5), only M1 qualifies, at 4/4 and 4/4 with M1/oracle 1.00–1.03. E8 revised: 0/4.
+* **Fix 10, E9 holdout.** `fix10_e9_holdout.json`; see the paper (`paper_workshop/holdout_numbers.tex`).
+* **Fix 13, PC bands.** G = AS/√ρ is larger for bottom-variance null PCs than for top-variance ones. Top/random < 1 on 3 of 4 models at d=24 (ResNet 1.16). Energy-matched size is a confound, not a signal.
+* **Fix 14.** Needs ImageNet images; spec in `gpu_jobs/fix14_vitl_translator_fidelity.md`. Not run.
