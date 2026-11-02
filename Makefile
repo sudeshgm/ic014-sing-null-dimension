@@ -8,7 +8,7 @@ SING ?= $(SING_ROOT)
 IC014_PRIVATE ?= $(CURDIR)/_private
 export IC014_PRIVATE
 
-.PHONY: reproduce reproduce-full paper sing verify-feats check-feats holdout-fast
+.PHONY: reproduce reproduce-full reproduce-r4 paper sing verify-feats check-feats holdout-fast
 
 reproduce:
 	PY=$(PY) scripts/reproduce.sh
@@ -39,6 +39,24 @@ reproduce-full: sing verify-feats
 	$(PY) r3/retrain_translators.py --feats-root $(IC014_FEATS) --sing-root $(SING)
 	$(PY) r3/retrain_lambda_posthoc.py --feats-root $(IC014_FEATS) --sing-root $(SING)
 	$(PY) r3/fix14_floor.py --feats-root $(IC014_FEATS)
+	$(MAKE) reproduce
+
+# Round-4 analyses (PREREG_R4*.md) from the private features, CPU; writes only aggregate JSON to r4/results
+reproduce-r4: sing verify-feats
+	$(PY) r4/surrogates.py --feats-root $(IC014_FEATS) --sing-root $(SING)
+	$(PY) r4/retrained_a4.py --feats-root $(IC014_FEATS) --sing-root $(SING)
+	$(PY) r4/a1_stats.py
+	$(PY) r4/planted.py
+	$(PY) r2/e2_claims_ci.py --private $(IC014_PRIVATE)
+	$(PY) r4/dino.py --feats-root $(IC014_FEATS)
+	$(PY) r4/class_perm.py --feats-root $(IC014_FEATS) --sing-root $(SING)
+	$(PY) r4/calibration.py --feats-root $(IC014_FEATS)
+	$(PY) r4/ncm_null.py --feats-root $(IC014_FEATS)
+	$(PY) r4/selectivity.py --feats-root $(IC014_FEATS) --sing-root $(SING)
+	$(PY) r4/dino_addendum.py --feats-root $(IC014_FEATS)
+	$(PY) r4/geometry.py --feats-root $(IC014_FEATS) --part all
+	$(PY) r4/nzs.py --feats-root $(IC014_FEATS)
+	$(PY) r4/is_energy.py --feats-root $(IC014_FEATS)
 	$(MAKE) reproduce
 
 # Reduced holdout (PREREG_R3.md N10): about 36 min on 8 cores (target was < 30), resumable cache in $(IC014_PRIVATE)
