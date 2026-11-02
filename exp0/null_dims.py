@@ -1,7 +1,8 @@
 """Null dimension m - rank(W) of each SING classifier head (SVD, tol 1e-5, as in sing/core/projectors.py).
-Models follow /tmp/sing/src/sing/configs/models.yaml. CPU only."""
-import torch, timm, torchvision, json, csv, gc, yaml, functools
-SPECS=yaml.safe_load(open('/tmp/sing/src/sing/configs/models.yaml'))['models']
+Models follow $SING_ROOT (default _ext/sing)/src/sing/configs/models.yaml. CPU only."""
+import torch, timm, torchvision, json, csv, gc, yaml, functools, os
+SING_ROOT = os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing'))
+SPECS=yaml.safe_load(open(os.path.join(SING_ROOT,'src/sing/configs/models.yaml')))['models']
 PLAN={'vgg16':3096,'vgg19':3096,'resnet':1048,'resnext':1048,'bitresnet':1048,'dinov2':1048,'swin_large':536,
       'efficientnet':280,'densenet':24,'convnext':24,'deit':24,'eva02_large':24,'dinovit1':24}
 TV={'resnet50':lambda: torchvision.models.resnet50(weights='IMAGENET1K_V1'),'densenet121':lambda: torchvision.models.densenet121(weights='IMAGENET1K_V1'),

@@ -2,7 +2,7 @@
 {water, green, thin, knitted}, 50 trials at seed 1, linear and nonlinear plants, for M1, M2, S9, S10, M5, S4, AS_SING (raw)
 and AS_fair-A (alpha=0-subtracted). Reuses e9/analyze_e9.py's Model/evaluate unchanged (imported without running its main).
 Also: original and fix-9 revised flatness, paired bootstrap of tau(M1) - tau(AS_fair) over trials (1000x, seed 0).
-Usage: python r2/e9_holdout.py --feats-root $IC014_FEATS --sing-root /tmp/sing [--cache r2_private/e9_holdout_cache.jsonl]"""
+Usage: python r2/e9_holdout.py --feats-root $IC014_FEATS [--sing-root _ext/sing] [--cache r2_private/e9_holdout_cache.jsonl]"""
 import argparse, os, sys, json, math, time, numpy as np, torch
 from scipy.stats import kendalltau
 R = os.path.dirname(os.path.abspath(__file__)); src = open(os.path.join(R, '..', 'e9', 'analyze_e9.py')).read()
@@ -38,7 +38,7 @@ def as_scores(M, c, mode, jobs, s_raw):
 ang = E9['ang']
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', required=True)
+    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', default=os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing')))
     ap.add_argument('--cache', default=None); a0 = ap.parse_args(); fr = a0.feats_root
     a = argparse.Namespace(feats=f'{fr}/e3/ret/e3_feats', private=f'{fr}/e3/private', dev_concepts=E9['DEV_C'], trials=50, models=MODELS)
     cache = a0.cache or f'{fr}/r2_private/e9_holdout_cache.jsonl'; os.makedirs(os.path.dirname(cache), exist_ok=True)

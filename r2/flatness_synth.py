@@ -2,7 +2,7 @@
 Part 1 (synthetic, numpy): known W, translator, plant; oracle O(B) = alpha*||B^T u|| (planted amplitude inside B, noise-free) and
 M1 (E9 debiased null leakage). Part 2 (post hoc): re-judge E8 NCP and E9 DEV flatness with the revised rule
 max/min_d [score(d)/O(d)] <= 1.5, O(d) = alpha * mean_j ||B_j^T u_c|| on the same sub-null bases (seed 20000+j) as E8/E9.
-Usage: python r2/flatness_synth.py --feats-root $IC014_FEATS --sing-root /tmp/sing"""
+Usage: python r2/flatness_synth.py --feats-root $IC014_FEATS [--sing-root _ext/sing]"""
 import argparse, os, json, csv, numpy as np, torch
 R = os.path.join(os.path.dirname(__file__), '..'); DS = [24, 50, 100, 200, 300]; ALPHAS = [0.1, 1.0]
 
@@ -81,7 +81,7 @@ def readjudicate(fr, sing):
                 planted_fraction_in_B=dict((f'{k[0]}|{k[1]}|{k[2]}', v) for k, v in frac.items()))
 
 if __name__ == '__main__':
-    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', required=True); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', default=os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing'))); a = ap.parse_args()
     out = dict(synthetic=synth(), readjudication_post_hoc=readjudicate(a.feats_root, a.sing_root))
     json.dump(out, open(os.path.join(R, 'r2/results/fix9_flatness.json'), 'w'), indent=1, default=float)
     s = out['synthetic']; print(json.dumps({k: {al: {x: v[al][x] for x in ['oracle_ratio', 'oracle_flat', 'M1_ratio', 'M1_over_oracle_ratio', 'M1_revised_flat']} for al in v} for k, v in s.items()}, indent=1))
