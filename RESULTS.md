@@ -1,5 +1,16 @@
 # IC014 results: SING model comparison and null dimension
 
+## Headline (current paper framing)
+Null-space energy explains SING's cross-model ranking. Every number below comes from the sections further down and from `r2/results/`.
+* **ρ alone reproduces SING's order.** Kendall τ vs Supp. Fig. 12b over 13 models: ρ 0.821 [0.56, 1], the same as AS_SING 0.821 [0.56, 1] (screened set: ρ 0.78, AS_SING 0.82). Spearman(ρ, IS/AS) = −0.94; null dimension alone −0.46 (p 0.12).
+* **Within-model growth (Exp 1).** |AS| rises about 10× from d = 24 to d = 1048 on 3 of 4 models (BiT collapses through translator conditioning).
+* **Energy law (E1, fix 6).** |AS| ∝ ρ^a with a = 0.431, cell bootstrap [0.388, 0.485], cluster bootstrap [0.382, 0.464]; the d coefficient's CI covers 0. The pre-registered flatness part of E1 still fails (mixed).
+* **Energy is a confound, not signal (fix 13).** Top-variance null PCs carry less AS per unit √ρ than random null directions on 3 of 4 models at d = 24 (ResNet50 is the exception).
+* **The best planted-recovery score also tracks ρ (fix 10, post hoc).** M1 orders the 13 models close to ρ (τ 0.79, Spearman 0.90). M1 stays a candidate for a future pre-registered test: it is post hoc, fails the registered flatness rule and sees the concept score that defines the plant.
+* **Second result: DinoViT identity (Exp 0b, fix 14).** No public ViT-L/16 matches the reported 84.0% top-1, none is DINO, and SING's `dinovit1` translator fits the timm AugReg checkpoint best (0.848 vs next best 0.677; margin 0.171, pass).
+* **Secondary, caveated: size-corrected rankings differ from SING's but do not reverse it.** D-weak passes, D-strong fails (fix 3); AS_fair over-corrects (fix 4); score rankings are unstable across null tolerances (fix 5 failed). Class-level results under AS_fair are diagnostics, not reversals.
+* **Failed or not-passed pre-registered checks:** E8 KILL, E9 KILL (holdout: no candidate passes as registered), E3 not passed, E1 flatness part fails, fix 5 tolerance stability fails, D-strong fails, fix 4 "removes the trend" not allowed, and the E8/E9 flatness rule is ill-posed (fix 9).
+
 ## 1. DinoViT identity (Exp 0b)
 Source: `exp0b/results/results_top1.json`, full ImageNet-val (50k).
 | Candidate | native | r224 |
@@ -55,7 +66,7 @@ d=24 comparison over 8 models:
 
 Boring baseline over 13 models: Spearman(ρ_full, |AS|_full) = 0.868 (p 1.2e-4); Spearman(ρ_full, Fig. 6b ratio) = −0.940 (p 1.9e-6).
 
-## 4. Verdict (from the project lead)
+## 4. Exp 1 verdict (from the project lead)
 GO under the pre-registered rule: r ≥ 3 on 3 of the 4 models and τ ≤ 0.5.
 
 ## 5. Caveats
@@ -71,8 +82,8 @@ GO under the pre-registered rule: r ≥ 3 on 3 of the 4 models and τ ≤ 0.5.
 
 ## 6. Round 2 (response to `review_20261101_v1`; criteria in `PREREG_R2.md`)
 All numbers come from `r2/results/`; CIs are 95%. Unless noted, bootstraps resample models (2000×, seed 0), and LOO is leave-one-model-out.
-* **KILL-R did not fire.** Fix 2 and D-weak hold under both random-control families and D-strong does not, so the allowed wording is "differs from" and "reverses" is ruled out.
-* **Energy explains the published order.** τ vs Supp. Fig. 12b over 13 models: ρ alone 0.821 [0.56, 1]; AS_SING 0.821 [0.56, 1]; M1 (post hoc) 0.667 [0.29, 0.94].
+* **Energy explains the published order (headline).** τ vs Supp. Fig. 12b over 13 models: ρ alone 0.821 [0.56, 1]; AS_SING 0.821 [0.56, 1]; M1 (post hoc) 0.667 [0.29, 0.94].
+* **KILL-R did not fire.** Fix 2 and D-weak hold on all 13 and on the screened set, and D-strong does not, so the allowed wording is "differs from" and "reverses" is ruled out. This is a secondary finding.
 * **Fix 3, size-fair scores (all 13).** τ for each normaliser:
 
   | Normaliser | τ | 95% CI |
