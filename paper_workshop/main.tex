@@ -38,15 +38,15 @@ Workshop submission
 \begin{abstract}
 \vspace{-0.3em}
 SING~\citep{sing2026} ranks 13 ImageNet classifiers by how much class-relevant semantics leak into the null space of their linear heads, and reports that a ``DinoViT'' leaks least.
-We find that this cross-model ranking is explained by null-space energy.
+Null-space energy accounts for this cross-model ranking.
 The null energy fraction $\rho$ alone reproduces SING's published order as well as SING's own score does (Kendall $\tau{=}0.82$ for both).
-Within a model, $|$AS$|$ rises by ${\approx}10\times$ from $d{=}24$ to $d{=}1048$ removed null dimensions on 3 of 4 models (BiT drops instead, through translator conditioning).
+Within a model, removing $d{=}1048$ rather than $d{=}24$ null dimensions raises $|$AS$|$ by ${\approx}10\times$ on 3 of 4 models; on BiT it drops instead, through translator conditioning.
 Across controlled energy and dimension, $|$AS$|\propto\rho^{a}$ with $a\approx0.4$--$0.5$ (cell-bootstrap CI $[0.39,0.48]$), and high-variance null directions carry \emph{less} AS per unit $\sqrt{\rho}$ than random ones on 3 of 4 models, so energy acts as a confound rather than as signal.
 Even the best planted-leakage score from our search (M1, post hoc) orders the 13 models much as $\rho$ does ($\tau{=}0.79$).
 Second, SING's ``DinoViT'' cannot be identified as DINO: no public ViT-L/16 matches its reported 84.0\% top-1, and SING's translator fits the supervised timm AugReg checkpoint best (mean cosine $0.85$ vs.\ ${\le}0.68$).
 Size-corrected scores give orders that differ from SING's, but none reverses it with confidence: the outcome depends on the normaliser, the energy-matched correction over-corrects, and model ranks shift with the null tolerance.
 We report every pre-registered check, including the failures: a probe score (E8) and a 20-candidate score screen (E9) were KILLs, the flatness rule behind them is ill-posed, rank stability across null tolerances failed, and E3 and the flatness part of E1 did not pass.
-We recommend reporting $\rho$ and an energy-only ranking next to any cross-model null-space score.
+We recommend reporting $\rho$ and an energy-only ranking alongside any cross-model null-space score.
 \vspace{-0.3em}
 \end{abstract}
 
@@ -65,7 +65,7 @@ Across architectures, the null dimension $d$ and the null energy fraction
 $\rho = \mathbb{E}\|V_nV_n^\top f\|^2/\mathbb{E}\|f\|^2$
 both vary by orders of magnitude.
 If AS mostly tracks how much energy is removed, then a cross-model comparison of ``semantics'' is confounded by size.
-We test this directly and find that it is the case.
+We test this directly, and our experiments support it.
 
 \paragraph{Contributions.}
 (1)~\emph{Null energy explains SING's ranking} (\S\ref{sec:energy}): $\rho$ alone reproduces SING's 13-model order ($\tau{=}0.82$); AS grows with removed energy within a model (Exp~1) and scales as $\rho^{a}$, $a\approx0.4$--$0.5$, with resampled CIs (E1); top-variance null directions are not more semantic per unit energy; and the best planted-recovery score we found (M1) also tracks $\rho$.
@@ -211,7 +211,7 @@ SWAG E2E (88.07\%)
 and HF \texttt{google/vit-large-patch16-224} (81.98\%).
 None falls in $84.0\pm0.3$ (Fig.~\ref{fig:exp0b}). All five are supervised or SWAG weakly supervised, and DINO never released a ViT-L with a 1000-way head~\citep{dino2021}.
 The checkpoint we use (timm AugReg, the one SING's \texttt{models.yaml} loads) gives mean $\cos(T(f),\mathrm{CLIP})=0.848$ with SING's \texttt{dinovit1} translator.
-On the first 1000 subset images, re-extracted with each candidate's native transform, the other four give $0.677$ (torchvision IMAGENET1K\_V1), $0.631$ (HF), $0.615$ (SWAG linear) and $0.608$ (SWAG E2E). The used checkpoint is best by $0.171$, above the pre-registered $0.05$ margin. Its re-extracted features match our cached ones exactly. SING's translator was therefore most likely fit on this timm AugReg model, regardless of how it is labelled.
+On the first 1000 subset images, re-extracted with each candidate's native transform, the other four give $0.677$ (torchvision IMAGENET1K\_V1), $0.631$ (HF), $0.615$ (SWAG linear) and $0.608$ (SWAG E2E). The used checkpoint is best by $0.171$, above the pre-registered $0.05$ margin. Its re-extracted features match our cached ones exactly. These results suggest that SING's translator was fit on this timm AugReg model, irrespective of its DinoViT label.
 
 \begin{figure}[t]
 \centering
@@ -225,12 +225,12 @@ On the first 1000 subset images, re-extracted with each candidate's native trans
 \section{Secondary: size-corrected rankings (E2, round 2)}
 \label{sec:e2}\label{sec:r2}\label{sec:fair}
 \vspace{-0.2em}
-This section tests whether removing the energy dependence leaves a confident alternative ranking. It does not.
+We now examine whether removing the energy dependence leaves a confident alternative ranking. None of the corrections we tried does.
 
 \paragraph{Size-fair scores.}
 $\ASF = \mathrm{AS}_{\mathrm{null}}/\mathrm{AS}_{\mathrm{rand}}$, where $\mathrm{AS}_{\mathrm{rand}}$ is the mean $|$AS$|$ after removing an energy-matched random subspace.
 In the original analysis (\emph{family A}), the random subspace is Haar over the full feature space (seed $10000{+}r$, 20 draws).
-This changes the logits, so in round 2 we added two control families that preserve them better.
+Because this changes the logits, in round 2 we added two control families that preserve them better.
 \emph{Family B} draws an energy-matched subspace from the span of the lowest-$\sigma$ row-space directions of $W$. These directions do change the logits, by up to $14$--$74$ logit SDs for models with a large span (VGG, ResNeXt).
 \emph{Family C} compares a random $24$-dim null sub-subspace, which changes no logit, against a family-B control of matched energy.
 Every score is reported on all 13 models and on a pre-declared \emph{screened} set of 11. The screen excludes models with $\rho{<}10^{-4}$ or with a retained direction of $\sigma{<}10^{-3}$ holding ${>}5\%$ of the energy, which removes DenseNet ($\rho{=}1.8{\times}10^{-8}$) and BiT.
@@ -258,7 +258,7 @@ Low-$\rho$ models such as DinoViT and EVA02 are pushed to the bottom. Instead of
 
 \paragraph{Tolerance sensitivity (pre-registered check failed).}
 At null tolerances $10^{-6}$ to $10^{-3}$, the null dimension of DenseNet grows from 25 to 221, while that of the other models barely changes.
-Rank agreement between adjacent tolerances drops below the pre-registered $0.9$ for both scores: $\ASF$ gives $0.87$ (all 13) and $0.82$ (screened) from $10^{-5}$ to $10^{-4}$, and $\ASS$ gives $0.87$ from $10^{-4}$ to $10^{-3}$. Null dim and $\rho$ stay at or above $0.92$. This test fails, so model rankings from either score should not be read to single-rank precision.
+Rank agreement between adjacent tolerances drops below the pre-registered $0.9$ for both scores: $\ASF$ gives $0.87$ (all 13) and $0.82$ (screened) from $10^{-5}$ to $10^{-4}$, and $\ASS$ gives $0.87$ from $10^{-4}$ to $10^{-3}$. Null dim and $\rho$ stay at or above $0.92$. The check fails. Model rankings from either score are therefore not reliable to single-rank precision.
 
 \begin{figure}[t]
 \centering
@@ -278,13 +278,13 @@ Under $\ASS$, two claims do not reproduce on our pipeline:
 \item \textbf{C8}: ResNet's porcupine and sports-car classes are not in the top decile (percentile gaps $-5.2$ $[-9.7,-2.4]$ and $-29$).
 \end{itemize}
 C10 (jellyfish $\gg$ camel) is not confirmed ($-0.11$ $[-0.21,0.001]$).
-These are discrepancies between SING and our re-implementation, possibly due to protocol (SING used ${\approx}30$ concepts and ${\approx}1300$ images for C10), and they do not come from size correction.
+These discrepancies between SING and our re-implementation may reflect protocol differences (SING used ${\approx}30$ concepts and ${\approx}1300$ images for C10). They do not arise from size correction.
 Under $\ASF$, the image-bootstrap CIs of the other testable claims lie on the opposite side, C12 is not confirmed under the model bootstrap, and C9 (``no correlation'') is contradicted. Because $\ASF$ over-corrects, we treat these as diagnostics and do not claim class-level reversals.
 By $\ASF$ (family A), DinoViT ranks 12th of 13; under $\ASS$ it ranks 3rd.
 
 \paragraph{DinoViT ratio gap.}
 Our DinoViT IS/$|$AS$|$ is $20.95$, against $70.16$ in Supp.\ Fig.~12b, a $3.35\times$ gap. For the other 12 models SING's ratio is $0.98$--$2.5\times$ ours (EVA02 $2.5\times$, BiT $1.9\times$, DenseNet $1.7\times$), so the gap is largest for DinoViT, while the $\ASS$ order still agrees.
-Candidate causes include SING's image and class subset (16 classes vs.\ our 1000), its concept set, and the checkpoint (\S\ref{sec:dino}). We cannot tell them apart without SING's evaluation lists.
+The gap could reflect differences in SING's image and class subset (16 classes vs.\ our 1000), its concept set, or its checkpoint (\S\ref{sec:dino}). We cannot tell them apart without SING's evaluation lists.
 
 \begin{table}[t]
 \centering
@@ -338,23 +338,23 @@ The best was M1 (debiased null leakage, $\hat L^2=(\|\sum_iPf_is_i\|^2-\sum_i\|P
 Others: M2 $0.540$, S9 (a mutual-information score) $0.522$, S10 $0.395$ (the only flat one), M5 ($\mathrm{AS}/\sqrt{\rho}$) $0.323$, S4 ($\mathrm{AS}/\rho$) $-0.051$.
 \paragraph{The flatness rule is ill-posed (round 2).}
 On synthetic Gaussian features with a known head ($m{=}400$, null dim $300$), we planted a direction either in the full null or in a fixed 24-dim sub-subspace. We then scored an exact oracle, the planted amplitude inside the removed subspace $B$, $\alpha\|B^\top u\|$.
-The oracle itself fails the rule, with $\max/\min$ $3.55$ and $3.48$ ($\approx\sqrt{300/24}$), because a larger $B$ genuinely contains more of the plant.
+The oracle itself fails the rule, with $\max/\min$ $3.55$ and $3.48$ ($\approx\sqrt{300/24}$), because a larger $B$ contains more of the plant.
 A revised rule, $\max/\min$ of score$/$oracle $\le1.5$, is passed by M1 in both settings (ratios $1.00$--$1.03$).
 Re-judged post hoc on the saved DEV values, M1 is revised-flat on 4/4 models at both $\alpha$ and is the only E9 candidate that qualifies. E8's NCP is flat on 0/4. This is exploratory, and E8 and E9 remain KILLs as registered.
 \paragraph{E9 holdout (round 2, post hoc).}
 \HoldoutParagraph
 \HoldoutTable
 \paragraph{M1 on the 13 models (descriptive).}
-Because M1 beats $\ASF$ on the holdout, we also rank the 13 models by M1 (post hoc, descriptive; \texttt{r2/e2\_m1.py}).
+We also rank the 13 models by M1 (post hoc, descriptive; \texttt{r2/e2\_m1.py}), since M1 beats $\ASF$ on the holdout.
 At $\alpha{=}0$, on the full null and averaged over SING's 173 concepts, M1 gives $\tau{=}0.667$ $[0.29,0.94]$ against SING's order ($0.600$ $[0.06,0.92]$ on the screened set). Both intervals include $\ASS$'s $0.821$.
-M1's order is close to $\rho$'s ($\tau{=}0.79$, Spearman $0.90$; screened $0.75$, $0.85$). We expected this, because M1 is scaled by total feature energy and not by null size. It gives no ranking that differs from SING's, and it is a candidate for a future pre-registered test, not a recommended score: it was chosen post hoc, fails the registered flatness rule, and sees the concept score that defines the plant.
+M1's order is close to $\rho$'s ($\tau{=}0.79$, Spearman $0.90$; screened $0.75$, $0.85$). We expected this, because M1 is scaled by total feature energy and not by null size. It gives no ranking that differs from SING's, and we treat it as a candidate for a future pre-registered test rather than as a recommended score: it was chosen post hoc, fails the registered flatness rule, and sees the concept score that defines the plant.
 
 \section{Discussion}
 \vspace{-0.2em}
 SING's cross-model ranking is what null energy alone predicts: $\rho$ reproduces its order to the same $\tau$, AS grows with removed energy within a model, and the pooled energy exponent is close to the first-order $\sqrt{\rho}$ prediction with no detectable dimension effect.
 Top-variance null directions are not more semantic per unit energy than random ones, which argues against reading energy as signal, and the one score that recovers planted leakage well (M1) also orders models by $\rho$.
 This does not show that SING's ranking is wrong. It shows that the ranking cannot be told apart from an energy ranking.
-Nor does removing energy yield a confident alternative: energy-matched corrections either over-correct ($\ASF$) or leave a positive $\tau$ ($\rho^{0.43}$), and score-based model ranks shift with the null tolerance.
+Removing energy does not yield a confident alternative either. Energy-matched corrections either over-correct ($\ASF$) or leave a positive $\tau$ ($\rho^{0.43}$), and score-based model ranks shift with the null tolerance.
 Within a model, AS remains a useful probe of null content as seen through the translator.
 
 \paragraph{Recommendations.}
