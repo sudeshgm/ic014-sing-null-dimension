@@ -1,0 +1,13 @@
+# Exact versions of the direct dependencies used for the round-4 results (CPU, Python 3.13).
+# Tested in a fresh venv: python3 -m venv .venv && .venv/bin/pip install -r requirements-pinned.txt && PY=.venv/bin/python scripts/reproduce.sh
+# requirements.txt gives the looser ranges; requirements-lock.txt is a full machine freeze from round 2.
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy==2.5.4
+scipy==1.18.1
+matplotlib==3.11.2
+pillow==13.0.0
+PyYAML==6.0.3
+torch==2.15.0+cpu
+torchvision==0.29.2+cpu
+timm==1.0.30
+transformers==4.57.6
