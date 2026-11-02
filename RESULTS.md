@@ -1,15 +1,17 @@
 # IC014 results: SING model comparison and null dimension
 
-## Headline (current paper framing)
-Null-space energy explains SING's cross-model ranking. Every number below comes from the sections further down and from `r2/results/`.
-* **ρ alone reproduces SING's order.** Kendall τ vs Supp. Fig. 12b over 13 models: ρ 0.821 [0.56, 1], the same as AS_SING 0.821 [0.56, 1] (screened set: ρ 0.78, AS_SING 0.82). Spearman(ρ, IS/AS) = −0.94; null dimension alone −0.46 (p 0.12).
-* **Within-model growth (Exp 1).** |AS| rises about 10× from d = 24 to d = 1048 on 3 of 4 models (BiT collapses through translator conditioning).
-* **Energy law (E1, fix 6).** |AS| ∝ ρ^a with a = 0.431, cell bootstrap [0.388, 0.485], cluster bootstrap [0.382, 0.464]; the d coefficient's CI covers 0. The pre-registered flatness part of E1 still fails (mixed).
-* **Energy is a confound, not signal (fix 13).** Top-variance null PCs carry less AS per unit √ρ than random null directions on 3 of 4 models at d = 24 (ResNet50 is the exception).
-* **The best planted-recovery score also tracks ρ (fix 10, post hoc).** M1 orders the 13 models close to ρ (τ 0.79, Spearman 0.90). M1 stays a candidate for a future pre-registered test: it is post hoc, fails the registered flatness rule and sees the concept score that defines the plant.
-* **Second result: DinoViT identity (Exp 0b, fix 14).** No public ViT-L/16 matches the reported 84.0% top-1, none is DINO, and SING's `dinovit1` translator fits the timm AugReg checkpoint best (0.848 vs next best 0.677; margin 0.171, pass).
-* **Secondary, caveated: size-corrected rankings differ from SING's but do not reverse it.** D-weak passes, D-strong fails (fix 3); AS_fair over-corrects (fix 4); score rankings are unstable across null tolerances (fix 5 failed). Class-level results under AS_fair are diagnostics, not reversals.
-* **Failed or not-passed pre-registered checks:** E8 KILL, E9 KILL (holdout: no candidate passes as registered), E3 not passed, E1 flatness part fails, fix 5 tolerance stability fails, D-strong fails, fix 4 "removes the trend" not allowed, and the E8/E9 flatness rule is ill-posed (fix 9).
+## Headline (current paper framing, round 3)
+SING's cross-model ranking is indistinguishable from a null-energy ranking. With SING's released translators, energy accounts for the agreement; with retrained translators, it accounts for part of it. Round-3 numbers are in `r3/results/` (see `r3/README.md`); earlier rounds below.
+* **ρ and AS_SING are indistinguishable predictors of SING's order** (F). Kendall τ vs Supp. Fig. 12b: ρ 0.821 [0.56, 1], AS_SING 0.821 [0.56, 1]; paired difference CI [−0.36, 0.29] (BCa [−0.37, 0.28]); permutation p = 5e−5 for both; partial Kendall τ 0.61 both ways; partial Spearman 0.63 (AS | ρ), 0.72 (ρ | AS). Like-for-like ratio τ (our IS/|AS| vs SING IS/AS) 0.744 [0.33, 1.00]; SING/ours 0.98–3.35 (largest: DinoViT 3.35, EVA02 2.51).
+* **Equal-energy intervention (A): ENERGY-ACCOUNTS, no KILL-R3.** A1 (remove √(ρ₀/ρ)·Πf, ρ₀ = 0.005): τ −0.03 [−0.54, 0.61] (E12), 0.09 [−0.45, 0.78] (S11); paired drop CI [0.23, 1.39] / [0.08, 1.30]. A2 (top PCs) 0.03 / 0.13; A3 (random rotation) 0.03 / 0.16; A4 (matched CLIP energy) −0.15 / −0.20. κ 0.67 (E12), κ − ρ CI [−0.41, 0.28]; γ = κ/ρ −0.06. NuSA-style null norm 0.85 (all 13), τ(NuSA, ρ) 0.97.
+* **Leak-free null (B): N4 passes on all 3 models** (Spearman 1, log-log slopes 0.38–0.69, CIs exclude 0): AS responds to null energy with no image-specific content; "confound" only in this qualified sense. Planted concept at ρ_t = 0.2: ×1.04–1.09 (α = 0.1), ×1.35–1.51 (α = 0.3). Leak-free scores reproduce the order: τ(AS_surr) 0.69 [0.39, 0.92] (all 13), 0.64 (S11); Spearman(AS_surr, AS_SING) 0.96. No claim from the excess X (τ 0.54 [0.14, 0.83]).
+* **Retrained translators (G):** fidelity 0.79–0.84 (released 0.81–0.87 on the same test half). τ(AS retrained) 0.85 (all 13), 0.82 (E12, S11): order survives retraining; τ(retrained AS, released AS) 0.72. **Caveat:** A1 with retrained translators keeps part of the agreement, 0.61 [0.15, 0.94] (E12) and 0.75 [0.32, 1.00] (S11). The registered ridge grid put every model at its edge; post hoc extended grid: 0.39 / 0.53 (only VGG16/19 and DenseNet change λ, so fragile); λ = 10^6 everywhere: ≈ 0.79–0.82.
+* **PC bands vs the energy law (C):** d = 24, â = 0.431: ResNet50 1.50, ResNeXt101 0.74, DINOv2-L 0.98 [0.97, 0.99] → "top PCs carry less AS than energy predicts" (2/3), not robust (at â = 0.388: "more"). d = 100 ratios: 1.18, 0.97, 0.91. BiT-R50x1 (0.009) is reported but not counted.
+* **Within-model growth (Exp 1) and energy law (E1):** |AS| rises about 10× from d = 24 to d = 1048 on 3 of 4 models (BiT collapses); |AS| ∝ ρ^a, a = 0.431 [0.388, 0.485]; E1 flatness part fails (mixed).
+* **DinoViT checkpoint (Exp 0b, fix 14, D):** SING's `dinovit1` translator matches timm AugReg ViT-L/16 (cos 0.848, shuffled floor 0.575, retrieval top-1 78.8 %); the other four candidates sit at their shuffled floors (gap ≤ 0.002, retrieval ≤ 0.2 %). No candidate gives 84.0 %; the 84.0 vs 85.85 % gap is unexplained (protocol unknown). SING describes the model as pretrained beyond ImageNet. A true DINO model is a GPU job spec (`gpu_jobs/r3_dino_vitb16.md`), not run.
+* **Size-corrected rankings differ but do not reverse** (round 2). D-weak passes at the threshold on the screened set (5/8); D-strong fails, and its single screened pass comes from family B, which is not logit-preserving (max Δlogit/SD up to 74). AS_fair over-corrects; rankings are unstable across null tolerances.
+* **Claims (E, BCa, de-duplicated):** under AS_SING 7 hold, 3 reverse (C4, C8, C10), 1 contradicted (C9). N7 flag: AS_fair C6 SD point −0.203 outside BCa [−0.2642, −0.2641] (degenerate bootstrap), reported, not used.
+* **Failed or not-passed pre-registered checks:** E8 KILL, E9 KILL (holdout: no candidate passes as registered), E3 not passed, E1 flatness part fails, tolerance stability fails, D-strong fails, AS_fair "removes the trend" fails, flatness rule ill-posed, N7 (one BCa flag), PC-band label not robust in â.
 
 ## 1. DinoViT identity (Exp 0b)
 Source: `exp0b/results/results_top1.json`, full ImageNet-val (50k).
@@ -24,7 +26,7 @@ Source: `exp0b/results/results_top1.json`, full ImageNet-val (50k).
 No candidate gives 84.0 ± 0.3 (Supp. Table 2). All of them are supervised or SWAG weakly supervised, and none is DINO.
 
 ## 2. Exp 0 (`exp0/`)
-* Fig. 6b plots only IS/AS (13 bars). Our digitized values, at ±0.38: DenseNet 70.71, DinoViT 70.16, EVA02-L 54.32, BiT 47.21, ConvNeXt 37.38, EffNet 36.28, Swin-L 29.18, ResNet50 24.81, VGG16 24.26, VGG19 19.89, DINOv2 16.61, ResNeXt101 13.88, DeiT 9.51.
+* SING Supp. Fig. 12b (called Fig. 6b in our file names) plots only IS/AS (13 bars). Our digitized values, at ±0.38: DenseNet 70.71, DinoViT 70.16, EVA02-L 54.32, BiT 47.21, ConvNeXt 37.38, EffNet 36.28, Swin-L 29.18, ResNet50 24.81, VGG16 24.26, VGG19 19.89, DINOv2 16.61, ResNeXt101 13.88, DeiT 9.51.
 * The null dims match the plan except for **DenseNet121 = 27** (rank 997 at tol 1e-5).
 * IS/AS vs null dim, all 13, DenseNet = 27: Spearman −0.456 (perm p 0.124), Kendall −0.379 (0.105). Without DinoViT: −0.381 (0.224) / −0.329 (0.187). With DenseNet = 24: −0.517 (0.077) / −0.449 (0.054).
 
@@ -61,10 +63,10 @@ r = AS(1048)/AS(24) with its 2σ band (recomputed from the raw files and confirm
 
 d=24 comparison over 8 models:
 * By |AS| (low first): densenet, convnext, dinov2, resnet, resnext, eva02, deit, bitresnet.
-* Fig. 6b reference order: densenet, eva02, bitresnet, convnext, resnet, dinov2, resnext, deit.
-* Kendall τ vs Fig. 6b: 0.286 (p 0.40) for |AS|; 0.357 (p 0.28) for IS/|AS|.
+* Supp. Fig. 12b reference order: densenet, eva02, bitresnet, convnext, resnet, dinov2, resnext, deit.
+* Kendall τ vs Supp. Fig. 12b: 0.286 (p 0.40) for |AS|; 0.357 (p 0.28) for IS/|AS|.
 
-Boring baseline over 13 models: Spearman(ρ_full, |AS|_full) = 0.868 (p 1.2e-4); Spearman(ρ_full, Fig. 6b ratio) = −0.940 (p 1.9e-6).
+Boring baseline over 13 models: Spearman(ρ_full, |AS|_full) = 0.868 (p 1.2e-4); Spearman(ρ_full, Supp. Fig. 12b ratio) = −0.940 (p 1.9e-6).
 
 ## 4. Exp 1 verdict (from the IC014 Idea Agent)
 GO under the pre-registered rule: r ≥ 3 on 3 of the 4 models and τ ≤ 0.5.
