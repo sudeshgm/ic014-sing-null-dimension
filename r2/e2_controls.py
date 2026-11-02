@@ -2,8 +2,8 @@
  - at null tolerances abs {1e-6,1e-5,1e-4,1e-3} and rel {1e-5,1e-4,1e-3}*sigma_max: null dim, rho, AS_SING, AS_fair-A;
  - at tol 1e-5: control families B (low-gain row space) and C (d=24 null sub-subspaces), see PREREG_R2.md;
  - degeneracy-screen statistics; M1 (debiased null leakage, alpha=0, mean over 173 SING concepts).
-Per-image arrays for fix 8 are written to --private (outside the repo).
-Usage: python r2/e2_controls.py --feats-root $IC014_FEATS [--sing-root _ext/sing] --private $IC014_FEATS/r2_private"""
+Per-image arrays for fix 8 are written to --private (default: the git-ignored repo-local _private/; never the feature store).
+Usage: python r2/e2_controls.py --feats-root $IC014_FEATS [--sing-root _ext/sing] [--private _private]"""
 import argparse, os, sys, json, csv, math, time, numpy as np, torch
 torch.set_num_threads(os.cpu_count())
 ALL = ['vgg16', 'vgg19', 'densenet', 'resnet', 'dinovit1', 'efficientnet', 'bitresnet', 'resnext', 'convnext',
@@ -29,7 +29,7 @@ def find(roots, name):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', default=os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing')))
-    ap.add_argument('--private', required=True); ap.add_argument('--out', default=os.path.join(os.path.dirname(__file__), 'results'))
+    ap.add_argument('--private', default=os.environ.get('IC014_PRIVATE', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_private'))); ap.add_argument('--out', default=os.path.join(os.path.dirname(__file__), 'results'))
     ap.add_argument('--models', nargs='*', default=ALL)
     a = ap.parse_args(); os.makedirs(a.private, exist_ok=True); os.makedirs(a.out, exist_ok=True)
     import importlib.util  # load SING's projectors.py directly (the sing package __init__ pulls in diffusers)

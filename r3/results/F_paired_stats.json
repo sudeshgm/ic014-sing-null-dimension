@@ -1,0 +1,203 @@
+{
+ "n": 13,
+ "models": [
+  "vgg16",
+  "vgg19",
+  "densenet",
+  "resnet",
+  "dinovit1",
+  "efficientnet",
+  "bitresnet",
+  "resnext",
+  "convnext",
+  "swin_large",
+  "dinov2",
+  "deit",
+  "eva02_large"
+ ],
+ "tau_rho": {
+  "tau": 0.8205128205128204,
+  "pct": [
+   0.5587418300653595,
+   1.0
+  ],
+  "bca": [
+   0.48117482198462874,
+   0.9714285714285715
+  ],
+  "n": 13,
+  "B_used": 2000
+ },
+ "tau_AS_SING": {
+  "tau": 0.8205128205128204,
+  "pct": [
+   0.5555555555555556,
+   1.0
+  ],
+  "bca": [
+   0.4664505010177793,
+   1.0
+  ],
+  "n": 13,
+  "B_used": 2000
+ },
+ "tau_rho_S11": {
+  "tau": 0.7818181818181819,
+  "pct": [
+   0.44,
+   1.0
+  ],
+  "bca": [
+   0.32970969190769905,
+   0.9615384615384616
+  ],
+  "n": 11,
+  "B_used": 2000
+ },
+ "tau_AS_SING_S11": {
+  "tau": 0.8181818181818182,
+  "pct": [
+   0.5102040816326531,
+   1.0
+  ],
+  "bca": [
+   0.41666666666666674,
+   1.0
+  ],
+  "n": 11,
+  "B_used": 2000
+ },
+ "paired_rho_minus_AS": {
+  "diff": 0.0,
+  "pct": [
+   -0.3561643835616437,
+   0.294197138314785
+  ],
+  "bca": [
+   -0.36619718309859156,
+   0.2777777777777778
+  ],
+  "B_used": 2000
+ },
+ "paired_rho_minus_AS_S11": {
+  "diff": -0.036363636363636376,
+  "pct": [
+   -0.47058823529411764,
+   0.35311764705882254
+  ],
+  "bca": [
+   -0.43999999999999995,
+   0.3673469387755102
+  ],
+  "B_used": 2000
+ },
+ "tau_rho_AS": 0.6923076923076922,
+ "spearman_rho_AS": 0.8681318681318682,
+ "partial_kendall": {
+  "rho_given_AS": 0.6120549846123049,
+  "AS_given_rho": 0.6120549846123049
+ },
+ "partial_spearman": {
+  "rho_given_AS": 0.7239901689290278,
+  "AS_given_rho": 0.6320874522345971
+ },
+ "perm_p": {
+  "rho": 4.999750012499375e-05,
+  "AS_SING": 4.999750012499375e-05
+ },
+ "loglinear_residual_tau": {
+  "AS_resid_on_rho": 0.12820512820512817,
+  "rho_resid_on_AS": -0.025641025641025637
+ },
+ "near_tie_swap": {
+  "rho": 0.7948717948717947,
+  "AS_SING": 0.7948717948717947
+ },
+ "like_for_like": {
+  "tau_ours_vs_SING_ratio": {
+   "tau": 0.7435897435897434,
+   "pct": [
+    0.33333333333333337,
+    1.0
+   ],
+   "bca": [
+    0.11764705882352941,
+    0.9444444444444446
+   ],
+   "n": 13,
+   "B_used": 2000
+  },
+  "per_model": {
+   "VGG16": {
+    "ours_IS_over_absAS": 17.745131160681172,
+    "SING": 24.26,
+    "SING_over_ours": 1.3671355697699306
+   },
+   "VGG19": {
+    "ours_IS_over_absAS": 15.560056935594787,
+    "SING": 19.89,
+    "SING_over_ours": 1.2782729576329601
+   },
+   "DenseNet": {
+    "ours_IS_over_absAS": 41.47750114109862,
+    "SING": 70.71,
+    "SING_over_ours": 1.704779652936611
+   },
+   "ResNet50": {
+    "ours_IS_over_absAS": 17.403200824404347,
+    "SING": 24.81,
+    "SING_over_ours": 1.425599822143589
+   },
+   "DinoViT": {
+    "ours_IS_over_absAS": 20.954063944119664,
+    "SING": 70.16,
+    "SING_over_ours": 3.3482765055553334
+   },
+   "EfficientNet": {
+    "ours_IS_over_absAS": 22.15196065036575,
+    "SING": 36.28,
+    "SING_over_ours": 1.6377782794319373
+   },
+   "BitResNet": {
+    "ours_IS_over_absAS": 24.928749045249194,
+    "SING": 47.21,
+    "SING_over_ours": 1.8937973948996476
+   },
+   "ResNext101": {
+    "ours_IS_over_absAS": 12.597198195229458,
+    "SING": 13.88,
+    "SING_over_ours": 1.1018323110337613
+   },
+   "ConvNext": {
+    "ours_IS_over_absAS": 32.85723793430639,
+    "SING": 37.38,
+    "SING_over_ours": 1.1376488819521673
+   },
+   "SwinLarge": {
+    "ours_IS_over_absAS": 21.213115179953135,
+    "SING": 29.18,
+    "SING_over_ours": 1.3755641145801984
+   },
+   "DinoV2": {
+    "ours_IS_over_absAS": 15.488540750853415,
+    "SING": 16.61,
+    "SING_over_ours": 1.0724057396488298
+   },
+   "DeiT": {
+    "ours_IS_over_absAS": 9.731079044926075,
+    "SING": 9.51,
+    "SING_over_ours": 0.9772811376923971
+   },
+   "EVA02Large": {
+    "ours_IS_over_absAS": 21.64083202076413,
+    "SING": 54.32,
+    "SING_over_ours": 2.510069850728502
+   }
+  }
+ },
+ "reading_rule_N1": {
+  "paired_CI_covers_0": true,
+  "may_say": "indistinguishable",
+  "explains_allowed": false
+ }
+}

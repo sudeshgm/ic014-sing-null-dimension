@@ -1,0 +1,15 @@
+# Project dependencies for IC014 (CPU). Install into a fresh venv:
+#   python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+# The CPU wheel index keeps torch/torchvision CPU-only; the GPU extraction scripts (gpu_jobs/, */extract_*_gpu.py)
+# need the CUDA builds of the same packages instead. SING itself is fetched separately (make sing, commit e47b37d).
+# requirements-lock.txt is a full freeze of the machine that produced the round-2 results (not project-only).
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+pillow>=10.0
+pyyaml>=6.0
+torch>=2.1
+torchvision>=0.16
+timm>=1.0
+transformers>=4.40,<5

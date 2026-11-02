@@ -2,13 +2,18 @@
 {water, green, thin, knitted}, 50 trials at seed 1, linear and nonlinear plants, for M1, M2, S9, S10, M5, S4, AS_SING (raw)
 and AS_fair-A (alpha=0-subtracted). Reuses e9/analyze_e9.py's Model/evaluate unchanged (imported without running its main).
 Also: original and fix-9 revised flatness, paired bootstrap of tau(M1) - tau(AS_fair) over trials (1000x, seed 0).
-Usage: python r2/e9_holdout.py --feats-root $IC014_FEATS [--sing-root _ext/sing] [--cache r2_private/e9_holdout_cache.jsonl]"""
+--fast (PREREG_R3.md, N10): NDRAW=5, NSUB=2, candidates without S9; separate cache and output file.
+Usage: python r2/e9_holdout.py --feats-root $IC014_FEATS [--sing-root _ext/sing] [--private _private] [--cache FILE] [--fast]"""
 import argparse, os, sys, json, math, time, numpy as np, torch
 from scipy.stats import kendalltau
 R = os.path.dirname(os.path.abspath(__file__)); src = open(os.path.join(R, '..', 'e9', 'analyze_e9.py')).read()
 assert src.rstrip().endswith('main()'); E9 = {}; exec(compile(src.rstrip()[:-len('main()')], 'analyze_e9.py', 'exec'), E9)
-torch.set_num_threads(os.cpu_count()); MODELS, BIG, HOLD_C, DGRID, FLAT_A, NDRAW, NSUB = (E9[k] for k in ['MODELS', 'BIG', 'HOLD_C', 'DGRID', 'FLAT_A', 'NDRAW', 'NSUB'])
-CANDS = ['M1', 'M2', 'S9', 'S10', 'M5', 'S4']; ALLC = CANDS + ['AS_SING', 'AS_fair']; GUARD_S = 3 * 3600
+torch.set_num_threads(os.cpu_count()); MODELS, BIG, HOLD_C, DGRID, FLAT_A = (E9[k] for k in ['MODELS', 'BIG', 'HOLD_C', 'DGRID', 'FLAT_A'])
+FAST = '--fast' in sys.argv
+if FAST: E9['NDRAW'], E9['NSUB'] = 5, 2   # read by E9's Model at construction time
+NDRAW, NSUB = E9['NDRAW'], E9['NSUB']
+CANDS = ['M1', 'M2', 'S10', 'M5', 'S4'] if FAST else ['M1', 'M2', 'S9', 'S10', 'M5', 'S4']; ALLC = CANDS + ['AS_SING', 'AS_fair']; GUARD_S = 3 * 3600
+PRIV = os.environ.get('IC014_PRIVATE', os.path.join(R, '..', '_private'))
 
 def as_scores(M, c, mode, jobs, s_raw):
     """AS_SING (full-null or sub-null B removal, mean|AS|) and AS_fair-A (/ energy-matched full-space random, 20 draws) per job.
@@ -39,9 +44,10 @@ ang = E9['ang']
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', default=os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing')))
-    ap.add_argument('--cache', default=None); a0 = ap.parse_args(); fr = a0.feats_root
+    ap.add_argument('--private', default=PRIV); ap.add_argument('--cache', default=None); ap.add_argument('--fast', action='store_true')
+    a0 = ap.parse_args(); fr = a0.feats_root; t_start = time.time()
     a = argparse.Namespace(feats=f'{fr}/e3/ret/e3_feats', private=f'{fr}/e3/private', dev_concepts=E9['DEV_C'], trials=50, models=MODELS)
-    cache = a0.cache or f'{fr}/r2_private/e9_holdout_cache.jsonl'; os.makedirs(os.path.dirname(cache), exist_ok=True)
+    cache = a0.cache or os.path.join(a0.private, 'e9_holdout_cache_fast.jsonl' if FAST else 'e9_holdout_cache.jsonl'); os.makedirs(os.path.dirname(os.path.abspath(cache)), exist_ok=True)
     att = np.load(os.path.join(a0.sing_root, 'misc/embeddings/attribute_embeddings_broden_style_fp16.npz'), allow_pickle=True)
     names = [str(c) for c in att['classes']]; pi = [str(p) for p in att['prompts']].index('mean')
     TA = torch.nn.functional.normalize(torch.tensor(att['embeddings'][:, pi].astype(np.float64)), dim=-1)
@@ -112,7 +118,8 @@ def main():
         d = np.array((kend(mode, 'M1')['per_trial'])) - np.array(kend(mode, 'AS_fair')['per_trial']); b = np.random.default_rng(0)
         bs = [d[b.integers(0, 50, 50)].mean() for _ in range(1000)]; pm[mode] = dict(mean_diff=float(d.mean()), ci95=[float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))])
     res = dict(label='post hoc; E9 remains KILL as pre-registered', candidates=out, M1_minus_ASfair_paired=pm, elapsed_s=elapsed)
-    json.dump(res, open(os.path.join(R, 'results/fix10_e9_holdout.json'), 'w'), indent=1)
+    if FAST: res.update(mode=dict(fast=True, NDRAW=NDRAW, NSUB=NSUB, candidates=ALLC), wall_s_this_invocation=time.time() - t_start)
+    json.dump(res, open(os.path.join(R, 'results/fix10_e9_holdout_fast.json' if FAST else 'results/fix10_e9_holdout.json'), 'w'), indent=1)
     for sc, v in out.items():
         print(f"{sc:8s} lin {v['kendall']['mean']:+.3f} [{v['kendall']['ci95'][0]:+.3f},{v['kendall']['ci95'][1]:+.3f}] nl {v['kendall_nonlinear']['mean']:+.3f} "
               f"flat {v['flatness']['0.1']['n_flat']}/{v['flatness']['1.0']['n_flat']} rev {v['flatness_revised']['0.1']['n_flat']}/{v['flatness_revised']['1.0']['n_flat']} "

@@ -12,3 +12,5 @@ __pycache__/
 e3_feats/
 e3_private/
 r2_private/
+_private/
+paper_workshop/fancyhdr.sty

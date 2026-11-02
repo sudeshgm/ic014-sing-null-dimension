@@ -7,7 +7,8 @@ R = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'); OUT = f'{R}/
 NICE = dict(vgg16='VGG16', vgg19='VGG19', densenet='DenseNet', resnet='ResNet50', dinovit1='DinoViT', efficientnet='EffNet',
             bitresnet='BiT', resnext='ResNeXt', convnext='ConvNeXt', swin_large='Swin-L', dinov2='DINOv2', deit='DeiT3', eva02_large='EVA02')
 rows = lambda p: list(csv.DictReader(open(p)))
-def save(fig, name): fig.tight_layout(); [fig.savefig(f'{OUT}/{name}.{e}', dpi=250) for e in ('pdf', 'png')]; plt.close(fig)
+def save(fig, name):  # no creation date in the PDF, so reruns are byte-identical
+    fig.tight_layout(); fig.savefig(f'{OUT}/{name}.pdf', dpi=250, metadata={'CreationDate': None}); fig.savefig(f'{OUT}/{name}.png', dpi=250); plt.close(fig)
 
 # Fig 1: Exp 0b
 d = json.load(open(f'{R}/exp0b/results/results_top1.json'))
@@ -48,13 +49,14 @@ f2 = {x['model']: x for x in rows(f'{R}/r2/results/fix2_models.csv')}
 dig = json.load(open(f'{R}/e2/results/e2_rankings.json')); order = dig['fig6b_ranking_best_first']; sw = json.load(open(f'{R}/r2/results/fix2345_sweep.json'))['all13']['scores']
 def rank(sc): s = sorted(order, key=lambda m: sc[m]); return {m: s.index(m) + 1 for m in order}
 rs = rank({m: float(f2[m]['AS_SING']) for m in order}); rf = rank({m: float(f2[m]['AS_fair_A']) for m in order}); rg = {m: i + 1 for i, m in enumerate(order)}
-fig, ax = plt.subplots(figsize=(8, 3.1)); x = np.arange(13); w = .27
-for k, (rr, col, lab) in enumerate([(rg, '#bbbbbb', 'SING Supp. Fig. 12b (IS/AS)'), (rs, 'tab:blue', r'AS$_{\rm SING}$'), (rf, 'tab:red', r'AS$_{\rm fair}$ (family A)')]):
-    y = [rr[m] for m in order]; ax.bar(x + (k - 1) * w, y, w, color=col, label=lab)
-    ax.scatter([xi + (k - 1) * w for xi, yi in zip(x, y) if yi == 1], [1] * sum(yi == 1 for yi in y), marker='*', s=60, color='k', zorder=3)
+rp = rank({m: float(f2[m]['rho']) for m in order})
+fig, ax = plt.subplots(figsize=(8, 3.4)); x = np.arange(13); w = .21
+for k, (rr, col, lab) in enumerate([(rg, '#bbbbbb', 'SING Supp. Fig. 12b (IS/AS)'), (rp, 'tab:green', r'$\rho$ alone'), (rs, 'tab:blue', r'AS$_{\rm SING}$'), (rf, 'tab:red', r'AS$_{\rm fair}$ (family A)')]):
+    y = [rr[m] for m in order]; ax.bar(x + (k - 1.5) * w, y, w, color=col, label=lab)
+    ax.scatter([xi + (k - 1.5) * w for xi, yi in zip(x, y) if yi == 1], [1] * sum(yi == 1 for yi in y), marker='*', s=60, color='k', zorder=3)
 ax.set_xticks(x); ax.set_xticklabels([NICE[m] for m in order], rotation=35, ha='right'); ax.set_ylim(13.5, 0); ax.set_yticks([1, 4, 7, 10, 13])
-ax.set_ylabel('rank (1 = least leakage)'); ax.legend(frameon=False, fontsize=8, ncol=3, loc='lower right')
-ax.set_title(rf"E2 ranking vs SING Supp. Fig. 12b ($\tau_{{\rm SING}}={sw['AS_SING']['tau']:.2f}$, $\tau_{{\rm fair}}={sw['N6_AS_fair_A']['tau']:.2f}$; $\star$ = rank 1)", fontsize=10)
+ax.set_ylabel('rank (1 = least leakage)'); ax.legend(frameon=False, fontsize=8, ncol=4, loc='upper center', bbox_to_anchor=(0.5, -0.32))
+ax.set_title(rf"Ranks vs SING Supp. Fig. 12b ($\tau_\rho={sw['rho_alone']['tau']:.2f}$, $\tau_{{\rm SING}}={sw['AS_SING']['tau']:.2f}$, $\tau_{{\rm fair}}={sw['N6_AS_fair_A']['tau']:.2f}$; $\star$ = rank 1)", fontsize=10)
 save(fig, 'fig_e2_ranking')
 fig, axs = plt.subplots(1, 2, figsize=(8, 3)); rho = {m: float(f2[m]['rho']) for m in order}
 for ax, key, col, t in [(axs[0], 'AS_SING', 'tab:blue', r'(a) AS$_{\rm SING}$ rises with $\rho_{\rm null}$'), (axs[1], 'AS_fair_A', 'tab:red', r'(b) AS$_{\rm fair}$ falls with $\rho_{\rm null}$ (over-correction)')]:
@@ -80,3 +82,21 @@ ax.axhline(0, color='gray', lw=.6); ax.axhline(.3, color='gray', ls=':', lw=.8);
 ax.set_ylabel(r'Kendall $\tau$ vs SING'); ax.set_ylim(-1.05, 1.05); ax.legend(frameon=False, fontsize=8, loc='lower left')
 ax.set_title('Normaliser sweep (2000× model bootstrap, 95% CI)', fontsize=10); save(fig, 'fig_r2_normalisers')
 print('figures written to', OUT)
+
+# Fig (round 3): agreement with SING's order under energy controls and interventions (r3/results)
+A3 = json.load(open(f'{R}/r3/results/A_equal_energy.json')); B3 = json.load(open(f'{R}/r3/results/B_leakfree.json')); G3 = json.load(open(f'{R}/r3/results/G_retrain.json'))
+ent = [(r'$\rho$', A3['tau']['E12']['rho'], A3['tau']['S11']['rho']), (r'AS$_{\rm SING}$', A3['tau']['E12']['AS_SING'], A3['tau']['S11']['AS_SING']),
+       (r'$\kappa$', A3['tau']['E12']['kappa'], A3['tau']['S11']['kappa']), ('null norm', A3['tau']['E12']['nusa'], A3['tau']['S11']['nusa']),
+       (r'leak-free AS$_{\rm surr}$', None, B3['tau_AS_surr']['S11']), ('A1 equal energy', A3['tau']['E12']['A1'], A3['tau']['S11']['A1']),
+       ('A2 top PCs', A3['tau']['E12']['A2'], A3['tau']['S11']['A2']), ('A3 random rot.', A3['tau']['E12']['A3'], A3['tau']['S11']['A3']),
+       (r'A4 equal $\kappa$', A3['tau']['E12']['A4'], A3['tau']['S11']['A4']),
+       ('AS, retrained T', G3['tau']['E12']['AS_SING_retrained'], G3['tau']['S11']['AS_SING_retrained']), ('A1, retrained T', G3['tau']['E12']['A1_retrained'], G3['tau']['S11']['A1_retrained'])]
+fig, ax = plt.subplots(figsize=(8, 2.9))
+for i, (lab_, e, s_) in enumerate(ent):
+    for j, (d, col, nm) in enumerate([(e, 'k', 'E12 (12 models)'), (s_, 'tab:orange', 'S11 (screened)')]):
+        if d is None: continue
+        t = d['tau']; ax.errorbar(i + (j - .5) * .3, t, yerr=[[t - d['pct'][0]], [d['pct'][1] - t]], fmt='o', color=col, ms=4, capsize=2, label=nm if i == 0 else None)
+ax.axhline(0, color='gray', lw=.6); ax.axhline(.3, color='gray', ls=':', lw=.8); ax.axhline(.6, color='gray', ls='--', lw=.6); ax.axvline(4.5, color='gray', lw=.5)
+ax.set_xticks(range(len(ent))); ax.set_xticklabels([e[0] for e in ent], fontsize=7.5, rotation=25, ha='right')
+ax.set_ylabel(r'Kendall $\tau$ vs SING'); ax.set_ylim(-1.05, 1.05); ax.legend(frameon=False, fontsize=8, loc='lower left')
+save(fig, 'fig_r3_tau')
