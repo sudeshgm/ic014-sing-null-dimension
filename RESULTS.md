@@ -71,7 +71,7 @@ GO under the pre-registered rule: r ≥ 3 on 3 of the 4 models and τ ≤ 0.5.
 
 ## 6. Round 2 (response to `review_20261101_v1`; criteria in `PREREG_R2.md`)
 All numbers come from `r2/results/`; CIs are 95%. Unless noted, bootstraps resample models (2000×, seed 0), and LOO is leave-one-model-out.
-* **KILL-R did not fire.** Fix 2 and D-weak hold under both random-control families, D-strong does not, so the allowed wording is "differs from", not "reverses".
+* **KILL-R did not fire.** Fix 2 and D-weak hold under both random-control families and D-strong does not, so the allowed wording is "differs from" and "reverses" is ruled out.
 * **Energy explains the published order.** τ vs Supp. Fig. 12b over 13 models: ρ alone 0.821 [0.56, 1]; AS_SING 0.821 [0.56, 1]; M1 (post hoc) 0.667 [0.29, 0.94].
 * **Fix 3, size-fair scores (all 13).** τ for each normaliser:
 
@@ -107,6 +107,6 @@ All numbers come from `r2/results/`; CIs are 95%. Unless noted, bootstraps resam
   | AS_fair (α0-subtracted) | 0.167 [0.113, 0.221] | −0.045 | 0/0 | 0/0 | no |
 
   M1 meets both τ thresholds (τ ≥ 0.8, CI lower ≥ 0.7, nl. τ ≥ 0.6) but is flat on 0/4 models under the registered rule; it passes only under the revised (post-hoc) flatness rule. S10 is the only candidate flat under the registered rule, and its τ is too low. Paired over trials (1000×, seed 0), τ(M1) − τ(AS_fair) = 0.765 [0.714, 0.820] linear and 1.013 [0.959, 1.065] nonlinear. M1 is given the concept score that defines the plant and the AS-family scores are not, so this comparison favours M1 by construction. Runtime 1.95 CPU-h (under the 3 h guard).
-* **Fix 10, E2 under M1 (post hoc, descriptive).** `r2/e2_m1.py` → `fix10_e2_m1.json`. M1 at α=0, full null, mean over SING's 173 concepts. τ vs Supp. Fig. 12b: 0.667 [0.29, 0.94] on all 13 (LOO 0.61–0.79) and 0.600 [0.06, 0.92] screened. Both CIs include AS_SING's 0.821. M1's order tracks ρ: τ 0.79, Spearman 0.90 (screened 0.75, 0.85). So M1 does not give a ranking that differs from SING's.
-* **Fix 13, PC bands.** G = AS/√ρ is larger for bottom-variance null PCs than for top-variance ones. Top/random < 1 on 3 of 4 models at d=24 (ResNet 1.16). Energy-matched size is a confound, not a signal.
+* **Fix 10, E2 under M1 (post hoc, descriptive).** `r2/e2_m1.py` → `fix10_e2_m1.json`. M1 at α=0, full null, mean over SING's 173 concepts. τ vs Supp. Fig. 12b: 0.667 [0.29, 0.94] on all 13 (LOO 0.61–0.79) and 0.600 [0.06, 0.92] screened. Both CIs include AS_SING's 0.821. M1's order tracks ρ: τ 0.79, Spearman 0.90 (screened 0.75, 0.85). M1 therefore does not give a ranking that differs from SING's.
+* **Fix 13, PC bands.** G = AS/√ρ is larger for bottom-variance null PCs than for top-variance ones. Top/random < 1 on 3 of 4 models at d=24 (ResNet 1.16). So energy-matched size acts as a confound rather than as a signal.
 * **Fix 14, translator fidelity (pass).** `fix14_fidelity.json`. Mean cos(T(f), CLIP_img) under SING's `dinovit1` translator, first 1000 subset images, native transforms: timm AugReg (used) 0.848, torchvision IMAGENET1K_V1 0.677, HF google/vit-large-patch16-224 0.631, SWAG linear 0.615, SWAG E2E 0.608. Margin 0.171 ≥ 0.05. The re-extracted AugReg features equal the cached ones exactly. Features from a GPU run on Kaggle (2 × T4); they are ImageNet-derived and not in the repo.
