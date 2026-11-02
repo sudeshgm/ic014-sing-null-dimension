@@ -139,8 +139,9 @@ for k in ['C1/C11', 'C2', 'C3/C6_mean', 'C4', 'C5', 'C6_sd', 'C7', 'C8_porcupine
     vf = 'n/a' if k == 'C7' else VER.get(rf['verdict'], rf['verdict']).replace('\\textbf{rev.}', 'opp.')
     if k == 'C4': vf += '$^{*}$'
     if k == 'C12': vf = 'n.c.$^{\\ddagger}$'
-    if k == 'C6_sd': vf += '$^{\\S}$'
-    body += f'{k.replace("_", " ").replace("C6 mean", "C6m")} & {short[k]} & {eff} & {VER.get(r["verdict"], r["verdict"])} & {vf} \\\\\n'
+    if k == 'C6_sd' and (CLJ['N7_flags'] or not CLJ.get('C6_R4_pass', False)): vf += '$^{\\S}$'
+    vs = VER.get(r["verdict"], r["verdict"]) + ('$^{\\dagger}$' if k == 'C10' else '')
+    body += f'{k.replace("_", " ").replace("C6 mean", "C6m")} & {short[k]} & {eff} & {vs} & {vf} \\\\\n'
 body += 'C13 & EVA02 target-space order & -- & untestable & untestable \\\\\n\\bottomrule\n\\end{tabular}\n'
 write('tab_claims.tex', body)
 t = CLJ['tally_AS_SING']; M2 = {'TallyHolds': len(t['holds']), 'TallyRev': len(t['reverses']), 'TallyContra': len(t['contradicted'])}
@@ -174,7 +175,7 @@ write('tab_pcbands.tex', body + '\\bottomrule\n\\end{tabular}\n')
 k = S['KILL_R']; sw = S['all13']['scores']; scr = S['screened']['scores']
 f4 = S['fix4']; e3 = E3['all8']; fl = FL['synthetic']
 led = [
-    ('Exp~0', 'null size correlates with SING IS/AS', 'GO rests on $\\rho$ (Spearman $-0.94$); $d_{\\mathrm{null}}$ alone $-0.46$, $p{=}0.12$'),
+    ('Exp~0', 'null size correlates with SING IS/AS', 'GO rests on $\\rho$ (Spearman $+0.94$ with the leakage order); $d_{\\mathrm{null}}$ alone $+0.46$, $p{=}0.12$'),
     ('Exp~1', '$r{=}\\mathrm{AS}(1048)/\\mathrm{AS}(24)\\ge3$ on $\\ge3/4$; $\\tau_{d=24}\\le0.5$', f'GO ($r\\approx10$ on 3/4; BiT ${f(X1["bitresnet"]["r_AS1048_over_AS24"], 2)}$; $\\tau{{=}}0.29$)'),
     ('E1', 'high/low $\\ge3\\times$ at fixed $d$; $\\le1.5\\times$ across $d$ at fixed $\\rho$', 'MIXED (first part 4/4; second fails)'),
     ('E2', '$\\tau(\\ASF,\\text{SING})\\le0.5$ or headline claim reverses', 'PASS as registered; weakened in round 2'),
