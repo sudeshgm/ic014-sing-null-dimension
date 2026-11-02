@@ -1,6 +1,6 @@
 # GPU job: a true DINO backbone with a linear head (round 3, not run)
 
-**Why:** the second review (TMLR item 3, fix 8) asks for one genuine DINO model, so the self-supervision question that SING's "DinoViT" label raises can be tested on a model that is actually DINO. SING's own "DinoViT" translator matches a supervised timm AugReg ViT-L/16 (`r3/results/D_fix14_floor.json`). This job needs ImageNet images and a GPU, so it was not run in round 3 (CPU only). It is not pre-registered; if it is run, its reading rule must be written into a new pre-registration first.
+**Why:** the second review (TMLR item 3, fix 8) asks for one genuine DINO model, so the self-supervision question that SING's "DinoViT" label raises can be tested on a model that is actually DINO. SING's own "DinoViT" translator matches a supervised timm AugReg ViT-L/16 (`r3/results/D_fix14_floor.json`). This job needs ImageNet images and a GPU, so it was not run in round 3 (CPU only). It is not pre-registered. If it is run, its reading rule must first be written into a new pre-registration.
 
 ## Models
 - `dino_vitb16` backbone with the official DINO linear-evaluation head (`facebookresearch/dino`, `dino_vitb16_linearweights.pth`, reported 78.2 % top-1). Head input as in the DINO linear eval: last-block CLS token concatenated with the average patch token (2 × 768 = 1536-d). Check the dimension against the head's weight shape before running.
