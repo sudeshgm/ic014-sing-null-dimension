@@ -24,4 +24,4 @@ Compute: CPU only (numpy/scipy/torch-cpu). Only fix 14 needs new feature extract
 Order: prereg commit → fixes 6, 7, 4 (seconds) → 2, 3, 5 (E2 recompute) → kill check → 8 → 9 → 13 → 10 → paper/docs → fix 12 → push.
 
 ## Status (2026-11-01)
-1 done · 2 done (pass) · 3 done (D-weak pass, D-strong fail) · 4 done (trend not removed on screened set) · 5 failed (min adjacent τ < 0.9 for AS_SING and AS_fair) · 6 done · 7 done · 8 done · 9 done (registered rule ill-posed; revised rule) · 10 see `r2/results/fix10_e9_holdout.json` · 11 done · 12 done · 13 done · 14 needs GPU (`gpu_jobs/`). KILL-R did not fire.
+1 done · 2 done (pass) · 3 done (D-weak pass, D-strong fail) · 4 done (trend not removed on screened set) · 5 failed (min adjacent τ < 0.9 for AS_SING and AS_fair) · 6 done · 7 done · 8 done · 9 done (registered rule ill-posed; revised rule) · 10 done (post hoc; no candidate passes as registered; M1 passes τ but only revised flatness; M1 − AS_fair CI > 0; E2 under M1 τ 0.667 [0.29, 0.94]) · 11 done · 12 done · 13 done · 14 done (pass, margin 0.171). KILL-R did not fire. Updated 2026-11-02.

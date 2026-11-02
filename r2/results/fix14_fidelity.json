@@ -1,0 +1,9 @@
+{
+ "cached_dinovit1_first1000 (SING registry transform)": 0.8482378258203344,
+ "hf_google_vit-large-patch16-224": 0.6307834960747182,
+ "timm_vit_large_patch16_224.augreg_in21k_ft_in1k": 0.8482378258203344,
+ "tv_vit_l_16_IMAGENET1K_SWAG_E2E_V1": 0.6085069622701126,
+ "tv_vit_l_16_IMAGENET1K_SWAG_LINEAR_V1": 0.6149498245251106,
+ "tv_vit_l_16_IMAGENET1K_V1": 0.6772326521994569,
+ "_pass": true
+}

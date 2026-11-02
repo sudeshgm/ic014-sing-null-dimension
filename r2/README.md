@@ -10,6 +10,8 @@ Criteria: `../PREREG_R2.md`. Plan: `../ROUND2_PLAN.md`. CPU only; seed 0 unless 
 | `e2_claims_ci.py` | 8 | private `*_r2img.npz` | `fix8_claims_ci.{json,csv}` |
 | `flatness_synth.py` | 9 | private features, E8/E9 results | `fix9_flatness.json` |
 | `e9_holdout.py` | 10 | private features, SING | `fix10_e9_holdout.json` |
+| `holdout_tex.py` | 10 | `results/fix10_e9_holdout.json` | `paper_workshop/holdout_numbers.tex` |
+| `e2_m1.py` | 10 (E2 under M1, post hoc) | `results/fix2_models.csv` (optional cross-check: private `*_r2img.npz`) | `fix10_e2_m1.json` |
 | `pc_bands.py` | 13 | private features, SING | `fix13_pc_bands.json` |
-| `fix14_fidelity.py` | 14 | output of `gpu_jobs/fix14_extract_vitl.py` | `fix14_fidelity.json` (not run) |
+| `fix14_fidelity.py` | 14 | output of `gpu_jobs/fix14_extract_vitl.py` | `fix14_fidelity.json` |
 | `make_figs.py` | 12 | committed results | `paper_workshop/figs/*` |

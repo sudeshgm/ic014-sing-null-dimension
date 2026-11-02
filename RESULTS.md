@@ -93,6 +93,20 @@ All numbers come from `r2/results/`; CIs are 95%. Unless noted, bootstraps resam
 * **Fix 7, symmetric E3.** α0-subtracted: AS_SING 0.386 [0.324, 0.448] and AS_fair 0.109 [0.046, 0.171]. Without DenseNet: 0.343 and 0.135.
 * **Fix 8, claims.** See `fix8_claims_ci.csv`. Under AS_SING, C4 and C8 reverse, C10 is not confirmed, and the rest hold. C12 under AS_fair is not confirmed.
 * **Fix 9, flatness.** The oracle score itself has a max/min ratio of 3.55 (full null) and 3.48 (fixed 24-d), so the registered rule (≤ 1.5) is ill-posed. Under the revised rule (score/oracle ratio ≤ 1.5), only M1 qualifies, at 4/4 and 4/4 with M1/oracle 1.00–1.03. E8 revised: 0/4.
-* **Fix 10, E9 holdout.** `fix10_e9_holdout.json`; see the paper (`paper_workshop/holdout_numbers.tex`).
+* **Fix 10, E9 holdout (post hoc).** `fix10_e9_holdout.json`; water, green, thin, knitted; 50 trials, seed 1; 8 models. No candidate passes the E9 rule as registered, so E9 stays KILL.
+
+  | Score | lin. τ [95% CI] | nl. τ | flat (α 0.1/1) | revised flat | pass |
+  |---|---|---|---|---|---|
+  | M1 | 0.932 [0.914, 0.949] | 0.968 | 0/0 | 4/4 | revised rule only |
+  | M2 | 0.438 [0.388, 0.485] | 0.463 | 0/0 | 0/0 | no |
+  | S9 | 0.454 [0.401, 0.509] | 0.439 | 0/1 | 2/0 | no |
+  | S10 | 0.372 [0.327, 0.417] | 0.518 | 3/4 | 0/0 | no |
+  | M5 (AS/√ρ) | 0.223 [0.175, 0.273] | 0.145 | 0/0 | 0/0 | no |
+  | S4 (AS/ρ) | −0.081 [−0.151, −0.014] | −0.144 | 0/0 | 0/0 | no |
+  | AS_SING (raw) | 0.332 [0.268, 0.399] | 0.362 | 0/0 | 0/0 | no |
+  | AS_fair (α0-subtracted) | 0.167 [0.113, 0.221] | −0.045 | 0/0 | 0/0 | no |
+
+  M1 meets both τ thresholds (τ ≥ 0.8, CI lower ≥ 0.7, nl. τ ≥ 0.6) but is flat on 0/4 models under the registered rule; it passes only under the revised (post-hoc) flatness rule. S10 is the only candidate flat under the registered rule, and its τ is too low. Paired over trials (1000×, seed 0), τ(M1) − τ(AS_fair) = 0.765 [0.714, 0.820] linear and 1.013 [0.959, 1.065] nonlinear. M1 is given the concept score that defines the plant and the AS-family scores are not, so this comparison favours M1 by construction. Runtime 1.95 CPU-h (under the 3 h guard).
+* **Fix 10, E2 under M1 (post hoc, descriptive).** `r2/e2_m1.py` → `fix10_e2_m1.json`. M1 at α=0, full null, mean over SING's 173 concepts. τ vs Supp. Fig. 12b: 0.667 [0.29, 0.94] on all 13 (LOO 0.61–0.79) and 0.600 [0.06, 0.92] screened. Both CIs include AS_SING's 0.821. M1's order tracks ρ: τ 0.79, Spearman 0.90 (screened 0.75, 0.85). So M1 does not give a ranking that differs from SING's.
 * **Fix 13, PC bands.** G = AS/√ρ is larger for bottom-variance null PCs than for top-variance ones. Top/random < 1 on 3 of 4 models at d=24 (ResNet 1.16). Energy-matched size is a confound, not a signal.
-* **Fix 14.** Needs ImageNet images; spec in `gpu_jobs/fix14_vitl_translator_fidelity.md`. Not run.
+* **Fix 14, translator fidelity (pass).** `fix14_fidelity.json`. Mean cos(T(f), CLIP_img) under SING's `dinovit1` translator, first 1000 subset images, native transforms: timm AugReg (used) 0.848, torchvision IMAGENET1K_V1 0.677, HF google/vit-large-patch16-224 0.631, SWAG linear 0.615, SWAG E2E 0.608. Margin 0.171 ≥ 0.05. The re-extracted AugReg features equal the cached ones exactly. Features from a GPU run on Kaggle (2 × T4); they are ImageNet-derived and not in the repo.
