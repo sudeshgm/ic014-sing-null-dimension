@@ -43,9 +43,9 @@ The null energy fraction $\rho$ alone reproduces SING's published order as well 
 Within a model, $|$AS$|$ rises by ${\approx}10\times$ from $d{=}24$ to $d{=}1048$ removed null dimensions on 3 of 4 models; BiT goes the other way ($0.06\times$), which we trace to translator conditioning.
 Across energy and dimension, $|$AS$|\propto\rho^{a}$ with $a\approx0.4$--$0.5$.
 Size-corrected scores give rankings that \emph{differ from} SING's (point $\tau$ between $-0.41$ and $+0.33$ under seven of eight normalisers), but the 95\% model-bootstrap intervals are wide, the energy-matched correction $\ASF$ over-corrects, and model rankings are not stable across null tolerances. We therefore do not claim a reversal.
-No public ViT-L/16 checkpoint consistent with SING's code is a DINO model or matches the reported 84.0\% top-1.
+No public ViT-L/16 checkpoint consistent with SING's code is a DINO model or matches the reported 84.0\% top-1; SING's released DinoViT translator fits the timm AugReg checkpoint best (mean cosine $0.85$ vs.\ ${\le}0.68$ for the other four).
 We also report two pre-registered negative results: a probe-based score (E8) and a 20-candidate score screen (E9) both failed their criteria. A synthetic check then shows that the flatness criterion used in both is ill-posed.
-Under a revised rule, one candidate (debiased null leakage, M1) qualifies post hoc.
+Under a revised rule, one candidate (debiased null leakage, M1) qualifies post hoc. On a post-hoc holdout it recovers planted leakage well ($\tau{=}0.93$ vs.\ $0.17$ for $\ASF$) but still fails the registered rule, and across the 13 models it orders them much as $\rho$ does.
 We recommend reporting $\rho$ next to any cross-model null-space score.
 \vspace{-0.3em}
 \end{abstract}
@@ -70,7 +70,7 @@ If AS mostly tracks how much energy is removed, then a cross-model comparison of
 (1)~$\rho$ alone reproduces SING's 13-model order ($\tau{=}0.82$); AS scales as $\rho^{a}$, $a\approx0.4$--$0.5$ (Exp~1, E1).
 (2)~Size-corrected rankings differ from SING's under most of eight normalisers and three control families, but no correction reverses it with confidence (\S\ref{sec:r2}).
 (3)~Under SING's own score, two of its class-level claims (C4, C8) do not reproduce on our pipeline.
-(4)~The ``DinoViT'' checkpoint cannot be identified as DINO.
+(4)~The ``DinoViT'' checkpoint cannot be identified as DINO, although SING's translator fits the timm AugReg checkpoint best.
 (5)~We report every pre-registered experiment (Table~\ref{tab:prereg}), including two KILLs and the flawed flatness rule behind them.
 
 \begin{table*}[t]
@@ -88,11 +88,11 @@ E1 & ENERGY-DRIVEN: high/low $\ge3\times$ at fixed $d$ and $\le1.5\times$ across
 E2 & $\tau(\ASF,\text{SING})\le0.5$ or $\ge1$ headline claim reverses & PASS as registered; weakened by round-2 tests (\S\ref{sec:r2}) & \S\ref{sec:e2} \\
 E3 & $\tau(\ASF,\text{planted})\ge0.8$ and $\tau(\ASS,\text{planted})\le0.5$ & Not passed ($0.109$ vs $0.386$); KILL condition ($\ASS\ge0.8$) not met & \S\ref{sec:e3} \\
 E8 & NCP probe: $\tau\ge0.8$ and flat ($\max/\min\le1.5$ across $d$); KILL if $\tau<0.6$ & KILL ($\tau{=}{-}0.331$ $[-0.392,-0.273]$; flat 0/4) & \S\ref{sec:e8e9} \\
-E9 & 20-candidate screen: DEV $\tau\ge0.8$ and flat on $\ge3/4$ at $\alpha\in\{0.1,1\}$ & KILL (best M1 $\tau{=}0.976$, flat 0/4); holdout run post hoc & \S\ref{sec:e8e9} \\
+E9 & 20-candidate screen: DEV $\tau\ge0.8$ and flat on $\ge3/4$ at $\alpha\in\{0.1,1\}$ & KILL (best M1 $\tau{=}0.976$, flat 0/4). Post-hoc holdout: no candidate passes as registered; M1 $\tau{=}0.93$, passes only with revised flatness & \S\ref{sec:e8e9} \\
 R2 & KILL-R: drop ``disagrees'' unless fix 2 and D-weak pass on all 13 and screened set & Not fired; ``differs from'' allowed, ``reverses'' not (D-strong fails) & \S\ref{sec:r2} \\
 R2 & Tolerance stability: adjacent-tolerance $\tau\ge0.9$ for every score & FAIL ($\ASF$ $0.87$/$0.82$; $\ASS$ $0.87$ on all 13) & \S\ref{sec:r2} \\
 R2 & Synthetic oracle passes the E8/E9 flatness rule & FAIL (ratio $3.55$ / $3.48$): rule ill-posed & \S\ref{sec:e8e9} \\
-R2 & DinoViT translator fidelity: used checkpoint best by $\ge0.05$ & Not run (needs ImageNet images; GPU job specified) & \S\ref{sec:bg} \\
+R2 & DinoViT translator fidelity: used checkpoint best by $\ge0.05$ & PASS ($0.848$ vs.\ next best $0.677$; margin $0.171$) & \S\ref{sec:bg} \\
 \bottomrule
 \end{tabular}}
 \vspace{-0.4em}
@@ -122,7 +122,7 @@ SWAG E2E (88.07\%)
 and HF \texttt{google/vit-large-patch16-224} (81.98\%).
 None falls in $84.0\pm0.3$ (Fig.~\ref{fig:exp0b}). All five are supervised or SWAG weakly supervised, and DINO never released a ViT-L with a 1000-way head~\citep{dino2021}.
 The checkpoint we use (timm AugReg, the one SING's \texttt{models.yaml} loads) gives mean $\cos(T(f),\mathrm{CLIP})=0.848$ with SING's \texttt{dinovit1} translator.
-Whether another candidate fits that translator better needs ImageNet images. That test is specified as a GPU job (\texttt{gpu\_jobs/fix14\_*}) and has not been run.
+On the first 1000 subset images, re-extracted with each candidate's native transform, the other four give $0.677$ (torchvision IMAGENET1K\_V1), $0.631$ (HF), $0.615$ (SWAG linear) and $0.608$ (SWAG E2E). The used checkpoint is best by $0.171$, above the pre-registered $0.05$ margin. Its re-extracted features match our cached ones exactly. So SING's translator was most likely fit on this timm AugReg model, whatever its label.
 
 \begin{figure}[t]
 \centering
@@ -338,9 +338,11 @@ A revised rule, $\max/\min$ of score$/$oracle $\le1.5$, is passed by M1 in both 
 Re-judged post hoc on the saved DEV values, M1 is revised-flat on 4/4 models at both $\alpha$ and is the only E9 candidate that qualifies. E8's NCP is flat on 0/4. This is exploratory, and E8 and E9 remain KILLs as registered.
 \paragraph{E9 holdout (round 2, post hoc).}
 \HoldoutParagraph
+\HoldoutTable
 \paragraph{M1 on the 13 models (descriptive).}
-At $\alpha{=}0$, averaged over SING's 173 concepts, M1 gives $\tau{=}0.667$ $[0.29,0.94]$ against SING's order.
-Like $\ASS$, it is close to $\rho$'s ranking.
+Because M1 beats $\ASF$ on the holdout, we also rank the 13 models by M1 (post hoc, descriptive; \texttt{r2/e2\_m1.py}).
+At $\alpha{=}0$, on the full null and averaged over SING's 173 concepts, M1 gives $\tau{=}0.667$ $[0.29,0.94]$ against SING's order ($0.600$ $[0.06,0.92]$ on the screened set). Both intervals include $\ASS$'s $0.821$.
+M1's order is close to $\rho$'s ($\tau{=}0.79$, Spearman $0.90$; screened $0.75$, $0.85$). M1 is scaled by total feature energy, not by null size, so this is expected; it gives no ranking that differs from SING's.
 
 \section{Discussion}
 \vspace{-0.2em}
@@ -365,7 +367,7 @@ E1 does not cleanly separate energy from dimension.
 The claim CIs reflect image resampling only.
 Several claims rely on proxies (C1/C2/C11), and C13 is untestable.
 The E9 holdout and the revised flatness rule are post hoc.
-The DinoViT translator-fidelity comparison (\S\ref{sec:bg}) has not been run.
+In the holdout, M1 is given the concept score that defines the plant, and the AS-family scores are not. The translator-fidelity check uses 1000 images.
 We did not retrain translators or evaluate a true DINO model~\citep{dino2021}.
 Nor did we extend the audit to other null-space scores~\citep{vim2022,cook2020,rezaei2023}, or to information-theoretic leakage measures for concept models~\citep{makonnen2025}, which target a different notion of leakage.
 

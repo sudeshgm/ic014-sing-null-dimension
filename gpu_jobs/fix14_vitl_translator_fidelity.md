@@ -33,4 +33,5 @@ python r2/fix14_fidelity.py --feats-root $IC014_FEATS --cand-dir fix14_feats
 - **Reference:** the cached augreg features give 0.8482 on these first 1000 images and 0.8482 on the full 10k, using SING's registry transform. The in-job timm row checks that the native transform reproduces this value.
 
 ## Status
-Not run as of 2026-11-01; ImageNet is not available on the CPU box. The paper reports fix 14 as pending.
+Done 2026-11-02. Step 1 ran as Kaggle hiddenslave/ic014-fix14 v1 (2 × T4; about 1.9 h including downloads); step 2 ran on CPU. Features stay private and are not in the repo.
+Result (`r2/results/fix14_fidelity.json`): timm AugReg 0.848 (equal to the cached reference, and the re-extracted features match the cached ones exactly), torchvision IMAGENET1K_V1 0.677, HF 0.631, SWAG linear 0.615, SWAG E2E 0.608. Margin 0.171 ≥ 0.05: **pass**.
