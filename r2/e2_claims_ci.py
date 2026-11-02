@@ -1,9 +1,13 @@
 """Round-2 fix 8: signed effect sizes with 95% bootstrap CIs for SING's comparative claims (C1-C12), under AS_SING and
 AS_fair-A. Positive effect = SING's direction. Bootstrap: 1000x, seed 0, resample images within class, the same indices
 for every model. Per-image inputs from r2/e2_controls.py (--private dir). Lower score = less leakage.
-Usage: python r2/e2_claims_ci.py --private $IC014_FEATS/r2_private"""
+Round 3 (PREREG_R3.md E; N6, N7): CIs are BCa (acceleration from a delete-one-image jackknife over the 10k subset images
+and the 200 claim-class images); percentile CIs are kept in extra columns. Every point estimate is checked against its
+BCa CI and violations are flagged. Duplicate rows are merged: C1/C11 (Table-1 pool = Fig.-3 pool) and C3/C6-mean (one
+quantity; C6 keeps only the class-SD part). If C1 and C4 coincide numerically (same minimising model) they are counted once.
+Usage: python r2/e2_claims_ci.py [--private _private]"""
 import argparse, os, json, csv, numpy as np
-from scipy.stats import kendalltau, spearmanr
+from scipy.stats import kendalltau, spearmanr, norm
 R = os.path.dirname(os.path.abspath(__file__))
 FIG6B = {'densenet': 70.71, 'dinovit1': 70.16, 'eva02_large': 54.32, 'bitresnet': 47.21, 'convnext': 37.38, 'efficientnet': 36.28,
          'swin_large': 29.18, 'resnet': 24.81, 'vgg16': 24.26, 'vgg19': 19.89, 'dinov2': 16.61, 'resnext': 13.88, 'deit': 9.51}
@@ -11,7 +15,7 @@ FIVE = ['dinovit1', 'resnet', 'resnext', 'efficientnet', 'bitresnet']; TABLE1 = 
 CLS = {'jellyfish': 107, 'porcupine': 334, 'arabian_camel': 354, 'sports_car': 817}; ALL = list(FIG6B)
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--private', required=True); ap.add_argument('--boot', type=int, default=1000); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument('--private', default=os.environ.get('IC014_PRIVATE', os.path.join(R, '..', '_private'))); ap.add_argument('--boot', type=int, default=1000); a = ap.parse_args()
     D = {m: dict(np.load(os.path.join(a.private, f'{m}_r2img.npz'))) for m in ALL}
     y = D['resnet']['y']; yc = D['resnet']['yc']
     assert all((D[m]['y'] == y).all() and (D[m]['yc'] == yc).all() for m in ALL)
@@ -44,34 +48,59 @@ def main():
     for _ in range(a.boot):
         ix = np.concatenate([g[rng.integers(0, len(g), len(g))] for g in groups if len(g)])
         ixc = {c: g[rng.integers(0, len(g), len(g))] for c, g in cg.items()}; B.append(stats(ix, ixc))
-    out = {}
+    # delete-one-image jackknife for the BCa acceleration
+    full = np.arange(len(y)); J = []
+    for i in range(len(y)): J.append(stats(np.delete(full, i), cg))
+    for c, g in cg.items():
+        for t in range(len(g)): J.append(stats(full, {**cg, c: np.delete(g, t)}))
+    def bca(theta, arr, jack):
+        arr = arr[np.isfinite(arr)]; jack = jack[np.isfinite(jack)]
+        if np.ptp(arr) == 0: return [float(arr[0]), float(arr[0])]
+        p = np.mean(arr < theta) + 0.5 * np.mean(arr == theta); p = min(max(p, 1 / (len(arr) + 1)), 1 - 1 / (len(arr) + 1))
+        z0 = norm.ppf(p); jm = jack.mean(); den = 6 * np.sum((jm - jack) ** 2) ** 1.5; acc = np.sum((jm - jack) ** 3) / den if den > 0 else 0.0
+        q = [norm.cdf(z0 + (z0 + z) / (1 - acc * (z0 + z))) for z in (norm.ppf(.025), norm.ppf(.975))]
+        return [float(np.percentile(arr, 100 * q[0])), float(np.percentile(arr, 100 * q[1]))]
+    out = {}; flags = []
     def verdict(lo, hi, nocorr=False):
         if nocorr: return 'holds' if lo <= 0 <= hi else 'contradicted'
         return 'holds' if lo > 0 else ('reverses' if hi < 0 else 'not confirmed')
+    MERGE = {'C1': 'C1/C11', 'C3': 'C3/C6_mean'}; DROP = {'C11', 'C6_mean'}
     for k in ['AS_SING', 'AS_fair']:
         out[k] = {}
         for e, v in point[k].items():
-            arr = np.array([b[k][e] for b in B]); lo, hi = np.nanpercentile(arr, [2.5, 97.5])
-            out[k][e] = dict(effect=v, ci95=[float(lo), float(hi)], verdict=verdict(lo, hi, e == 'C9_spearman'))
-        c6 = [out[k]['C6_mean']['verdict'], out[k]['C6_sd']['verdict']]
-        out[k]['C6'] = dict(verdict=c6[0] if c6[0] == c6[1] else 'not confirmed (mean and SD disagree)')
+            if e in DROP: continue
+            arr = np.array([b[k][e] for b in B]); jk = np.array([j[k][e] for j in J])
+            plo, phi = np.nanpercentile(arr, [2.5, 97.5]); lo, hi = bca(v, arr, jk)
+            inside = bool(lo - 1e-12 <= v <= hi + 1e-12)
+            if not inside: flags.append(f'{k}:{e} point {v:.4g} outside BCa [{lo:.4g},{hi:.4g}]')
+            out[k][MERGE.get(e, e)] = dict(effect=v, ci95=[lo, hi], ci95_percentile=[float(plo), float(phi)], point_in_ci=inside,
+                                           verdict=verdict(lo, hi, e == 'C9_spearman'))
+        out[k]['C6'] = dict(verdict=out[k]['C6_sd']['verdict'], note='C6 = class-SD part only; the class-mean part is C3')
         c8 = [out[k]['C8_porcupine']['verdict'], out[k]['C8_sports_car']['verdict']]
         out[k]['C8'] = dict(verdict='reverses' if 'reverses' in c8 else ('holds' if all(x == 'holds' for x in c8) else 'not confirmed'),
                             flag='possible re-implementation discrepancy (fails under both scores in E2)')
         out[k]['C10']['flag'] = 'possible re-implementation discrepancy (fails under both scores in E2)'
+        if abs(point[k]['C1'] - point[k]['C4']) < 1e-9:
+            out[k]['C4']['footnote'] = 'numerically identical to C1/C11 (the same model attains both minima); counted once'
     out['AS_fair']['C7'] = dict(verdict='N/A (AS_fair is unitless)')
     out['C13'] = 'untestable (no EVA02-space translators released)'; out['C14'] = 'untestable / not a comparative leakage claim'
     for k in ['AS_SING', 'AS_fair']:
-        out[f'n_reverses_{k}'] = sorted(e for e, v in out[k].items() if isinstance(v, dict) and v.get('verdict') == 'reverses' and not e.startswith(('C6_', 'C8_')))
+        rows = {e: v for e, v in out[k].items() if isinstance(v, dict) and 'verdict' in v and not e.startswith(('C6_', 'C8_'))
+                and 'footnote' not in v}
+        out[f'tally_{k}'] = {vd: sorted(e for e, v in rows.items() if v['verdict'] == vd) for vd in sorted({v['verdict'] for v in rows.values()})}
+        out[f'n_reverses_{k}'] = out[f'tally_{k}'].get('reverses', [])
+    out['N7_flags'] = flags; out['N7_pass'] = not flags; out['jackknife_n'] = len(J)
     json.dump(out, open(os.path.join(R, 'results/fix8_claims_ci.json'), 'w'), indent=1)
     with open(os.path.join(R, 'results/fix8_claims_ci.csv'), 'w', newline='') as fh:
-        w = csv.writer(fh); w.writerow(['score', 'effect_id', 'effect', 'ci_lo', 'ci_hi', 'verdict'])
+        w = csv.writer(fh); w.writerow(['score', 'effect_id', 'effect', 'ci_lo_bca', 'ci_hi_bca', 'ci_lo_pct', 'ci_hi_pct', 'verdict', 'note'])
         for k in ['AS_SING', 'AS_fair']:
             for e, v in out[k].items():
-                if 'effect' in v: w.writerow([k, e, v['effect'], *v['ci95'], v['verdict']])
-                else: w.writerow([k, e, '', '', '', v['verdict']])
+                note = v.get('footnote', v.get('note', ''))
+                if 'effect' in v: w.writerow([k, e, v['effect'], *v['ci95'], *v['ci95_percentile'], v['verdict'], note])
+                else: w.writerow([k, e, '', '', '', '', '', v['verdict'], note])
     for k in ['AS_SING', 'AS_fair']:
-        print(k); [print(f"  {e:16s}", (f"{v['effect']:+.3f} [{v['ci95'][0]:+.3f},{v['ci95'][1]:+.3f}] " if 'effect' in v else ''), v['verdict']) for e, v in out[k].items()]
-        print('  reversals:', out[f'n_reverses_{k}'])
+        print(k); [print(f"  {e:16s}", (f"{v['effect']:+.3f} BCa[{v['ci95'][0]:+.3f},{v['ci95'][1]:+.3f}] " if 'effect' in v else ''), v['verdict'], v.get('footnote', '')) for e, v in out[k].items()]
+        print('  tally:', out[f'tally_{k}'])
+    print('N7 flags:', flags)
 
 if __name__ == '__main__': main()
