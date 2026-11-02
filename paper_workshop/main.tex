@@ -35,9 +35,9 @@
 SING~\citep{sing2026} ranks 13 ImageNet classifiers by how much class semantics ``leak'' into the null space of their linear heads, measured by the angular shift (AS) of a CLIP-aligned translation when the null component is removed.
 We audit this ranking.
 The fraction of feature energy in the null space, $\rho$, reproduces SING's published order as well as SING's own score does (Kendall $\tau{=}\NTauRho$ for both; paired difference 95\% CI $\NPairedDiffCI$), and each keeps a partial association with the order given the other ($\tau{=}\NPartialKendall$ both ways). SING's ranking is therefore indistinguishable from a null-energy ranking.
-Interventions show that AS has a path from null energy to the score that carries no image-specific content, but they cannot separate null energy from real null content as the source of the agreement.
-Replacing each model's null coordinates with content-free surrogates of the same energy reproduces SING's order (point $\tau$ $\QSurrLo$--$\QSurrHi$ on all 13 models, depending on the surrogate), and so does the excess of real over surrogate AS ($\tau{=}\QSDpermA$); the data cannot apportion the order between the two.
-Removing an equal share of null energy from every model, which amounts to AS per unit null energy, loses the agreement with SING's released translators ($\tau{=}{\NTauAoneE}$ and $\NTauAoneS$ on two model sets; $\QLtoRelS$ on the second set without two models) but keeps it with retrained ridge translators ($\tau{=}\QAoneRetE$ and $\QAoneRetS$), the level our earlier pre-registered rule set to reject the energy reading.
+Our interventions show that AS has a path from null energy to the score that carries no image-specific content. They cannot, however, separate null energy from real null content as the source of the agreement.
+Replacing each model's null coordinates with content-free surrogates of the same energy reproduces SING's order (point $\tau$ $\QSurrLo$--$\QSurrHi$ on all 13 models, depending on the surrogate), and so does the excess of real over surrogate AS ($\tau{=}\QSDpermA$). The data cannot apportion the order between the two.
+Removing an equal share of null energy from every model amounts to measuring AS per unit null energy. With SING's released translators this loses the agreement ($\tau{=}{\NTauAoneE}$ and $\NTauAoneS$ on two model sets; $\QLtoRelS$ on the second set without two models). With retrained ridge translators it keeps it ($\tau{=}\QAoneRetE$ and $\QAoneRetS$), at the level our earlier pre-registered rule set to reject the energy reading.
 Shuffling class means across classes in the null space, which preserves energy exactly, keeps the agreement ($\tau{=}\QCpRelE$), which leans toward energy, but the class-aligned part has the stronger association given $\rho$.
 No estimator we tested, including two translator-free ones, recovers known content in semi-synthetic calibration worlds.
 Two true DINO backbones rank 8th and 9th of 15 by AS, not lowest, and SING's ``DinoViT'' translator matches a supervised timm ViT-L/16 checkpoint.
@@ -132,7 +132,7 @@ The paired bootstrap difference $\tau(\rho)-\tau(\ASS)$ is $0.00$ with 95\% CI $
 Both agreements are far from chance (permutation $p{=}\NPermP$ for each, the smallest value 20000 permutations can give).
 $\rho$ and $\ASS$ agree with each other at $\tau{=}\NTauRhoAS$ (Spearman $\NSpRhoAS$).
 Each keeps a partial association with SING's order given the other: partial Kendall $\tau{=}\NPartialKendall$ both ways, and partial Spearman $\NPartialSpAS$ for $\ASS$ given $\rho$ and $\NPartialSpRho$ for $\rho$ given $\ASS$.
-So the data cannot tell the two predictors apart, and $\rho$ does not make $\ASS$ redundant.
+The data therefore cannot tell the two predictors apart, and $\rho$ does not make $\ASS$ redundant.
 Null dimension alone is a weak predictor (Spearman $+0.46$ with the leakage order, $p{=}0.12$): DeiT3-L~\citep{deit3} has $d_{\mathrm{null}}{=}24$ yet the worst ratio.
 A NuSA-style null norm, $\mathbb{E}_i\|\Pi f_i\|/\|f_i\|$, in the spirit of \citet{cook2020}, is an energy proxy rather than a second leakage score: it orders the models almost as $\rho$ does ($\tau{=}\NTauNusaRho$) and agrees with SING at $\tau{=}\NTauNusaAll$.
 
@@ -161,7 +161,7 @@ Agreement between $\rho$ and SING's order does not show that energy drives AS ac
 Energy could instead \emph{mediate} genuine leakage, if models with more null energy also hold more class content there.
 We ran four interventions in round 3 and further tests in round 4, all pre-registered (Tables~\ref{tab:tau} and~\ref{tab:r4}, Fig.~\ref{fig:tau}).
 None of them separates the two readings.
-Together they show that AS has a content-free path from null energy to the score, and that the data cannot apportion SING's order between null energy and null content.
+They do show that AS has a content-free path from null energy to the score. They also show that the data cannot apportion SING's order between null energy and null content.
 We read a $\tau$ of $0.6$ or more as tracking and $|\tau|<0.3$ as not reproducing the order; with 13 models, most CIs are wide, so we treat point estimates between the bars as inconclusive.
 
 \begin{table}[t]
@@ -196,14 +196,14 @@ The pre-registered outcome was \textsc{energy-accounts} if $\tau(\text{A1})<0.3$
 For a small removal, the translated shift is close to linear in the removed component, so A1 $\approx\beta\,\ASS=\ASS\sqrt{\rho_0/\rho}$: A1 is, to first order, AS per unit null amplitude.
 The data agree: A1 and $\ASS/\sqrt\rho$ give nearly the same order ($\tau{=}\QAoneNormTauE$ on E12 and $\QAoneNormTauS$ on S11; Spearman $\QAoneNormSpE$ and $\QAoneNormSpS$), and A1 and $\ASS/\rho^{\hat a}$ give $\tau{=}\QAoneAhatTauE$ and $\QAoneAhatTauS$.
 The first-order ratio A1$/(\beta\ASS)$ runs from $0.36$ (DeiT3-L) to $1.00$ (DinoViT).
-A1 therefore asks whether AS \emph{per unit null energy} tracks SING's order, not whether energy causes AS.
+The question A1 answers is therefore whether AS \emph{per unit null energy} tracks SING's order. Whether energy causes AS is a separate question.
 
 \paragraph{Result.} With the released translators, AS per unit energy does not track SING: $\tau{=}{\NTauAoneE}$ $\NTauAoneECI$ on E12 and $\NTauAoneS$ $\NTauAoneSCI$ on S11.
 The paired drop from $\ASS$ has CI $\NPairAoneECI$ (BCa $\NPairAoneEBCa$) on E12 and $\NPairAoneSCI$ on S11, which meets the pre-registered \textsc{energy-accounts} criterion.
 Taking the energy from top PCs ($\NTauAtwoE$) or random directions ($\NTauAthreeE$) gives the same picture.
 The result rests on few models.
-Delete-one jackknife values of $\tau$(A1) span $\QJackRelE$ on E12 and $\QJackRelS$ on S11, but dropping DinoViT and EVA02 together gives $\QLtoRelE$ on E12 and $\QLtoRelS$ on S11. The S11 value reaches the level ($\ge0.6$) that our round-3 kill rule set for the energy reading; it is the only one of the 55 leave-two-out subsets of S11 that does.
-Matching CLIP-space energy instead (A4: $\NTauAfourE$ and $\NTauAfourS$) gives the same result with the released translators only; with our ridge translators A4 gives $\QAfourRetE$ and $\QAfourRetS$ (\S\ref{sec:retrain}).
+Delete-one jackknife values of $\tau$(A1) span $\QJackRelE$ on E12 and $\QJackRelS$ on S11, but dropping DinoViT and EVA02 together gives $\QLtoRelE$ on E12 and $\QLtoRelS$ on S11. The S11 value reaches the level ($\ge0.6$) that our round-3 kill rule set for the energy reading, and no other of the 55 leave-two-out subsets of S11 does.
+Matching CLIP-space energy instead (A4: $\NTauAfourE$ and $\NTauAfourS$) gives the same result, but only with the released translators. With our ridge translators A4 gives $\QAfourRetE$ and $\QAfourRetS$ (\S\ref{sec:retrain}).
 We therefore do not use A1 or A4 as evidence about the cause of the order.
 The A1 scores still differ across models by a factor of six (Table~\ref{tab:models}), so equalising energy changes their order without making them equal.
 
@@ -223,13 +223,13 @@ We then optionally plant a concept direction with strength $\alpha\in\{0,0.1,0.3
 The pre-registered test (from the second review) required that, at $\alpha{=}0$, AS rise with $\rho_t$ with Spearman ${\ge}0.8$ and that the log-log slope CI exclude 0, on all three models.
 
 \paragraph{Result.} The test passes on all three models (Spearman $1$; slopes $\NSlopeMin$--$\NSlopeMax$, all CIs far from 0; Table~\ref{tab:leakfree} in Appendix~\ref{app:tables}).
-AS therefore grows with null energy that carries no image-specific content: it has a content-free path from null energy to the score.
+AS therefore grows with null energy that carries no image-specific content, which gives it a content-free path from null energy to the score.
 
 \paragraph{Planted content.}
 Planted content raises AS at fixed energy, by $\times\NPlantOneMin$--$\NPlantOneMax$ at $\alpha{=}0.1$ and $\times\NPlantThreeMin$--$\NPlantThreeMax$ at $\alpha{=}0.3$ ($\rho_t{=}0.2$), and by $\times\QPlantOwnMin$--$\QPlantOwnMax$ at $\alpha{=}0.3$ when each model keeps its own $\rho$ (Table~\ref{tab:planted} in Appendix~\ref{app:tables}; DINOv2-L $\times\QPlantOwnDinoThree$).
 Across the interquartile range of $\rho$ over the 12 models ($\QRhoQlo$ to $\QRhoQhi$), the energy law moves AS by $r_E{=}\QREMin$--$\QREMax\times$ on these three models.
 The planted strength that would move AS as much, $\alpha^*$, is therefore above $0.3$, the largest strength we tested, on all three models.
-AS does respond to null content at fixed energy, but within the tested range content moves it less than the observed spread of energy does.
+So AS does respond to null content at fixed energy. Within the tested range, though, content moves it less than the observed spread of energy does.
 
 \paragraph{Leak-free scores and the content excess.}
 On all 13 models, replacing each model's null content with its own leak-free surrogate, at its own energy and covariance, gives $\ASsurr$ with $\tau{=}\NTauSurr$ $\NTauSurrCI$ against SING ($\NTauSurrS$ on S11) and Spearman $\NSpSurrAS$ with $\ASS$.
@@ -274,13 +274,13 @@ Read against the round-3 rule (a kill of the energy reading if $\tau(\mathrm{A1}
 The paired CI of $\tau(\ASS)-\tau(\mathrm{A1})$ covers 0 ($\QPairRetECI$ on E12, $\QPairRetSCI$ on S11).
 Leaving out any two models keeps it at $\QLtoRetMinE$ or more on E12 and $\QLtoRetMinS$ or more on S11.
 Released and retrained A1 order the models almost independently ($\tau{=}\QAoneRelRetE$ on E12).
-Retrained A1 spans a narrow range ($\QAoneRetRangeLo$--$\QAoneRetRangeHi^\circ$, against $\QAoneRelRangeLo$--$\QAoneRelRangeHi^\circ$ released) and follows $\rho$ ($\tau{=}\QAoneRetRhoE$ and $\QAoneRetRhoS$); given $\rho$, its partial Spearman with the order is $\QPartAoneRetE$ (E12) and $\QPartAoneRetS$ (S11).
+Retrained A1 spans a narrow range ($\QAoneRetRangeLo$--$\QAoneRetRangeHi^\circ$, against $\QAoneRelRangeLo$--$\QAoneRelRangeHi^\circ$ released) and follows $\rho$ ($\tau{=}\QAoneRetRhoE$ and $\QAoneRetRhoS$). Given $\rho$, its partial Spearman with the order is $\QPartAoneRetE$ (E12) and $\QPartAoneRetS$ (S11).
 With these translators, matched CLIP-space energy (A4) gives $\QAfourRetE$ $\QAfourRetECI$ and $\QAfourRetS$, between our bars, and $\kappa$ itself tracks the order ($\QKappaRetE$, $\QKappaRetS$).
 The pre-registered penalty grid put every model at its upper edge, so we extended the grid post hoc ($10^{3}$--$10^{6}$).
 Over the combined grid the chosen penalties are interior: $10^4$ for VGG16, VGG19 and DenseNet, and $10^3$, the value already used, for the other ten models.
-With these penalties A1 gives $\NPhAoneE$ $\NPhAoneECI$ on E12 and $\NPhAoneS$ on S11; the drop from $\NTauRetrAoneE$ comes from re-fitting just the two VGG models, so this number is fragile.
+With these penalties A1 gives $\NPhAoneE$ $\NPhAoneECI$ on E12 and $\NPhAoneS$ on S11. The drop from $\NTauRetrAoneE$ comes from re-fitting just the two VGG models, so this number is fragile.
 Forcing heavier regularisation on every model ($10^6$) raises it to about $\NPhAoneHeavy$.
-Whether AS per unit energy tracks SING's order therefore depends on how the translator is fit: it does not with the released translators and does with ours.
+Whether AS per unit energy tracks SING's order therefore depends on how the translator is fit. It does not with the released translators, and it does with ours.
 We do not know which translator better reflects null semantics, so neither result decides between the two readings.
 
 \subsection{Are high-energy null directions more semantic?}
@@ -313,12 +313,12 @@ The energy exponents in worlds C and M run from $\QCalAMin$ to $\QCalAMax$, agai
 \item \emph{Null zero-shot accuracy} NZS: zero-shot classification from the translated null part alone, minus a permuted control. It passes its validity gate (no change under rescaling of $\Pi f$; $\tau{=}1$ with planted content on all three bases), but it is not energy-free ($\tau(\cdot,\rho){=}\QNzsRhoE$ and $\QNzsRhoS$), and against SING it gives $\QNzsE$ $\QNzsECI$ (E12) and $\QNzsS$ (S11): inconclusive.
 \item \emph{Selectivity} $R$: AS after removing the top-20 between-class null directions (estimated on held-out images) over AS after removing the same energy at random. Within each model $R$ differs from 1 (CI excludes 1 on $\QSelExcl$ of 12 models), but in both directions ($\QSelAbove$ above 1, $\QSelBelow$ below). Across models it does not reproduce the order ($\tau{=}\QSeltwentyE$ and $\QSeltwentyS$; $k{=}5$ and $50$ give the same).
 \end{itemize}
-None of these scores tracks SING's order, and none is both energy-free and validated, so we propose no replacement score.
+None of these scores tracks SING's order. None is both energy-free and validated, so we propose no replacement score.
 
 \subsection{How AS grows with energy}
 \label{sec:geom}
 \paragraph{Decomposition.} Split the removed translated null component $\delta=A\Pi f$ into its part in the plane of $T(f)$ and the class text $t$ and the orthogonal, out-of-plane part.
-The out-of-plane part changes the angle to $t$ only at second order, by $\tfrac12\cot\theta\,\|\delta_{\mathrm{oop}}\|^2/\|T(f)\|^2$, and it does so whatever direction $\delta_{\mathrm{oop}}$ has, so it is blind to the class text.
+The out-of-plane part changes the angle to $t$ only at second order, by $\tfrac12\cot\theta\,\|\delta_{\mathrm{oop}}\|^2/\|T(f)\|^2$. It does so whatever direction $\delta_{\mathrm{oop}}$ has, so it is blind to the class text.
 If the translator's squared gain per null PC scales with the PC's variance as $\lambda^{s}$, a first-order argument predicts the energy exponent $a_{\mathrm{pred}}=(1+s)/2$.
 
 \paragraph{Confirmatory tests.}
@@ -336,10 +336,10 @@ SING's invariant-space shift IS is not a proxy for row-space energy: $\tau(\math
 
 \subsection{What the interventions show}
 Energy and SING's score cannot be separated by their agreement with SING's order (\S\ref{sec:energy}).
-AS has a content-free energy path: it grows with surrogate null content of no image-specific content, and the out-of-plane mechanism explains how.
-Content-free surrogates at each model's energy reproduce the order, and so does the content excess; the data cannot apportion the order between the two.
+AS has a content-free energy path. It grows with surrogate null content that has no image-specific content, and the out-of-plane mechanism explains how.
+Content-free surrogates at each model's energy reproduce the order, and so does the content excess. The data cannot apportion the order between the two.
 AS per unit energy loses the agreement with the released translators and keeps it with ours.
-Shuffling class means keeps the agreement, which leans toward energy, but no estimator we tested is content-diagnostic in calibration, so this cannot settle the question.
+Shuffling class means keeps the agreement, which leans toward energy. No estimator we tested is content-diagnostic in calibration, though, so this cannot settle the question.
 AS responds to planted content at fixed energy, so these results do not show that AS carries no leakage signal.
 
 \section{The DinoViT checkpoint}
@@ -363,8 +363,8 @@ Their 50k top-1 is $\QDinoBTop\%$, $\QDinoSTop\%$ and $\QAugRegTop\%$ (the DINO 
 Each DINO head leaves a null space of dimension $\QDinoBDnull$ ($\rho{=}\QDinoBRho$ and $\QDinoSRho$); the AugReg head has none.
 There is no released SING translator for these models, so we use ridge translators fit as in \S\ref{sec:retrain} (fidelity $\QDinoBFid$ and $\QDinoSFid$) and compare with the 13 models under their ridge translators.
 AS is $\QDinoBAS^\circ$ (ViT-B/16) and $\QDinoSAS^\circ$ (ViT-S/16), ranks $\QDinoBRank$ and $\QDinoSRank$ of 15 (median of the 13: $\QDinoMedian^\circ$).
-So true DINO models do not leak least by SING's measure, which is inconsistent with SING's account of self-supervision (pre-registered Q-DN1).
-Against the energy law fitted on E12, ViT-B/16 lies inside the 95\% prediction interval ($\QDinoBPI$, predicted $\QDinoBPred$) and ViT-S/16 lies just below it ($\QDinoSPI$, predicted $\QDinoSPred$): a mixed result (Q-DN2).
+By SING's measure, true DINO models do not leak least. This is inconsistent with SING's account of self-supervision (pre-registered Q-DN1).
+Against the energy law fitted on E12, ViT-B/16 lies inside the 95\% prediction interval ($\QDinoBPI$, predicted $\QDinoBPred$) and ViT-S/16 lies just below it ($\QDinoSPI$, predicted $\QDinoSPred$), so we rate this as mixed (Q-DN2).
 For $\Delta_{\mathrm{align}}$ and NCM$_{\mathrm{null}}$, both models fall inside the prediction intervals from $\rho$, and neither is among the four lowest-leakage models ($\Delta_{\mathrm{align}}$ ranks $\QDinoBDalRank$ and $\QDinoSDalRank$, NCM$_{\mathrm{null}}$ ranks $\QDinoBNCMRank$ and $\QDinoSNCMRank$).
 
 \begin{table}[t]
@@ -433,7 +433,7 @@ Models trained further into that regime, or with heads fit differently, would ha
 We have not tested this.
 
 \paragraph{Relation to other work.}
-Our negative controls follow a familiar pattern.
+Similar negative controls appear in other areas.
 Saliency maps that survive model and data randomisation fail as explanations~\citep{adebayo2018sanity}, attention weights need adversarial and random baselines before they can be read as explanation~\citep{wiegreffe2019attention}, and apparent emergent abilities can be an artefact of the metric rather than the model~\citep{schaeffer2023mirage}.
 Our surrogates are the null-space analogue of the surrogate-data test~\citep{theiler1992surrogate}: replace the content while keeping the second moments, and see whether the statistic changes.
 \citet{cui2022deconfounded} regress a confound out of representation-similarity scores such as RSA and CKA. \citet{groger2026aristotelian} show that representational similarity metrics are confounded by model scale, calibrate them with permutation nulls, and find that global convergence largely disappears while local neighbourhood similarity survives, a mixed picture of the same shape as ours. Both argue, as we do, that a cross-model score needs a baseline for a nuisance variable before it is read as a property of the models.
@@ -473,7 +473,7 @@ We did not evaluate information-theoretic leakage measures for concept models~\c
 
 \section{Conclusion}
 Using SING's code and released translators, we reproduce its 13-model ranking, and the null energy fraction $\rho$ reproduces it equally well.
-AS has a content-free path from null energy to the score, and image-independent null content with each model's own energy reproduces the order.
+A content-free path connects null energy to AS, and image-independent null content with each model's own energy reproduces the order.
 The content excess reproduces it too, and AS per unit energy tracks the order with retrained translators but not with the released ones, so the data cannot separate null energy from real null content as the source of the order.
 SING's ``DinoViT'' translator matches a supervised timm checkpoint, and true DINO backbones fall mid-table.
 Size-corrected scores change the order without reversing it with confidence.
@@ -627,7 +627,7 @@ The best was M1, a debiased null-leakage estimate $\hat L^2=(\|\sum_iPf_is_i\|^2
 It reached $\tau{=}0.976$ $[0.963,0.988]$ but was flat on 0/4 models.
 
 \paragraph{The flatness rule is ill-posed.}
-We tested the rule on synthetic Gaussian features with a known head ($m{=}400$, $d_{\mathrm{null}}{=}300$). An exact oracle, the planted amplitude inside the removed subspace, fails it with $\max/\min$ $3.55$ and $3.48$ ($\approx\sqrt{300/24}$), because a larger removed subspace contains more of the plant.
+We tested the rule on synthetic Gaussian features with a known head ($m{=}400$, $d_{\mathrm{null}}{=}300$). Our exact oracle is the planted amplitude inside the removed subspace. It fails the rule with $\max/\min$ $3.55$ and $3.48$ ($\approx\sqrt{300/24}$), because a larger removed subspace contains more of the plant.
 A revised rule ($\max/\min$ of score$/$oracle $\le1.5$, post hoc) is passed by M1 (ratios $1.00$--$1.03$).
 Under the revised rule M1 is flat on 4/4 models, and E8's score on 0/4.
 E8 and E9 remain killed as registered.
