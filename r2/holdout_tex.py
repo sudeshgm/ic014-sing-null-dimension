@@ -44,7 +44,7 @@ def main():
         fo, fr = C['S10']['flatness'], C['S10']['flatness_revised']
         s += (f"The revised rule also changes which candidate counts as flat: S10, the only candidate flat under the registered rule "
               f"({fo['0.1']['n_flat']}/4 and {fo['1.0']['n_flat']}/4 models at $\\alpha{{=}}0.1/1$), is flat on {fr['0.1']['n_flat']}/4 and {fr['1.0']['n_flat']}/4 under the revised one. ")
-    s += (r"The plant is written along the null projection that M1 itself measures, and M1 is given the concept score that defines the plant, while the AS-family scores are not, so this comparison favours M1 by construction. "
+    s += (r"The plant is written along the null projection that M1 itself measures, and M1, unlike the AS-family scores, is given the concept score that defines the plant. This comparison therefore favours M1 by construction. "
           r"One of the four held-out concepts, water, was also an E3 plant concept whose results we had seen before choosing the holdout set; its inclusion was pre-registered, but the set is not fully unseen. "
           r"M1 was picked after the DEV results and the flatness rule was revised after the oracle test, so this holdout is post hoc. "
           r"E9 stays a KILL as registered, and M1 is a candidate for a future pre-registered test, not a validated score.")
