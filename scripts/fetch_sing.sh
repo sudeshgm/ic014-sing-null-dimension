@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Clone SING's released code at the commit used in this audit.
 set -euo pipefail
-DEST="${1:-/tmp/sing}"
+DEST="${1:-${SING_ROOT:-$(cd "$(dirname "$0")/.." && pwd)/_ext/sing}}"
 if [ ! -d "$DEST/.git" ]; then
   git clone https://github.com/harel314/SING-analyzing-semantic-invariants-classifiers "$DEST"
 fi

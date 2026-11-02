@@ -2,7 +2,8 @@
 # make reproduce-full  : rerun the feature-level analyses (needs private ImageNet features in $(IC014_FEATS))
 PY ?= python3
 IC014_FEATS ?= /workspace/gpubot/ic014
-SING ?= /tmp/sing
+SING_ROOT ?= $(CURDIR)/_ext/sing
+SING ?= $(SING_ROOT)
 
 .PHONY: reproduce reproduce-full paper sing verify-feats
 

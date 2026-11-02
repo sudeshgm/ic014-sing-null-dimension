@@ -18,7 +18,7 @@ def ang(a, b):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('feats'); ap.add_argument('out')
-    ap.add_argument('--sing-root', default='/tmp/sing'); ap.add_argument('--boot', type=int, default=1000)
+    ap.add_argument('--sing-root', default=os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing'))); ap.add_argument('--boot', type=int, default=1000)
     ap.add_argument('--seeds', type=int, default=20); ap.add_argument('--models', nargs='*', default=MODELS)
     a = ap.parse_args(); os.makedirs(a.out, exist_ok=True)
     emb = np.load(os.path.join(a.sing_root, 'misc/embeddings/imagenet_text_embeddings_fp16.npz'), allow_pickle=True)

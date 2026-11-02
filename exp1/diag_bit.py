@@ -1,7 +1,8 @@
 """CPU diagnosis of the BiT full-null vs random-subspace AS anomaly, on 100 Imagenette-160 val images (no ImageNet-scale work).
 Same code path as run_exp1_gpu.py (sing load_model / translator / projectors)."""
 import sys, os, glob, json, numpy as np, torch
-sys.path.insert(0, '/tmp/sing/src')
+SING_ROOT = os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing'))
+sys.path.insert(0, os.path.join(SING_ROOT, 'src'))
 from PIL import Image
 from sing.models.registry import load_model
 from sing.translators.registry import load_default_translator
@@ -11,7 +12,7 @@ torch.manual_seed(0)
 syn = sorted(l.split()[0] for l in open('/dev/stdin')) if False else None
 root = '/workspace/ic013_data/imagenette2-160/val'
 files = [f for c in sorted(os.listdir(root)) for f in sorted(glob.glob(f'{root}/{c}/*'))[:10]]
-emb = np.load('/tmp/sing/misc/embeddings/imagenet_text_embeddings_fp16.npz', allow_pickle=True)
+emb = np.load(os.path.join(SING_ROOT, 'misc/embeddings/imagenet_text_embeddings_fp16.npz'), allow_pickle=True)
 E = torch.nn.functional.normalize(torch.tensor(emb['embeddings'].astype(np.float32)), dim=-1)
 Em = torch.nn.functional.normalize(E.mean(1), dim=-1)
 def ang(a, b):
@@ -20,7 +21,7 @@ def ang(a, b):
 out = {}
 for name in sys.argv[1:] or ['bitresnet', 'resnet']:
     lm = load_model(name, torch.device('cpu'))
-    T = load_default_translator(translators_root=Path('/tmp/sing/translators'), registry_path=Path('/tmp/sing/translators/registry.yaml'), model_name=name, device='cpu').model.float()
+    T = load_default_translator(translators_root=Path(SING_ROOT, 'translators'), registry_path=Path(SING_ROOT, 'translators/registry.yaml'), model_name=name, device='cpu').model.float()
     with torch.no_grad():
         F = torch.cat([lm.wrapper.extract_features(torch.stack([lm.preprocess(Image.open(f).convert('RGB')) for f in files[i:i+20]])) for i in range(0, len(files), 20)])
         logits = lm.wrapper.logits_from_features(F); Y = logits.argmax(1)  # predicted class as text target (no labels needed)

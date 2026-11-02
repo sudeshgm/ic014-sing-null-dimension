@@ -2,7 +2,7 @@
 (uncentred second moment of Vn^T f) and compare AS per unit sqrt-energy, G = AS/sqrt(rho), with random null subspaces.
 Models: the four null-1048 models. Bands: top, middle (centred on PC 524), bottom, random (20 Haar draws in the null,
 seed 40000+j). d in {24, 100}. Image bootstrap (1000x, seed 0) of G_top/G_rand.
-Usage: python r2/pc_bands.py --feats-root $IC014_FEATS --sing-root /tmp/sing"""
+Usage: python r2/pc_bands.py --feats-root $IC014_FEATS [--sing-root _ext/sing]"""
 import argparse, os, json, numpy as np, torch
 torch.set_num_threads(os.cpu_count()); R = os.path.join(os.path.dirname(__file__), '..')
 BIG = ['resnet', 'resnext', 'dinov2', 'bitresnet']; DS = [24, 100]
@@ -10,7 +10,7 @@ BIG = ['resnet', 'resnext', 'dinov2', 'bitresnet']; DS = [24, 100]
 def ang(Z, T): return torch.rad2deg(torch.acos(torch.clamp((torch.nn.functional.normalize(Z, dim=-1) * T).sum(-1), -1, 1)))
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', required=True); a = ap.parse_args()
+    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--sing-root', default=os.environ.get('SING_ROOT', os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '_ext', 'sing'))); a = ap.parse_args()
     fr = a.feats_root; emb = np.load(os.path.join(a.sing_root, 'misc/embeddings/imagenet_text_embeddings_fp16.npz'), allow_pickle=True)
     TC = torch.nn.functional.normalize(torch.nn.functional.normalize(torch.tensor(emb['embeddings'].astype(np.float32)), dim=-1).mean(1), dim=-1)
     out = {}; rng = np.random.default_rng(0); N = 10000; BI = rng.integers(0, N, size=(1000, N))
