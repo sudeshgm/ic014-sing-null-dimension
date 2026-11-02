@@ -68,15 +68,27 @@
   "C6_sd": {
    "effect": 0.743980267524171,
    "ci95": [
-    0.7354007824063369,
-    0.7588289866053454
+    0.710523550339182,
+    0.7853256741181232
    ],
    "ci95_percentile": [
-    0.7282115649248079,
-    0.7525313399354336
+    0.7089005237829118,
+    0.7807190055821903
    ],
    "point_in_ci": true,
-   "verdict": "holds"
+   "verdict": "holds",
+   "ci_method": "class-resampling bootstrap (1000 classes), BCa from delete-one-class jackknife",
+   "variance_corrected": {
+    "raw_sd": {
+     "resnet": 0.86715564854464,
+     "dinovit1": 0.12317538102046903
+    },
+    "corrected_sd": {
+     "resnet": 0.8489963542558777,
+     "dinovit1": 0.09698790508238526
+    },
+    "corrected_effect": 0.7520084491734924
+   }
   },
   "C12": {
    "effect": 0.8205128205128204,
@@ -159,7 +171,7 @@
   },
   "C6": {
    "verdict": "holds",
-   "note": "C6 = class-SD part only; the class-mean part is C3"
+   "note": "C6 = class-SD part only; the class-mean part is C3; CI resamples classes"
   },
   "C8": {
    "verdict": "reverses",
@@ -236,15 +248,27 @@
   "C6_sd": {
    "effect": -0.20301090187967935,
    "ci95": [
-    -0.2642172662192594,
-    -0.2640918787492701
+    -0.24281535937194848,
+    -0.16631903171156806
    ],
    "ci95_percentile": [
-    -0.36042972018682584,
-    -0.2935125247074626
+    -0.24020558689092145,
+    -0.1636669649310547
    ],
-   "point_in_ci": false,
-   "verdict": "reverses"
+   "point_in_ci": true,
+   "verdict": "reverses",
+   "ci_method": "class-resampling bootstrap (1000 classes), BCa from delete-one-class jackknife",
+   "variance_corrected": {
+    "raw_sd": {
+     "resnet": 0.41857956800932955,
+     "dinovit1": 0.6215904698890089
+    },
+    "corrected_sd": {
+     "resnet": 0.4124727560744383,
+     "dinovit1": 0.43719306718912687
+    },
+    "corrected_effect": -0.024720311114688587
+   }
   },
   "C12": {
    "effect": -0.17948717948717946,
@@ -314,7 +338,7 @@
   },
   "C6": {
    "verdict": "reverses",
-   "note": "C6 = class-SD part only; the class-mean part is C3"
+   "note": "C6 = class-SD part only; the class-mean part is C3; CI resamples classes"
   },
   "C8": {
    "verdict": "reverses",
@@ -378,9 +402,8 @@
   "C6",
   "C8"
  ],
- "N7_flags": [
-  "AS_fair:C6_sd point -0.203 outside BCa [-0.2642,-0.2641]"
- ],
- "N7_pass": false,
+ "N7_flags": [],
+ "N7_pass": true,
+ "C6_R4_pass": true,
  "jackknife_n": 10200
 }
