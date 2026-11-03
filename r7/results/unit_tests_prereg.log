@@ -1,0 +1,19 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-9.1.1, pluggy-1.7.0 -- /workspace/ic014_r2_venv/bin/python
+cachedir: .pytest_cache
+rootdir: /workspace/ic014
+plugins: anyio-4.15.1
+collecting ... collected 10 items
+
+r7/tests/test_r7.py::test_hsic_u_shift_invariant_and_unbiased_zero PASSED [ 10%]
+r7/tests/test_r7.py::test_world_B_exact_rescale_invariance PASSED        [ 20%]
+r7/tests/test_r7.py::test_noise_free_views_give_population_value PASSED  [ 30%]
+r7/tests/test_r7.py::test_worldC_noise_does_not_bias_T2_on_average PASSED [ 40%]
+r7/tests/test_r7.py::test_naive_cka_attenuates_with_noise PASSED         [ 50%]
+r7/tests/test_r7.py::test_within_group_removes_group_level_alignment PASSED [ 60%]
+r7/tests/test_r7.py::test_perm_test_null_and_planted PASSED              [ 70%]
+r7/tests/test_r7.py::test_reliability_and_noise_ratio PASSED             [ 80%]
+r7/tests/test_r7.py::test_nuisance_only_control_centred_on_zero PASSED   [ 90%]
+r7/tests/test_r7.py::test_views_deterministic_shared_and_pixel_shuffle_exact PASSED [100%]
+
+============================== 10 passed in 0.64s ==============================
