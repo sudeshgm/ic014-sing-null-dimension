@@ -18,7 +18,7 @@ V-information result.
    code is the unchanged `verdicts_r6.score_block`. ρ itself is also run through the energy part of the rule.
 2. **ViM with α frozen** (`controls_r6.py`). α is fixed at its real-data value for each fit half under E1 and E2. The
    refit-α values reproduce the audit's values (consistency check stored in `R6_posthoc.json`).
-3. **Magnitude.** The share of the cross-model range left after E1, range(E1)/range(real), over the estimable E12
+3. **Retained cross-model range.** range(E1)/range(real) after E1, over the estimable E12
    (and S11) models, for every score and control.
 4. **Power of the τ bar.** P(τ_EQ < 0.3) when the orders before and after E1 are independent (n = 12, 11; 20 000
    permutations, seed 0).
@@ -42,8 +42,9 @@ V-information result.
   reproduce the committed round-2 values.
 * ViM, α frozen: ResNet50 0.876 → 0.00025 under E1; τ_EQ −0.52 / −0.49, R_B 1.33, ENERGY-DRIVEN. Refit-α values equal
   the audit's (max difference 0).
-* Range left after E1 (E12): NuSA 0.005, IS 0.11 / 0.05, AS 0.11 / 0.15 (released / retrained), V-info 0.29,
-  ActSub 0.78, ViM 0.90 (1.93 with α frozen), CORE 0.92.
+* Retained cross-model range after E1 (E12): NuSA 0.005, IS 0.11 / 0.05, AS 0.11 / 0.15 (released / retrained), V-info 0.29,
+  ActSub 0.78, ViM 0.90 (1.93 with α frozen), CORE 0.92. This is a descriptive comparison, not a validity gate and
+  not the fraction of confounding removed: ViM with α frozen retains 1.93 of its range yet is ENERGY-DRIVEN.
 * P(τ_EQ < 0.3) under independent orders: 0.90 (n = 12), 0.89 (n = 11).
 * V-information: DenseNet121 is 86% of the 13-model range; without it 7 of E12 and 7 of S11 are estimable, so no verdict
   is possible. ResNet50 penalty: the inner CV chose λ_A/λ_B = 1/0.1 in 2 of 2 reruns, as in the audit (0.00158); a flip
