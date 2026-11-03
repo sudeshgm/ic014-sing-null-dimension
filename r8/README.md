@@ -1,7 +1,9 @@
 # IC014 round 8: θ_sem, a target-first T1 score (results)
 
-Pre-registration `PREREG_R8.md`, frozen with the code and tests in commit **09d6e48**. That commit was pushed before any real-model
+Pre-registration `PREREG_R8.md`, frozen with the code and tests in commit **09d6e48**. That commit was pushed (2026-11-03 20:56 IST) before any real-model
 θ_sem was computed. Run: `python r8/run_r8.py --feats-root <cached features>` (CPU, B = 2000, seeds from 100800).
+Times in this repository are IST (UTC+5:30). `PREREG_R8.md` and `PLAN.md` give their date as 2026-11-03 (SGT), i.e. UTC+8; the push of
+09d6e48 was at 23:26 in UTC+8, the same day. The results commit b9d3e6a was pushed at 22:50 IST.
 Outputs:
 - `results/R8_verdicts.json`: all gates, confirmatory τ and descriptive τ;
 - `results/permodel/*.json`: every per-model and per-world number;
@@ -119,7 +121,7 @@ Head-swap (3 bases; fit on images 0–4, top-1 on 5–9; all heads have d_null 1
 | | NCM | 0.036 | 0.38 | 0.773 | 0.0002 [0.0001, 0.0003] |
 | | LDA | 0.662 | 2.46 | 0.779 | 0.676 [0.667, 0.692] |
 
-At near-equal accuracy, the head choice moves ρ, AS and θ_sem by orders of magnitude. The NCM head spans the class means, so almost no class
+The head choice moves ρ, AS and θ_sem by orders of magnitude, but the refit heads are not matched in accuracy: they are 5–13 points less accurate than the released heads (released top-1 on images 5–9, computed post hoc from the cached features and released biases: ResNet50 0.762, DINOv2-L 0.860, ResNeXt101 0.828). The NCM head spans the class means, so almost no class
 signal is left in its null space. The shrinkage-LDA head leaves most of it there.
 
 Within-class participation ratio (null / row) is in `R8_summary.json`. DeiT3-L 9.9 / 323 and DenseNet121 11 / 228 have very anisotropic null blocks.
