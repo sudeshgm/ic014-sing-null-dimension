@@ -47,14 +47,14 @@ Reading the tables:
   Gram is significantly aligned with the CLIP text embedding of the inserted background class (permutation p = 0.001, the
   floor, at every level), and well above the nuisance-only control. But the artefact control (same images with the background
   pixels randomly permuted, which keeps the background's colour histogram and destroys its spatial / semantic layout) is
-  aligned just as strongly: T2(edit) - T2(artefact) is ~0 with CIs straddling 0 in every model and level, under both the
+  aligned just as strongly, and T2(edit) - T2(artefact) is ~0 with CIs straddling 0 in every model and level, under both the
   pre-registered and the corrected CIs. The detectable alignment is therefore carried by low-level background statistics
   (colour / intensity distribution), not by the semantic content of the edit.
 - **H3 (noise cancellation in a world-C analogue): NOT TESTED** in every model, as pre-registered (H2 not ALIGNED).
 - **Per-model summary: "real views support noise cancellation" = false for all four. Family statement: NOT SUPPORTED (0 of 4).**
 - **Kill rules:** K0 (synthetic) did not fire; K1 (no reproducible null-space edit) did not fire.
-- The automated verdict file also prints an "H2 = ALIGNED" line for the secondary statistic T. That is a code artefact:
-  the pre-registration makes T descriptive (permutation test only) and the code fills the control conditions as passed for
+- The automated verdict file also prints an "H2 = ALIGNED" line for the secondary statistic T. That is a code artefact.
+  The pre-registration makes T descriptive (permutation test only), and the code fills the control conditions as passed for
   T. It is not a verdict and is ignored here.
 
 ## 3. Deviation found after the analysis (post hoc): the pre-registered bootstrap CIs for T and T2 are invalid
@@ -63,8 +63,8 @@ The pre-registered within-group bootstrap resamples images with replacement. HSI
 duplicated image forms an "off-diagonal" pair with itself and its self-similarity is counted as cross-image covariance. The
 bootstrap distributions of T and T2 are then shifted far upwards (for example, resnet L2: point T2 0.0017, bootstrap CI
 0.012-0.016, which does not contain the point estimate). The CIs for dT2(edit - artefact) and dT2(edit - nuisance) that H2
-uses are affected in the same way. Reliability is not a U-statistic and its CI is unaffected; point estimates and permutation
-tests never resample and are unaffected. The docstring claim in `stats_r7.parts` that duplicates are harmless was wrong. The
+uses are affected in the same way. Reliability is not a U-statistic, so its CI is unaffected. Point estimates and permutation
+tests never resample and are also unaffected. The docstring claim in `stats_r7.parts` that duplicates are harmless was wrong. The
 unit tests did not catch this because they never compared a bootstrap CI with its point estimate.
 
 Correction (post hoc, `r7/sens_r7.py`, seed 100750): within-group half-sampling without replacement (500 draws) with basic
@@ -75,7 +75,7 @@ either way, and the corrected CIs (table column "corrected") still straddle 0 in
 ## 4. Descriptive (no verdict)
 
 - **Manipulation check for the nuisance levels holds** (nu3/nu1 = 4.7 resnet, 7.4 efficientnet, 4.8 resnext, 5.9 dinov2).
-  But the cross-view (signal) energy of the edit also falls by 37-49 % from L1 to L3: the stronger crops remove background, so
+  But the cross-view (signal) energy of the edit also falls by 37-49 % from L1 to L3. The stronger crops remove background, so
   the levels change content as well as noise. Even if H2 had passed, the levels were not a clean world-C.
 - T2 across levels (not a test): flat for resnet (max/min 1.11), resnext (1.22) and dinov2 (1.02); rises 2.2x for efficientnet.
 - **The row space (classifier-visible part) carries the same kind of alignment at a similar size** (row T2 0.0014-0.0027
@@ -87,9 +87,9 @@ either way, and the corrected CIs (table column "corrected") still straddle 0 in
 
 ## 5. What this means for a score (clue only; the paper is not changed in this round)
 
-- A null-space edit is real and reproducible across independent nuisance views (H1). The machinery works on real data:
+- A null-space edit is real and reproducible across independent nuisance views (H1). The machinery works on real data.
   T2 is estimable at every level, and nuisance-only controls are near 0.
-- But on this edit set, what links the null-space edit to an outside semantic reference is explained by low-level
+- On this edit set, however, what links the null-space edit to an outside semantic reference is explained by low-level
   background pixel statistics. So the experiment gives **no evidence for semantic noise cancellation** in the null space.
 - Practical requirements for any future null-space "semantic" score, learned from this round:
   - it needs independent views (a cross-view Gram), so it cannot be computed from cached single-pass features;
