@@ -15,4 +15,6 @@ $PY r4/make_tables_r4.py > /dev/null
 $PY r5/calib_compare.py > /dev/null
 $PY r5/posthoc_r5.py > /dev/null
 $PY r5/make_tables_r5.py > /dev/null
-echo "reproduce: done (r2/results, r3/results/F_paired_stats.json, paper_workshop/figs, paper_workshop/tables incl. round-4 and round-5 tables, paper_workshop/holdout_numbers.tex)"
+$PY r6/verdicts_r6.py > /dev/null 2>&1
+$PY r6/make_tables_r6.py > /dev/null
+echo "reproduce: done (r2/results, r3/results/F_paired_stats.json, r6/results/R6_summary.json, paper_workshop/figs, paper_workshop/tables incl. round-4, round-5 and round-6 tables, paper_workshop/holdout_numbers.tex)"

@@ -1,5 +1,20 @@
 # IC014 results: SING model comparison and null dimension
 
+## Round 6 (`PREREG_R6.md`; results in `r6/results/`)
+`PREREG_R6.md` was pushed on its own (a768051) before any real-model number was computed. Four published null/residual scores, one set of tests; every intervention changes only Πf (largest logit change 1.3e-5, DenseNet121 after its tiny null part is scaled up; ≤ 1.4e-13 elsewhere).
+
+| Score | estimable E12 / S11 | τ_EQ E12 / S11 | median R_B | \|C1\| ≥ 2 / \|Δ_arb\| ≥ 2 (of 13) | energy | content | τ with SING E12 / S11 |
+|---|---|---|---|---|---|---|---|
+| ViM | 12 / 11 | 0.88 / 0.89 | 0.06 | 9 / 5 | NOT ENERGY-DRIVEN | PARTIAL | 0.03 / 0.05 |
+| ActSub S→ | 12 / 11 | 0.79 / 0.78 | 0.14 | 11 / 8 | MIXED | PARTIAL | 0.36 / 0.49 |
+| CORE S_mem | 12 / 11 | 0.85 / 0.82 | 0.11 | 11 / 8 | MIXED | PARTIAL | 0.33 / 0.42 |
+| V-info (class) | 11 / 10 | 0.20 / 0.33 | 0.19 | 11 / 12 | MIXED | CONTENT-RESPONSIVE | −0.09 / −0.20 |
+| NuSA share (reference, not counted) | 12 / 11 | 0.27 / 0.31 | 0.89 | 9 / 7 | MIXED | PARTIAL | 0.82 / 0.82 |
+
+* **Counting rule.** n = 4 (all four estimable; the V-information fallback was not needed), k = 0 ENERGY-DRIVEN → **SING-SPECIFIC**: the energy confound is largely specific to SING's AS/IS. The title stays SING-centred. "Content is measurable" is not stated (0 scores are both NOT ENERGY-DRIVEN and CONTENT-RESPONSIVE).
+* **Caveats.** The energy bar is strict: the NuSA reference, energy by construction, has R_B 0.89 but keeps part of its order after E1 (τ_EQ 0.27 / 0.31), so it misses ENERGY-DRIVEN on S11 by 0.01. ActSub and CORE miss NOT ENERGY-DRIVEN only on R_B (0.14 and 0.11 against 0.10). The within-class control C2 moves every score by > 1 SD on > 3 models (ESTIMATOR-NOISY for all eight scores), so the content verdicts mix content with the image-level row/null coupling. The V-information penalty sat at the top of its grid in 15 of 26 fits. Every fit uses 5 images per class from the other half (no training features).
+* **Descriptive.** CORE on Πf is exactly scale-invariant (R_B = 0), responds to C1 and the arbitrary plant on 13/13 models, τ with SING 0.45 / 0.38, partial given ρ 0.57 / 0.48. Synthetic worlds (C/M/D on three bases; `r6/results/worlds/`, paper Table tab:r6worlds): only CORE passes the world-C bar, on one base (DINOv2-L, ratio 1.34). ActSub, CORE and V-info fall with ρ at fixed content in world C (τ ≤ −0.73) and rise with L in M and D (τ ≥ 0.88); ViM rises with ρ in C and not with L; the NuSA share rises with ρ in C on all three bases.
+
 ## Round 5 (`PREREG_R5.md`; results in `r5/results/`)
 The pre-registration was committed before any confirmatory run. No pre-registered kill fired.
 * **Calibration fix.** `r4/calibration.py` now permutes the residuals across images (seed 99000, `--resid perm`, output `r4/results/I2_calibration_v2.json`). The round-4 in-sample version is kept in `I2_calibration.json`. 50 of 78 table values change (`r5/results/R5_calibration_old_vs_new.json`), and there is still no content-diagnostic estimator. Largest changes by |Δτ| (0.485 each): X world C on ResNet50 −0.52 → −0.03, A1 world C on DINOv2-L 0.00 → 0.48, X world C on DINOv2-L −1.00 → −0.52. Most consequential: NCM_null world M on DINOv2-L 0.80 → 0.44 (now misses the world-M bar there); also NCM_null world C on ResNet50 −0.32 → −0.72. The fix was run, and ResNet50's corrected world τ values were seen, before `PREREG_R5.md` was pushed; world-C AS min 0.97 (was 1.00). World D ρ τ is now defined but carries no information (≈0, near-ties) because the class-mean × permuted-residual cross term is not exactly zero.
