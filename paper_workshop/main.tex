@@ -306,10 +306,10 @@ High-energy null directions are not clearly more semantic per unit energy. The r
 \label{sec:calib}
 \paragraph{Semi-synthetic worlds.}
 To check whether any estimator can tell null content from null energy, we built three worlds on each of three bases (ResNet50, ResNeXt101 and DINOv2-L, each with its released translator) by rescaling the class-mean part $\mu_y$ and the residual $r$ of the null coordinates, with the 12 E12 values of $\rho$ as targets.
-In world C the class-mean null energy $L$ is fixed while $\rho$ varies; in world M the residual is fixed, so $L$ rises with $\rho$; in world D, $\rho$ is fixed and $L$ varies.
+Content is measured by $L$, the class-mean null energy as a share of total feature energy. In world C, $L$ is fixed while $\rho$ varies; in world M the residual is fixed, so $L$ rises with $\rho$; in world D, $\rho$ is fixed and $L$ varies.
 An estimator is \emph{content-diagnostic} if, on all three bases, $|\tau(\cdot,\rho)|\le0.2$ in world C, $\tau(\cdot,L)\ge0.8$ in world M and $\tau(\cdot,L)\ge0.6$ in world D.
 None of the eight estimators we tested meets all three criteria ($\rho$, AS, A1, AS$_{\mathrm{gauss}}$, $X$, $\Delta_{\mathrm{align}}$, NCM$_{\mathrm{null}}$ and the selectivity $R$; Table~\ref{tab:calib} in Appendix~\ref{app:tables}).
-The bar is strict. Content here is the absolute class-mean null energy $L$, so in world C, where $L$ is fixed and $\rho$ grows, the class-mean share of null energy falls from $\QCalCShareHi\%$ to $\QCalCShareLo\%$, and a score that responds to that share fails world C by construction.
+The bar is strict. In world C, where $L$ is fixed and $\rho$ grows (the absolute class-mean null energy rises ${\times}\QCalCAbsRise$, since the row-space energy is held fixed), the class-mean share of null energy falls from $\QCalCShareHi\%$ to $\QCalCShareLo\%$, and a score that responds to that share fails world C by construction.
 NCM$_{\mathrm{null}}$ tracks $L$ in worlds M ($\QNcmCalMLo$--$\QNcmCalMHi$) and D ($\QNcmCalDLo$--$\QNcmCalDHi$), and $\Delta_{\mathrm{align}}$ and $X$ track it in world D ($\QDalCalDLo$--$\QDalCalDHi$ for $\Delta_{\mathrm{align}}$); all three fail world C.
 AS follows $\rho$ at fixed content (world C, $\tau{=}1$ on all bases).
 The energy exponents in worlds C and M run from $\QCalAMin$ to $\QCalAMax$, against $\hat a{=}\NEOneA$ from the energy law and $\QCalCrossA$ $\QCalCrossACI$ across models.
@@ -317,7 +317,7 @@ The energy exponents in worlds C and M run from $\QCalAMin$ to $\QCalAMax$, agai
 \paragraph{Translator-free and energy-free scores.}
 \begin{itemize}
 \item \emph{Null decodability} NCM$_{\mathrm{null}}$: leave-one-out nearest-class-mean accuracy on the normalised null coordinates, minus a shuffled-label control. It needs no translator. It ranges from $\QNcmMin$ to $\QNcmMax$ points and gives $\tau{=}\QNcmE$ $\QNcmECI$ on E12 and $\QNcmS$ on S11, between our bars. It follows $\rho$ ($\QNcmRhoE$, $\QNcmRhoS$), and its partial association given $\rho$ is about zero ($\QNcmPartE$, $\QNcmPartS$).
-\item \emph{Null zero-shot accuracy} NZS: zero-shot classification from the translated null part alone, minus a permuted control. It passes its validity gate (no change under rescaling of $\Pi f$; $\tau{=}1$ with planted content on all three bases), but it is not energy-free ($\tau(\cdot,\rho){=}\QNzsRhoE$ and $\QNzsRhoS$), and against SING it gives $\QNzsE$ $\QNzsECI$ (E12) and $\QNzsS$ (S11): inconclusive. Given $\rho$, its partial association with the order is negative (${\QNzsPartA}$, ${\QNzsPartE}$ and ${\QNzsPartS}$ on all 13, E12 and S11).
+\item \emph{Null zero-shot accuracy} NZS: zero-shot classification from the translated null part alone, minus a permuted control. It passes its validity gate (no change under rescaling of $\Pi f$; $\tau{=}1$ with planted content on all three bases), but it is not energy-free ($\tau(\cdot,\rho){=}\QNzsRhoE$ and $\QNzsRhoS$), and against SING it gives $\QNzsE$ $\QNzsECI$ (E12) and $\QNzsS$ (S11): inconclusive. Given $\rho$, its partial association with the order has negative point estimates, but every CI includes 0 (${\QNzsPartA}$ $\QNzsPartACI$, ${\QNzsPartE}$ $\QNzsPartECI$ and ${\QNzsPartS}$ $\QNzsPartSCI$ on all 13, E12 and S11).
 \item \emph{Selectivity} $R$: AS after removing the top-20 between-class null directions (estimated on held-out images) over AS after removing the same energy at random. Within each model $R$ differs from 1 (CI excludes 1 on $\QSelExcl$ of 12 models), but in both directions ($\QSelAbove$ above 1, $\QSelBelow$ below). Across models it does not reproduce the order ($\tau{=}\QSeltwentyE$ and $\QSeltwentyS$; $k{=}5$ and $50$ give the same).
 \end{itemize}
 None of these scores tracks SING's order. None is both energy-free and fully calibrated, so we propose no replacement score.
@@ -373,7 +373,7 @@ Each DINO head leaves a null space of dimension $\QDinoBDnull$ ($\rho{=}\QDinoBR
 There is no released SING translator for these models, so we use ridge translators fit as in \S\ref{sec:retrain} (fidelity $\QDinoBFid$ and $\QDinoSFid$) and compare with the 13 models under their ridge translators.
 AS is $\QDinoBAS^\circ$ (ViT-B/16) and $\QDinoSAS^\circ$ (ViT-S/16), ranks $\QDinoBRank$ and $\QDinoSRank$ of 15 (median of the 13: $\QDinoMedian^\circ$).
 The pre-registered raw-AS question (Q-DN1) asks whether both DINO models rank among the four lowest; its outcome is ``SING-inconsistent'', since both lie above the median of the 13.
-Raw ridge AS is not SING's own measure, however, and it tracks null energy, which for both models is above the median of the 13 ($\rho{=}\QDinoBRho$ and $\QDinoSRho$), so we put more weight on the energy-adjusted reading (Q-DN2).
+Raw ridge AS is not SING's own measure, however, and it tracks null energy, which for both models is above the median of the 13 ($\rho{=}\QDinoBRho$ and $\QDinoSRho$), so, post hoc, we put more weight on the energy-adjusted reading (Q-DN2).
 Against the energy law fitted on E12, ViT-B/16 lies inside the 95\% prediction interval ($\QDinoBPI$, predicted $\QDinoBPred$) and ViT-S/16 lies just below it ($\QDinoSPI$, predicted $\QDinoSPred$). ViT-S/16 thus has less AS than its energy predicts, which leans toward SING's account for that model, and the pre-registered outcome is mixed.
 For $\Delta_{\mathrm{align}}$ and NCM$_{\mathrm{null}}$, both models fall inside the prediction intervals from $\rho$. The pre-registered ``least leaking'' label, which needs both models among the four lowest, holds for neither score; ViT-S/16 alone is among the four lowest on both ($\Delta_{\mathrm{align}}$ rank $\QDinoSDalRank$ of $\QDalRankN$, NCM$_{\mathrm{null}}$ rank $\QDinoSNCMRank$ of $\QNcmRankN$), while ViT-B/16 ranks $\QDinoBDalRank$ and $\QDinoBNCMRank$.
 Both DINO heads are linear probes on frozen, concatenated block features, a different regime from the supervised heads of the 13 models, so this comparison is indicative only.
@@ -449,7 +449,7 @@ Saliency maps that survive model and data randomisation fail as explanations~\ci
 Our surrogates are the null-space analogue of the surrogate-data test~\citep{theiler1992surrogate}: replace the content while keeping the second moments, and see whether the statistic changes.
 \citet{cui2022deconfounded} regress a confound out of representation-similarity scores such as RSA and CKA. \citet{groger2026aristotelian} show that representational similarity metrics are confounded by model scale, calibrate them with permutation nulls, and find that global convergence largely disappears while local neighbourhood similarity survives, a mixed picture of the same shape as ours. Both argue, as we do, that a cross-model score needs a baseline for a nuisance variable before it is read as a property of the models.
 \citet{makelov2024illusion} show that activation patching along a subspace can change behaviour through a dormant pathway that the model does not normally use; their illusion and our energy path both arise when a component the model ignores still moves a readout.
-In OOD detection, Mahalanobis++~\citep{mueller2025mahalanobis} finds that feature norms confound Mahalanobis scores across 44 models and that $\ell_2$ normalisation removes the effect, a feature-energy confound in a different kind of score.
+In OOD detection, Mahalanobis++~\citep{mueller2025mahalanobis} finds that feature norms confound Mahalanobis scores across 44 models and that $\ell_2$ normalisation mitigates it, a feature-energy confound in a different kind of score.
 
 \paragraph{Relation to other null-space work.}
 ActSub~\citep{zongur2025actsub} finds that the activation components a classifier largely ignores help to detect distribution shift, and \citet{jacobsen2019excessive} show that class information can hide in directions the logits do not use.
@@ -474,7 +474,7 @@ There are only 13 models, so every cross-model CI is wide.
 SING's order is digitised from a figure.
 Our retrained translators are ridge maps chosen by us.
 SING's training recipe may differ, and the equal-energy result depends on this choice.
-The energy-scan part of the leak-free test covers three models with $d_{\mathrm{null}}{=}1048$, and the planted strengths stop at $\alpha{=}0.3$, below the energy-equivalent strength.
+The energy-scan part of the leak-free test covers three models with $d_{\mathrm{null}}{=}1048$, and the planted strengths stop at $\alpha{=}0.3$, below the energy-equivalent strength at each model's own $\rho$ (at $\rho_t{=}0.01$, post hoc, content moves AS more than energy does on $\QPlantLowAbove$ of the three models).
 The calibration worlds are semi-synthetic, built on three bases by rescaling class-mean and residual null content; they test whether an estimator can separate the two, not whether real models differ in content.
 The geometric account is consistent with two held-out models and with synthetic data that builds in its gain law; on the 13 models it is exploratory.
 The true DINO comparison uses our ridge translators, since SING released none for these models.
@@ -491,7 +491,7 @@ Size-corrected scores change the order without reversing it with confidence.
 Cross-model AS-type null-space comparisons should report $\rho$, an energy-only baseline and content-free surrogates of matched energy next to the score.
 
 \paragraph{Reproducibility.}
-The supplementary material contains the code, pre-registrations, aggregated results and a one-command \texttt{make reproduce} that regenerates every table, figure and number in this paper from committed aggregates. The code is publicly available; for review we provide it as an anonymised archive.
+The supplementary material contains the code, pre-registrations, aggregated results and a one-command \texttt{make reproduce} that regenerates every table, figure and number in this paper from committed aggregates. For review, the code is provided as an anonymised archive; a public link will be added on acceptance.
 ImageNet-derived features are not redistributed; checksums, the image list and the extraction scripts are included.
 A full rerun from features takes about 2~h on 8 CPU cores; feature extraction needs a GPU and ImageNet (Appendix~\ref{app:repro}).
 
@@ -564,7 +564,7 @@ E1 to E9 come from the original plan, R2 from the round-2 pre-registration and R
 \begin{table}[H]
 \centering\footnotesize
 \resizebox{\linewidth}{!}{\input{tables/tab_calib.tex}}
-\caption{Calibration worlds (\S\ref{sec:calib}): Kendall $\tau$ against $\rho$ in world C and against the class-mean null energy $L$ in worlds M and D, on three bases. Criteria in the header; ``diagnostic'' requires all nine. Last row: fitted energy exponent.}
+\caption{Calibration worlds (\S\ref{sec:calib}): Kendall $\tau$ against $\rho$ in world C and against $L$ (class-mean null energy as a share of total feature energy) in worlds M and D, on three bases. Criteria in the header; ``diagnostic'' requires all nine. Last row: fitted energy exponent.}
 \label{tab:calib}
 \end{table}
 
