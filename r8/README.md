@@ -43,8 +43,8 @@ coverage was 0.98 / 0.99.
 
 The old world C (non-gating) is flat for θ_sem as well:
 - ResNet50: 0.0002 → −0.0006, all within about 1 SE.
-- DINOv2-L: 0.0013 → 0.0020 (×1.5).
-- ResNeXt101: 0.0012 → 0.0027 (×2.2).
+- DINOv2-L: 0.0013 → 0.0020 (×1.6).
+- ResNeXt101: 0.0012 → 0.0027 (×2.3).
 
 World M rises about 200–300× and world D about 20–30×, in line with T1.
 
@@ -114,7 +114,7 @@ Head-swap (3 bases; fit on images 0–4, top-1 on 5–9; all heads have d_null 1
 | | LDA | 0.930 | 2.56 | 0.635 | 0.930 [0.928, 0.932] |
 | DINOv2-L | released | 0.322 | 1.50 | — | 0.093 [0.083, 0.098] |
 | | NCM | 0.107 | 0.48 | 0.745 | 0.001 [0.001, 0.002] |
-| | LDA | 0.436 | 1.42 | 0.752 | 0.378 [0.373, 0.387] |
+| | LDA | 0.436 | 1.42 | 0.752 | 0.377 [0.373, 0.387] |
 | ResNeXt101 | released | 0.451 | 2.00 | — | 0.212 [0.201, 0.217] |
 | | NCM | 0.036 | 0.38 | 0.773 | 0.0002 [0.0001, 0.0003] |
 | | LDA | 0.662 | 2.46 | 0.779 | 0.676 [0.667, 0.692] |
@@ -129,6 +129,6 @@ Within-class participation ratio (null / row) is in `R8_summary.json`. DeiT3-L 9
 - No deviation from `PREREG_R8.md` in the code that was run; the code is unchanged since 09d6e48.
 - The pipeline was smoke-tested on fake random features before the freeze (disclosed in the prereg §1).
 - A `ConstantInputWarning` from `partial_ci` arises in a few bootstrap draws: 17 of 2000 dropped for E12, 22 for S11 (`B_used`).
-- The ρ decomposition and the offset/centring results (prereg §1) were known before the freeze and are post hoc.
+- The ρ decomposition and the offset/centring results (prereg §1) were known before the freeze and are post hoc; scripts, outputs and a note are in `posthoc/` (`posthoc/POSTHOC.md`).
 - Standard-addition AS was not run (as registered).
 - Round 8 does not change any earlier verdict.
