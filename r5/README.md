@@ -14,3 +14,11 @@ Seeds: 99000 (residual permutation for the worlds), 99100+s (XCC Haar frames), 9
 Run: `make reproduce-r5 IC014_FEATS=/path/to/feats` (CPU: about 20 min for the worlds and 10 min for the organisation scores on 4 cores), or `make reproduce` for the tables from committed aggregates.
 
 Outcomes: no kill fired. SO_null INCONCLUSIVE (τ 0.33 E12, 0.45 S11), XCC_24 DOES-NOT-TRACK (−0.12, −0.05); inheritance NOT INHERITED; G4 not testable for SO_null. Every outcome is in the round-5 ledger (paper Appendix, `tab_prereg_r5.tex`) and in `RESULTS.md`.
+
+## Post hoc: SO_null with exact centring (not pre-registered)
+
+`organisation.py` `dcent()` subtracts the off-diagonal row means of a hollow (zero-diagonal) matrix. For an additive class effect a_i + a_j that leaves (a_i + a_j − 2ā)/(N − 1) in every entry, and the row sums of the output are not centred, so additive per-class effects are not removed exactly (the docstring overstates it). In a synthetic case with no content and large class offsets correlated with the text marginal, this gives a spurious, estimable SO_null. `so_exact_r5.py` reruns SO_null with an exact hollow double-centring (`dcent_exact`) on both the distance and the text side, with the same features, folds, text, permutation null, G2 derangements and G3 plants, next to the original values (its copy of the original path reproduces `results/R5_gates.json`). `organisation.py`, `PREREG_R5.md` and the registered results are unchanged. Synthetic check: `tests/test_so_exact.py`.
+
+    python r5/so_exact_r5.py --feats-root $IC014_FEATS    # -> results/posthoc/SO_exact_models.json, SO_exact_summary.json
+
+Outcome: see `results/posthoc/SO_exact_summary.json` and the paper (Appendix "Round 5", "Centring correction (post hoc)"). Per-model changes are at most 0.0013, the 13-model order is unchanged (τ 1.00) and the round-5 outcome is still INCONCLUSIVE.
