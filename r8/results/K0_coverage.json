@@ -1,0 +1,53 @@
+{
+ "K": 1000,
+ "n_truth": 200,
+ "n_cov": 100,
+ "B": 300,
+ "scenarios": {
+  "signal": {
+   "sz": 0.3,
+   "ss": 1.0,
+   "sb": 0.5,
+   "sw": 1.0,
+   "offset": 0.0
+  },
+  "zero": {
+   "sz": 0.0,
+   "ss": 1.0,
+   "sb": 0.5,
+   "sw": 1.0,
+   "offset": 3.0
+  }
+ },
+ "res": {
+  "signal": {
+   "truth": 0.08248714421727196,
+   "truth_mc_sd": 0.0025111755020440804,
+   "sd_point_over_datasets": 0.002378866271794981,
+   "coverage": {
+    "boot": 0.97,
+    "half": 0.98
+   },
+   "mean_se": {
+    "boot": 0.002478640377323011,
+    "half": 0.0028171524478282843
+   }
+  },
+  "zero": {
+   "truth": 0.0,
+   "truth_mc_sd": null,
+   "sd_point_over_datasets": 0.0011699619283032517,
+   "coverage": {
+    "boot": 0.99,
+    "half": 0.99
+   },
+   "mean_se": {
+    "boot": 0.0018511516331023374,
+    "half": 0.002120300432062466
+   }
+  }
+ },
+ "method": "boot",
+ "K0_fires": false,
+ "secs": 3112.291874885559
+}
