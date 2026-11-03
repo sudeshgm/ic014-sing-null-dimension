@@ -8,7 +8,7 @@ SING ?= $(SING_ROOT)
 IC014_PRIVATE ?= $(CURDIR)/_private
 export IC014_PRIVATE
 
-.PHONY: reproduce reproduce-full reproduce-r4 reproduce-r5 reproduce-r6 paper sing verify-feats check-feats holdout-fast
+.PHONY: reproduce reproduce-full reproduce-r4 reproduce-r5 reproduce-r6 reproduce-r6-posthoc paper sing verify-feats check-feats holdout-fast
 
 reproduce:
 	PY=$(PY) scripts/reproduce.sh
@@ -63,6 +63,8 @@ reproduce-r4: sing verify-feats
 reproduce-r5: sing verify-feats
 	$(PY) r4/calibration.py --feats-root $(IC014_FEATS) --resid perm
 	$(PY) r5/organisation.py --feats-root $(IC014_FEATS) --sing-root $(SING) --part all
+	$(PY) -m pytest -q r5/tests
+	$(PY) r5/so_exact_r5.py --feats-root $(IC014_FEATS) --sing-root $(SING)
 	$(MAKE) reproduce
 
 # Round-6 audit of published null/residual scores (PREREG_R6.md), CPU; aggregates to r6/results (about 2.5 h wall with four
@@ -70,6 +72,13 @@ reproduce-r5: sing verify-feats
 reproduce-r6: sing verify-feats
 	$(PY) -m pytest -q r6/tests
 	$(PY) r6/audit_r6.py --feats-root $(IC014_FEATS) --sing-root $(SING) --models vgg16,vgg19,densenet,resnet,dinovit1,efficientnet,bitresnet,resnext,convnext,swin_large,dinov2,deit,eva02_large --worlds resnet,dinov2,resnext
+	$(MAKE) reproduce-r6-posthoc
+
+# Round-6 post hoc controls (r6/POSTHOC_R6.md), CPU; aggregates to r6/results/posthoc (SING's AS/IS under the round-6 tests,
+# frozen-alpha ViM; V-information penalty repro on ResNet50)
+reproduce-r6-posthoc: sing verify-feats
+	$(PY) r6/controls_r6.py --feats-root $(IC014_FEATS) --sing-root $(SING) --force --models vgg16,vgg19,densenet,resnet,dinovit1,efficientnet,bitresnet,resnext,convnext,swin_large,dinov2,deit,eva02_large
+	$(PY) r6/vinfo_repro_r6.py --feats-root $(IC014_FEATS) --model resnet --reps 2
 	$(MAKE) reproduce
 
 # Reduced holdout (PREREG_R3.md N10): about 36 min on 8 cores (target was < 30), resumable cache in $(IC014_PRIVATE)
