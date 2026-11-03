@@ -28,7 +28,7 @@ ROWS = [  # (label, tau_EQ dict, R_B median, magnitude key, verdict, group)
     ('ActSub $S_{\\to}$', SC['ActSub']['tau_EQ'], SC['ActSub']['R_B_median'], 'ActSub', SC['ActSub']['energy_verdict'], 's'),
     ('CORE $S_{\\mathrm{mem}}$', SC['CORE']['tau_EQ'], SC['CORE']['R_B_median'], 'CORE', SC['CORE']['energy_verdict'], 's'),
     ('$\\mathcal{V}$-information', SC['Vinfo']['tau_EQ'], SC['Vinfo']['R_B_median'], 'Vinfo', SC['Vinfo']['energy_verdict'], 's')]
-body = ('\\begin{tabular}{@{}lccccl@{}}\n\\toprule\n & \\multicolumn{2}{c}{$\\tau_{\\mathrm{EQ}}$} & & range left & rule \\\\\n'
+body = ('\\begin{tabular}{@{}lccccl@{}}\n\\toprule\n & \\multicolumn{2}{c}{$\\tau_{\\mathrm{EQ}}$} & & retained range & rule \\\\\n'
         'Score & E12 & S11 & med.\\ $R_B$ & after E1 & output \\\\\n\\midrule\n\\multicolumn{6}{@{}l}{\\emph{Positive controls (energy scores or SING\'s own score; post hoc except NuSA)}} \\\\\n')
 for i, (lab, t, rb, mk, v, grp) in enumerate(ROWS):
     if grp == 's' and ROWS[i - 1][5] == 'c': body += '\\midrule\n\\multicolumn{6}{@{}l}{\\emph{Audited scores (pre-registered; frozen-$\\alpha$ ViM post hoc)}} \\\\\n'

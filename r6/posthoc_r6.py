@@ -2,7 +2,7 @@
 (1) positive-control rows: SING's AS and IS (released and retrained translators, r6/results/posthoc/controls_*.json) and rho itself, through
     the unchanged statistics and verdict rule of verdicts_r6.score_block;
 (2) ViM with alpha frozen at its real-data value (E1, E2);
-(3) a magnitude statistic, not pre-registered: the share of the cross-model range left after E1, range(E1) / range(real), on the
+(3) a descriptive statistic, not pre-registered: the retained cross-model range after E1, range(E1) / range(real), on the
     estimable models of E12 (and S11);
 (4) the size of tau_EQ under independence (the tau part of the ENERGY-DRIVEN bar);
 (5) V-information sensitivity: range and estimability without DenseNet121, non-positive gains, C2 vs C1, penalty choices;
@@ -51,7 +51,7 @@ def main():
     vf.update(real=realv, E1_frozen=e1f, E1_refit={n: CT[n]['vim_alpha']['E1_refit'] for n in ms}, alpha_ratio_E1={n: float(np.mean([CT[n]['vim_alpha']['alpha_E1'][h] / CT[n]['vim_alpha']['alpha_real'][h] for h in 'AB'])) for n in ms},
               max_abs_real_vs_audit=float(max(abs(realv[n] - P6[n]['real']['ViM']) for n in ms)), max_abs_E1refit_vs_audit=float(max(abs(CT[n]['vim_alpha']['E1_refit'] - P6[n]['E1']['ViM']) for n in ms)))
     out['vim_frozen'] = vf
-    # (3) magnitude: share of cross-model range left after E1
+    # (3) retained cross-model range after E1 (descriptive)
     rows = {k: (SUM[k]['real'], SUM[k]['E1'], SUM[k]['estimable']) for k in SUM}
     for k in ('AS_released', 'AS_retrained', 'IS_released', 'IS_retrained'):
         c = out['controls'][k]; rows[k] = (c['real'], c['E1'], c['estimable'])
