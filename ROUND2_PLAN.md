@@ -1,7 +1,7 @@
 # IC014 round-2 plan (response to review_20261101_v1.md, Weak Reject)
 
 Criteria are in `PREREG_R2.md`, committed before any round-2 number is computed. Code goes in `r2/`, outputs in `r2/results/`.
-Inputs: the cached private features under `$IC014_FEATS` (on our box `/workspace/gpubot/ic014`: E1 null features, E2/E3 `*_full.npz` for all 13 models, E3 null coordinates and CLIP concept scores) and SING at commit `e47b37d` (`scripts/fetch_sing.sh`).
+Inputs: the cached private features under `$IC014_FEATS` (E1 null features, E2/E3 `*_full.npz` for all 13 models, E3 null coordinates and CLIP concept scores) and SING at commit `e47b37d` (`scripts/fetch_sing.sh`).
 Compute: CPU only (numpy/scipy/torch-cpu). Only fix 14 needs new feature extraction (spec in `gpu_jobs/`).
 
 | Fix | What we run | Where | Needs GPU? |

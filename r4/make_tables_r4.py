@@ -141,6 +141,9 @@ for e, lab in EST:
 body += '\\midrule\nexponent $a$ & ' + ' & '.join(mm(f(I2['bases'][b]['worlds'][W]['exponent']['a'])) for W in 'CM' for b in BASES) + ' & \\multicolumn{3}{c}{--} & \\\\\n'
 shC = [x['L'] / x['rho'] for b in BASES for x in I2['bases'][b]['worlds']['C']['rows']]
 M('CalCShareHi', f(100 * max(shC), 0)); M('CalCShareLo', f(100 * min(shC), 1))
+# world C: L is a share of total feature energy; with row energy fixed, total (and absolute class-mean) energy scales as 1/(1-rho)
+rC = [x['rho_target'] for x in I2['bases']['resnet']['worlds']['C']['rows']]
+M('CalCAbsRise', f((1 - min(rC)) / (1 - max(rC))))
 for W in 'MD':
     vs = [I2['bases'][b]['worlds'][W]['tau']['NCM_null'] for b in BASES]
     M(f'NcmCal{W}Lo', f(min(vs))); M(f'NcmCal{W}Hi', f(max(vs)))
@@ -200,7 +203,7 @@ write('tab_geom.tex', body + '\\bottomrule\n\\end{tabular}\n')
 # ---- B3, B4
 for s, k in (('E12', 'E'), ('S11', 'S'), ('all13', 'A')):
     M(f'Nzs{k}', f(B3['tau'][s]['tau'])); M(f'Nzs{k}CI', ci(B3['tau'][s])); M(f'NzsRho{k}', f(B3['tau_vs_rho'][s]['tau']))
-    M(f'NzsPart{k}', f(B3['partial_given_rho'][s]['r']))
+    M(f'NzsPart{k}', f(B3['partial_given_rho'][s]['r'])); M(f'NzsPart{k}CI', ci(B3['partial_given_rho'][s]))
     M(f'IsRow{k}', f(B4['tau_IS_rowenergy'][s]['tau'])); M(f'IsKrow{k}', f(B4['tau_IS_kappa_row'][s]['tau'])); M(f'IsSing{k}', f(B4['tau_IS_sing'][s]['tau'])); M(f'IsRow{k}CI', ci(B4['tau_IS_rowenergy'][s]))
 M('NzsGate', 'pass' if B3['gate_pass'] else 'fail'); M('NzsSing', B3['sing_test']); M('NzsFree', 'yes' if B3['energy_free'] else 'no')
 M('NzsGateTau', f(min(min(v['tau_NZS_p'], 1.0) for v in B3['gate'].values())))
