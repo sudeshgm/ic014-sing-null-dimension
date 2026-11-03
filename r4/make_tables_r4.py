@@ -76,6 +76,11 @@ M('PlantOwnDinoThree', f(pm['dinov2']['planted_ratio_own']['0.3'])); M('PlantAbs
 M('PlantAbsDinoZero', f(pm['dinov2']['AS_own_abs']['0.0']))
 M('PlantOwnMin', f(min(pm[m]['planted_ratio_own']['0.3'] for m in pm))); M('PlantOwnMax', f(max(pm[m]['planted_ratio_own']['0.3'] for m in pm)))
 M('REMin', f(min(pm[m]['r_E'] for m in pm), 1)); M('REMax', f(max(pm[m]['r_E'] for m in pm), 1))
+BC = J('r3/results/B_core.json')  # round-3 planted sweep: AS by rho_t and alpha
+low = {m: BC[m]['AS_by_level_alpha']['0.01']['0.3'] / BC[m]['AS_by_level_alpha']['0.01']['0.0'] for m in ('resnet', 'resnext', 'dinov2')}
+M('PlantLowRN', f(low['resnet'])); M('PlantLowRNX', f(low['resnext'])); M('PlantLowDino', f(low['dinov2']))
+M('REresnet', f(pm['resnet']['r_E'])); M('REresnext', f(pm['resnext']['r_E'])); M('REdinov', f(pm['dinov2']['r_E']))
+M('PlantLowAbove', str(sum(low[m] > pm[m]['r_E'] for m in low)))
 M('RhoQlo', f(P['rho_q25'], 3)); M('RhoQhi', f(P['rho_q75'], 3))
 body = '\\begin{tabular}{@{}lccccccc@{}}\n\\toprule\n & & \\multicolumn{2}{c}{AS($\\alpha$)/AS(0), $\\rho_t{=}0.2$} & \\multicolumn{2}{c}{AS($\\alpha$)/AS(0), own $\\rho$} & & \\\\\nModel & own $\\rho$ & $\\alpha{=}0.1$ & $\\alpha{=}0.3$ & $\\alpha{=}0.1$ & $\\alpha{=}0.3$ & AS ($^\\circ$) own $\\rho$, $\\alpha{=}0/0.3$ & $r_E$ \\\\\n\\midrule\n'
 for m in ('resnet', 'resnext', 'dinov2'):
@@ -102,6 +107,7 @@ for m, k in (('dino_vitb16', 'B'), ('dino_vits16', 'S')):
     M(f'Dino{k}NCM', f(I5['dino'][m]['NCM_null'], 1)); M(f'Dino{k}NZS', f(B3['dino'][m]['NZS'], 2))
     M(f'Dino{k}Dal', f(I6['per_model'][m]['D_align_ret'], 3)); M(f'Dino{k}DalRank', str(I6['ranks']['D_align_ret'][m]))
     M(f'Dino{k}NCMRank', str(I6['ranks']['NCM_null'][m]))
+M('DalRankN', str(I6['ranks']['D_align_ret']['n_ranked'])); M('NcmRankN', str(I6['ranks']['NCM_null']['n_ranked']))
 M('DinoMedian', f(DN['median_AS_ret_13'], 3)); M('QDNone', DN['Q_DN1']); M('QDNtwo', DN['Q_DN2'])
 M('AugRegTop', f(DN['kill_dn']['timm_vitb16_augreg']['top1_50k'], 2))
 body = '\\begin{tabular}{@{}lccccccc@{}}\n\\toprule\nModel & top-1 (50k) & $d_{\\mathrm{null}}$ & $\\rho$ & fidelity & AS (ridge) [rank/15] & 95\\% PI from E12 law & NCM$_{\\mathrm{null}}$ \\\\\n\\midrule\n'
@@ -133,6 +139,13 @@ for e, lab in EST:
             cells.append('--' if v is None or (isinstance(v, float) and math.isnan(v)) else mm(f(v)))
     body += f'{lab} & ' + ' & '.join(cells) + f' & {"yes" if I2["content_diagnostic"][e] else "no"} \\\\\n'
 body += '\\midrule\nexponent $a$ & ' + ' & '.join(mm(f(I2['bases'][b]['worlds'][W]['exponent']['a'])) for W in 'CM' for b in BASES) + ' & \\multicolumn{3}{c}{--} & \\\\\n'
+shC = [x['L'] / x['rho'] for b in BASES for x in I2['bases'][b]['worlds']['C']['rows']]
+M('CalCShareHi', f(100 * max(shC), 0)); M('CalCShareLo', f(100 * min(shC), 1))
+for W in 'MD':
+    vs = [I2['bases'][b]['worlds'][W]['tau']['NCM_null'] for b in BASES]
+    M(f'NcmCal{W}Lo', f(min(vs))); M(f'NcmCal{W}Hi', f(max(vs)))
+    vs = [I2['bases'][b]['worlds'][W]['tau']['D_align'] for b in BASES]
+    M(f'DalCal{W}Lo', f(min(vs))); M(f'DalCal{W}Hi', f(max(vs)))
 write('tab_calib.tex', body + '\\bottomrule\n\\end{tabular}\n')
 M('CalAnyDiag', 'none' if not any(I2['content_diagnostic'].values()) else ', '.join(k for k, v in I2['content_diagnostic'].items() if v))
 ex = [I2['bases'][b]['worlds'][W]['exponent']['a'] for b in BASES for W in 'CM']
@@ -188,7 +201,7 @@ write('tab_geom.tex', body + '\\bottomrule\n\\end{tabular}\n')
 for s, k in (('E12', 'E'), ('S11', 'S'), ('all13', 'A')):
     M(f'Nzs{k}', f(B3['tau'][s]['tau'])); M(f'Nzs{k}CI', ci(B3['tau'][s])); M(f'NzsRho{k}', f(B3['tau_vs_rho'][s]['tau']))
     M(f'NzsPart{k}', f(B3['partial_given_rho'][s]['r']))
-    M(f'IsRow{k}', f(B4['tau_IS_rowenergy'][s]['tau'])); M(f'IsKrow{k}', f(B4['tau_IS_kappa_row'][s]['tau'])); M(f'IsSing{k}', f(B4['tau_IS_sing'][s]['tau']))
+    M(f'IsRow{k}', f(B4['tau_IS_rowenergy'][s]['tau'])); M(f'IsKrow{k}', f(B4['tau_IS_kappa_row'][s]['tau'])); M(f'IsSing{k}', f(B4['tau_IS_sing'][s]['tau'])); M(f'IsRow{k}CI', ci(B4['tau_IS_rowenergy'][s]))
 M('NzsGate', 'pass' if B3['gate_pass'] else 'fail'); M('NzsSing', B3['sing_test']); M('NzsFree', 'yes' if B3['energy_free'] else 'no')
 M('NzsGateTau', f(min(min(v['tau_NZS_p'], 1.0) for v in B3['gate'].values())))
 M('NzsRescale', f(100 * max(v['rescale_max_rel_change'] for v in B3['gate'].values()), 1))
@@ -261,7 +274,7 @@ L = [
     ('R4B-5', 'NCM$_{\\mathrm{null}}$: NCM-CONTENT ($\\ge0.6$, partial CI $\\not\\ni0$) / NCM-NULL ($<0.3$)', f'intermediate (${mac["NcmE"]}$, ${mac["NcmS"]}$); no kill'),
     ('R4B-3', 'selectivity $R$: R-TRACKS ($\\ge0.6$) / R-NULL ($<0.3$); within-model CI $\\not\\ni1$ on $\\ge9/12$',
      f'R-NULL (${mac["SeltwentyE"]}$, ${mac["SeltwentyS"]}$); within-model {mac["SelExcl"]}/12 ({mac["SelAbove"]} above, {mac["SelBelow"]} below 1)'),
-    ('R4B-6', 'DINO inside the E12 PI of $\\Delta_{\\mathrm{align}}$ and NCM$_{\\mathrm{null}}$; lowest 4 of 15', 'inside both PIs for both; not lowest 4 for either score'),
+    ('R4B-6', 'DINO inside the E12 PI of $\\Delta_{\\mathrm{align}}$ and NCM$_{\\mathrm{null}}$; both in the lowest 4', f'inside both PIs for both; `least leaking\' label not met (it needs both models in the lowest 4); ViT-S/16 alone is in the lowest 4 on both (ranks {mac["DinoSDalRank"]} of {I6["ranks"]["D_align_ret"]["n_ranked"]} and {mac["DinoSNCMRank"]} of {I6["ranks"]["NCM_null"]["n_ranked"]})'),
     ('R4C-G2', 'geometry on true DINO: (i) Spearman $\\ge0.9$, (ii) oop CI $>0$, (iii) closed form $\\le25\\%$; (iv) $|a_{\\mathrm{fit}}-a_{\\mathrm{pred}}|\\le0.1$',
      f'PASS on both; exponent {mac["GTwoExp"]}; no kill'),
     ('R4C-G3', 'synthetic: $a_{\\mathrm{fit}}$ within $\\pm0.05$ of $(1{+}s)/2$', f'{mac["GThreeVerdict"].upper()} (max error ${mac["GThreeMaxErr"]}$)'),
