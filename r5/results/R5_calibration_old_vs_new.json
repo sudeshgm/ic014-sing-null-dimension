@@ -1,0 +1,650 @@
+{
+ "rows": [
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "rho",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "AS",
+   "old": 0.9999999999999998,
+   "new": 0.9696969696969696,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "A1",
+   "old": 0.6969696969696969,
+   "new": 0.7272727272727272,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "AS_gauss",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "X",
+   "old": -0.5151515151515151,
+   "new": -0.0303030303030303,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "D_align",
+   "old": -0.9999999999999998,
+   "new": -0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "NCM_null",
+   "old": -0.3212504157459161,
+   "new": -0.7156264473321343,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "R",
+   "old": -0.8787878787878787,
+   "new": -0.909090909090909,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "C",
+   "estimator": "exponent_a",
+   "old": 0.5456476075726614,
+   "new": 0.5914635215455906,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "rho",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "AS",
+   "old": 0.3333333333333333,
+   "new": 0.3333333333333333,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "A1",
+   "old": 0.4545454545454545,
+   "new": 0.5151515151515151,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "AS_gauss",
+   "old": 0.9393939393939392,
+   "new": 0.9393939393939392,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "X",
+   "old": -0.6666666666666666,
+   "new": -0.4545454545454545,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "D_align",
+   "old": -0.1515151515151515,
+   "new": -0.2121212121212121,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "NCM_null",
+   "old": 0.9211323729436766,
+   "new": 0.8081352297940448,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "R",
+   "old": -0.0606060606060606,
+   "new": -0.0606060606060606,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "M",
+   "estimator": "exponent_a",
+   "old": 0.284712218438438,
+   "new": 0.3062407895026118,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "rho",
+   "old": NaN,
+   "new": -0.03077287274483318,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "AS",
+   "old": 0.2424242424242424,
+   "new": 0.1212121212121212,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "A1",
+   "old": -0.9999999999999998,
+   "new": -0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "AS_gauss",
+   "old": -0.5454545454545454,
+   "new": -0.5151515151515151,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "X",
+   "old": 0.9696969696969696,
+   "new": 0.909090909090909,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "D_align",
+   "old": 0.9393939393939392,
+   "new": 0.909090909090909,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "NCM_null",
+   "old": 0.9313248452425005,
+   "new": 0.9999999999999998,
+   "changed": true
+  },
+  {
+   "base": "resnet",
+   "world": "D",
+   "estimator": "R",
+   "old": -0.7272727272727272,
+   "new": -0.3333333333333333,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "rho",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "AS",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "A1",
+   "old": 0.0,
+   "new": 0.4848484848484848,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "AS_gauss",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "X",
+   "old": -0.9999999999999998,
+   "new": -0.5151515151515151,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "D_align",
+   "old": -0.9999999999999998,
+   "new": -0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "NCM_null",
+   "old": -0.9999999999999998,
+   "new": -0.9923953268977465,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "R",
+   "old": -0.303030303030303,
+   "new": -0.1515151515151515,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "C",
+   "estimator": "exponent_a",
+   "old": 0.29562584143834025,
+   "new": 0.4279098968474706,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "rho",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "AS",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "A1",
+   "old": -0.8484848484848484,
+   "new": -0.7878787878787877,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "AS_gauss",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "X",
+   "old": -0.8787878787878787,
+   "new": -0.7575757575757575,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "D_align",
+   "old": 0.1818181818181818,
+   "new": 0.1212121212121212,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "NCM_null",
+   "old": 0.80075721739621,
+   "new": 0.4392976851069795,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "R",
+   "old": 0.7878787878787877,
+   "new": 0.6969696969696969,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "M",
+   "estimator": "exponent_a",
+   "old": 0.4216015808050737,
+   "new": 0.4668836566245785,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "rho",
+   "old": NaN,
+   "new": 0.06154574548966636,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "AS",
+   "old": 0.9393939393939392,
+   "new": 0.9999999999999998,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "A1",
+   "old": 0.9393939393939392,
+   "new": 0.606060606060606,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "AS_gauss",
+   "old": -0.9393939393939392,
+   "new": -0.7575757575757575,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "X",
+   "old": 0.9696969696969696,
+   "new": 0.9999999999999998,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "D_align",
+   "old": 0.9393939393939392,
+   "new": 0.9999999999999998,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "NCM_null",
+   "old": 0.9999999999999998,
+   "new": 0.9923953268977465,
+   "changed": true
+  },
+  {
+   "base": "dinov2",
+   "world": "D",
+   "estimator": "R",
+   "old": -0.4848484848484848,
+   "new": -0.3333333333333333,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "rho",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "AS",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "A1",
+   "old": 0.5454545454545454,
+   "new": 0.6363636363636362,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "AS_gauss",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "X",
+   "old": -0.9999999999999998,
+   "new": -0.8787878787878787,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "D_align",
+   "old": -0.9999999999999998,
+   "new": -0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "NCM_null",
+   "old": -0.9999999999999998,
+   "new": -0.9923953268977465,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "R",
+   "old": -0.4545454545454545,
+   "new": -0.2121212121212121,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "C",
+   "estimator": "exponent_a",
+   "old": 0.493075315107455,
+   "new": 0.4651237825990165,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "rho",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "AS",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "A1",
+   "old": -0.7575757575757575,
+   "new": -0.7575757575757575,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "AS_gauss",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "X",
+   "old": -0.7575757575757575,
+   "new": -0.7272727272727272,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "D_align",
+   "old": 0.606060606060606,
+   "new": 0.5757575757575757,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "NCM_null",
+   "old": 0.8790490729915325,
+   "new": 0.8790490729915325,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "R",
+   "old": -0.8484848484848484,
+   "new": -0.7878787878787877,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "M",
+   "estimator": "exponent_a",
+   "old": 0.5160848648366292,
+   "new": 0.5317676290739928,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "rho",
+   "old": NaN,
+   "new": 0.0,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "AS",
+   "old": 0.9696969696969696,
+   "new": 0.9999999999999998,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "A1",
+   "old": 0.4848484848484848,
+   "new": 0.6969696969696969,
+   "changed": true
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "AS_gauss",
+   "old": -0.9999999999999998,
+   "new": -0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "X",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "D_align",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "NCM_null",
+   "old": 0.9999999999999998,
+   "new": 0.9999999999999998,
+   "changed": false
+  },
+  {
+   "base": "resnext",
+   "world": "D",
+   "estimator": "R",
+   "old": -0.8787878787878787,
+   "new": -0.9393939393939392,
+   "changed": true
+  }
+ ],
+ "n_changed": 50,
+ "n_total": 78,
+ "content_diagnostic_old": {
+  "rho": false,
+  "AS": false,
+  "A1": false,
+  "AS_gauss": false,
+  "X": false,
+  "D_align": false,
+  "NCM_null": false,
+  "R": false
+ },
+ "content_diagnostic_new": {
+  "rho": false,
+  "AS": false,
+  "A1": false,
+  "AS_gauss": false,
+  "X": false,
+  "D_align": false,
+  "NCM_null": false,
+  "R": false
+ }
+}

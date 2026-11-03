@@ -1,6 +1,10 @@
 """PREREG_R4B idea 2: semi-synthetic calibration of the estimators in worlds C (confound), M (mediation), D (dissociation).
 Bases ResNet50, DINOv2-L, ResNeXt101 (released translators, class text). z = mu_y + r rescaled as C' = a mu_y + b r; 12 synthetic
-models per world with the E12 rho values as targets. Outputs r4/results/I2_calibration.json. Usage: python r4/calibration.py --feats-root $IC014_FEATS"""
+models per world with the E12 rho values as targets.
+Residuals (round 5 fix, PREREG_R5.md): with --resid perm (default) the residual r is permuted across all images (seed 99000) before scaling,
+so within a class the residuals no longer sum to zero and split-half / leave-one-out class means are not anti-correlated. --resid insample
+reproduces the round-4 construction (r = z - in-sample class mean). Outputs r4/results/I2_calibration_v2.json (perm) or
+r4/results/I2_calibration.json (insample, round 4). Usage: python r4/calibration.py --feats-root $IC014_FEATS [--resid perm|insample]"""
 import argparse, os, sys, json, time, numpy as np, torch
 from scipy.stats import t as tdist
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'r3'))
@@ -10,6 +14,7 @@ from retrain_translators import find
 from class_perm import class_means
 import estimators as est
 torch.set_num_threads(os.cpu_count()); BASES = ['resnet', 'dinov2', 'resnext']
+RESID_SEED = 99_000
 ESTS = ['rho', 'AS', 'A1', 'AS_gauss', 'X', 'D_align', 'NCM_null', 'R']
 
 
@@ -19,15 +24,16 @@ def slope(x, y):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True)
+    ap = argparse.ArgumentParser(); ap.add_argument('--feats-root', required=True); ap.add_argument('--resid', choices=['perm', 'insample'], default='perm')
     ap.add_argument('--sing-root', default=os.environ.get('SING_ROOT', os.path.join(R, '_ext', 'sing'))); a = ap.parse_args(); fr = a.feats_root
     TC = text_emb(a.sing_root); ms, col, _ = load_models(); rho_all = col('rho'); S = sets(ms, rho_all)
     targ = sorted(float(rho_all[ms.index(n)]) for n in S['E12']); rmin = targ[0]; rD = float(np.median(targ)); h = 0.5 * rmin
-    out = dict(targets=targ, rho_D=rD, L_C=h, resid_frac_M=h, bases={})
+    out = dict(targets=targ, rho_D=rD, L_C=h, resid_frac_M=h, resid=a.resid, resid_seed=RESID_SEED if a.resid == 'perm' else None, bases={})
     for base in BASES:
         d = np.load(find(fr, base)); F = torch.tensor(d['F']).double(); y = torch.tensor(d['y']).long(); Vn = null_basis(torch.tensor(d['W']))
         A = torch.tensor(d['A']).double(); Ab = torch.tensor(d['Ab']).double(); tc = TC[y]
         C = F @ Vn; Frow = F - C @ Vn.T; Zrow = Frow @ A.T + Ab; AVt = Vn.T @ A.T; mu = class_means(C, y)[y]; Rr = C - mu
+        if a.resid == 'perm': Rr = Rr[torch.tensor(np.random.default_rng(RESID_SEED).permutation(len(y)))]
         Er = float(Frow.pow(2).sum(1).mean()); Mm = float(mu.pow(2).sum(1).mean()); Rm = float(Rr.pow(2).sum(1).mean()); hv = est.halves(y); k = min(20, C.shape[1] // 2)
         worlds = {}
         for W in ['C', 'M', 'D']:
@@ -60,7 +66,7 @@ def main():
         diag[e] = all(ok)
     out['content_diagnostic'] = diag
     ASm = col('AS_SING'); e12 = S['E12']; out['cross_model_exponent_E12'] = slope([rho_all[ms.index(n)] for n in e12], [ASm[ms.index(n)] for n in e12]); out['ahat_E1'] = 0.431
-    dump4('I2_calibration.json', out); print('content-diagnostic:', diag, 'cross-model exponent', out['cross_model_exponent_E12'])
+    dump4('I2_calibration_v2.json' if a.resid == 'perm' else 'I2_calibration.json', out); print('content-diagnostic:', diag, 'cross-model exponent', out['cross_model_exponent_E12'])
 
 
 if __name__ == '__main__':
