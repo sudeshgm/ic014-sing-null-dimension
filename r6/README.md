@@ -20,4 +20,4 @@ The run used four processes of 2 threads on a shared 8-core machine: 3–74 min 
 * NuSA-style reference (not counted): MIXED (τ_EQ 0.27 / 0.31, R_B 0.89), τ with SING 0.82 / 0.82.
 * ESTIMATOR-NOISY (C2) is flagged for every score. Full numbers: `results/R6_summary.json`; per-model values: `results/models/*.json`; synthetic worlds: `results/worlds/*.json`. See `RESULTS.md` and the paper (§ "Do other null-space scores share the energy confound?", Appendix "Round 6").
 
-Deviations from the pre-registration: the largest logit change on real data is 1.3e-5 (DenseNet121, whose null part is scaled up by 5e2–7e3; the 1e-8 tolerance in §1 refers to the synthetic tests); nothing else.
+Deviations from the pre-registration: the largest logit change on real data is 1.3e-5 (DenseNet121, whose null part is scaled up by 5e2–7e3; the 1e-8 tolerance in §1 refers to the synthetic tests). There are no other deviations.
