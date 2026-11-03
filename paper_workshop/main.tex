@@ -18,6 +18,7 @@
 \newcommand{\ASsurr}{\mathrm{AS}_{\mathrm{surr}}}
 \input{tables/numbers.tex}
 \input{tables/numbers_r4.tex}
+\input{tables/numbers_r5.tex}
 \input{holdout_numbers.tex}
 
 \title{SING's Cross-Model Leakage Ranking Is Indistinguishable from a Null-Energy Ranking}
@@ -39,11 +40,12 @@ Our interventions show that AS has a path from null energy to the score that car
 Replacing each model's null coordinates with content-free surrogates of the same energy reproduces SING's order (point $\tau$ $\QSurrLo$--$\QSurrHi$ on all 13 models, depending on the surrogate), and so does the excess of real over surrogate AS ($\tau{=}\QSDpermA$). The data cannot apportion the order between the two.
 Removing an equal share of null energy from every model amounts to measuring AS per unit null energy. With SING's released translators this loses the agreement ($\tau{=}{\NTauAoneE}$ and $\NTauAoneS$ on two model sets; $\QLtoRelS$ on the second set without two models). With retrained ridge translators it keeps it ($\tau{=}\QAoneRetE$ and $\QAoneRetS$), at the level our earlier pre-registered rule set to reject the energy reading.
 Shuffling class means across classes in the null space, which preserves energy exactly, keeps the agreement ($\tau{=}\QCpRelE$), but given $\rho$ the class-aligned part has the stronger partial association ($\QPartDalRelE$ against $\QPartCpRelE$). We read this as leaning toward energy; our pre-registration allows no stronger claim than these raw numbers.
-In semi-synthetic calibration worlds with known content, no estimator we tested meets all three criteria; the translator-free NCM$_{\mathrm{null}}$ tracks content in two of the three worlds.
+In semi-synthetic calibration worlds with known content, no estimator we tested meets all three criteria; the translator-free NCM$_{\mathrm{null}}$ tracks content in one world on all three bases and in a second on \QNcmCalMPass{} of three.
+A pre-registered score of how null class means are organised relative to the class texts, invariant to rescaling the null part, passes its validity gates, but its agreement with SING's order is inconclusive ($\tau{=}\FSOTauE$ and $\FSOTauS$).
 Under our ridge translators, two true DINO backbones rank 8th and 9th of 15 by raw AS. Adjusted for null energy, ViT-S/16 falls below the prediction interval, which leans toward SING's account for that model, while ViT-B/16 lies inside it, so the evidence is mixed.
 SING's ``DinoViT'' translator matches a supervised timm ViT-L/16 checkpoint.
 Size-corrected scores change the order but none reverses it with confidence.
-The main analyses were pre-registered over four rounds (two round-4 addenda were written after the first round-4 results), post hoc analyses are labelled, and we report every pre-registered outcome.
+The main analyses were pre-registered over five rounds (two round-4 addenda were written after the first round-4 results), post hoc analyses are labelled, and we report every pre-registered outcome.
 We recommend reporting $\rho$ and an energy-only baseline next to any cross-model AS-type null-space score.
 \end{abstract}
 
@@ -74,10 +76,10 @@ This paper tests that possibility.
 \begin{enumerate}
 \item \textbf{Energy-only control} (\S\ref{sec:energy}). $\rho$ alone reproduces SING's 13-model order as well as SING's score. The two are statistically indistinguishable predictors, and neither subsumes the other.
 \item \textbf{Interventions} (\S\ref{sec:interv}). Equal-energy removal, six null-content surrogates, a class-mean permutation, retrained translators and three translator-free or energy-free scores. AS has a content-free energy path, but the data cannot apportion SING's order between null energy and null content, and the equal-energy result depends on the translator.
-\item \textbf{Calibration} (\S\ref{sec:calib}). In semi-synthetic worlds with known null content, none of eight estimators meets all three calibration criteria, although NCM$_{\mathrm{null}}$ tracks content in two of the three worlds. A geometric decomposition describes how AS grows with energy (consistent with two held-out models).
+\item \textbf{Calibration} (\S\ref{sec:calib}). In semi-synthetic worlds with known null content, none of eight estimators meets all three calibration criteria, although NCM$_{\mathrm{null}}$ tracks content in world D on all three bases and in world M on \QNcmCalMPass{}. A pre-registered organisation score passes its validity gates and is inconclusive against SING's order. A geometric decomposition describes how AS grows with energy (consistent with two held-out models).
 \item \textbf{DINO checkpoints} (\S\ref{sec:dino}). SING's ``DinoViT'' translator fits a supervised timm ViT-L/16. Under our ridge translators, two true DINO backbones with linear heads fall mid-table by raw AS; adjusted for energy, the evidence is mixed.
 \item \textbf{Size-corrected scores} (\S\ref{sec:fair}). They change the order, but no correction reverses it with confidence. Several class-level claims do not reproduce on our pipeline.
-\item \textbf{Full reporting}. Four rounds of pre-registration with every outcome listed (Appendix~\ref{app:prereg}), including the kills of two score searches and the flaw in the flatness rule behind them (Appendix~\ref{app:search}).
+\item \textbf{Full reporting}. Five rounds of pre-registration with every outcome listed (Appendix~\ref{app:prereg}), including the kills of two score searches and the flaw in the flatness rule behind them (Appendix~\ref{app:search}).
 \end{enumerate}
 
 \section{Setup}
@@ -306,12 +308,13 @@ High-energy null directions are not clearly more semantic per unit energy. The r
 \label{sec:calib}
 \paragraph{Semi-synthetic worlds.}
 To check whether any estimator can tell null content from null energy, we built three worlds on each of three bases (ResNet50, ResNeXt101 and DINOv2-L, each with its released translator) by rescaling the class-mean part $\mu_y$ and the residual $r$ of the null coordinates, with the 12 E12 values of $\rho$ as targets.
+The residual is permuted across images before rescaling. An earlier version used each image's own residual, which sums to zero within each class, so class means estimated on disjoint subsets of a class's images are anti-correlated. The correction changes $\FCalChanged$ of the $\FCalTotal$ entries of Table~\ref{tab:calib} (earlier values in Table~\ref{tab:calibold}) but not the verdict.
 Content is measured by $L$, the class-mean null energy as a share of total feature energy. In world C, $L$ is fixed while $\rho$ varies; in world M the residual is fixed, so $L$ rises with $\rho$; in world D, $\rho$ is fixed and $L$ varies.
 An estimator is \emph{content-diagnostic} if, on all three bases, $|\tau(\cdot,\rho)|\le0.2$ in world C, $\tau(\cdot,L)\ge0.8$ in world M and $\tau(\cdot,L)\ge0.6$ in world D.
 None of the eight estimators we tested meets all three criteria ($\rho$, AS, A1, AS$_{\mathrm{gauss}}$, $X$, $\Delta_{\mathrm{align}}$, NCM$_{\mathrm{null}}$ and the selectivity $R$; Table~\ref{tab:calib} in Appendix~\ref{app:tables}).
 The bar is strict. In world C, where $L$ is fixed and $\rho$ grows (the absolute class-mean null energy rises ${\times}\QCalCAbsRise$, since the row-space energy is held fixed), the class-mean share of null energy falls from $\QCalCShareHi\%$ to $\QCalCShareLo\%$, and a score that responds to that share fails world C by construction.
-NCM$_{\mathrm{null}}$ tracks $L$ in worlds M ($\QNcmCalMLo$--$\QNcmCalMHi$) and D ($\QNcmCalDLo$--$\QNcmCalDHi$), and $\Delta_{\mathrm{align}}$ and $X$ track it in world D ($\QDalCalDLo$--$\QDalCalDHi$ for $\Delta_{\mathrm{align}}$); all three fail world C.
-AS follows $\rho$ at fixed content (world C, $\tau{=}1$ on all bases).
+NCM$_{\mathrm{null}}$ tracks $L$ in world D ($\QNcmCalDLo$--$\QNcmCalDHi$) and rises with it in world M ($\QNcmCalMLo$--$\QNcmCalMHi$, meeting the criterion on \QNcmCalMPass{} bases), and $\Delta_{\mathrm{align}}$ and $X$ track it in world D ($\QDalCalDLo$--$\QDalCalDHi$ for $\Delta_{\mathrm{align}}$); all three fail world C ($X$ meets the world-C criterion on \QCalXCPass{} base only).
+AS follows $\rho$ at fixed content (world C, $\tau{\ge}\QCalASCMin$ on all bases).
 The energy exponents in worlds C and M run from $\QCalAMin$ to $\QCalAMax$, against $\hat a{=}\NEOneA$ from the energy law and $\QCalCrossA$ $\QCalCrossACI$ across models.
 
 \paragraph{Translator-free and energy-free scores.}
@@ -320,7 +323,18 @@ The energy exponents in worlds C and M run from $\QCalAMin$ to $\QCalAMax$, agai
 \item \emph{Null zero-shot accuracy} NZS: zero-shot classification from the translated null part alone, minus a permuted control. It passes its validity gate (no change under rescaling of $\Pi f$; $\tau{=}1$ with planted content on all three bases), but it is not energy-free ($\tau(\cdot,\rho){=}\QNzsRhoE$ and $\QNzsRhoS$), and against SING it gives $\QNzsE$ $\QNzsECI$ (E12) and $\QNzsS$ (S11): inconclusive. Given $\rho$, its partial association with the order has negative point estimates, but every CI includes 0 (${\QNzsPartA}$ $\QNzsPartACI$, ${\QNzsPartE}$ $\QNzsPartECI$ and ${\QNzsPartS}$ $\QNzsPartSCI$ on all 13, E12 and S11).
 \item \emph{Selectivity} $R$: AS after removing the top-20 between-class null directions (estimated on held-out images) over AS after removing the same energy at random. Within each model $R$ differs from 1 (CI excludes 1 on $\QSelExcl$ of 12 models), but in both directions ($\QSelAbove$ above 1, $\QSelBelow$ below). Across models it does not reproduce the order ($\tau{=}\QSeltwentyE$ and $\QSeltwentyS$; $k{=}5$ and $50$ give the same).
 \end{itemize}
-None of these scores tracks SING's order. None is both energy-free and fully calibrated, so we propose no replacement score.
+None of these scores tracks SING's order, and none is both energy-free and fully calibrated.
+
+\paragraph{Organisation score (round 5, pre-registered).}
+The scores above measure how much class information the null part carries, which rises with its energy.
+SO$_{\mathrm{null}}$ instead asks whether the null class means are \emph{arranged} like the class texts.
+It is the Spearman correlation between a cross-validated (crossnobis) class-dissimilarity matrix of the null coordinates~\citep{walther2016reliability} and the dissimilarity matrix of SING's class-text embeddings, both double-centred, in the manner of representational similarity analysis~\citep{kriegeskorte2008rsa,nili2014toolbox}, divided by the square root of its split-half reliability. It needs no translator and is exactly invariant to rescaling the null part.
+A secondary score, XCC$_{24}$, is a cross-fitted alignment of the null and text class Gram matrices in random 24-dimensional frames.
+Both pass the pre-registered gates on all 13 models: exact invariance to scale and rotation, no signal after class means are deranged across classes, and a response to a semantic but not to an arbitrary planted class code. Both are estimable on $\FSOEstE$ of E12 and $\FSOEstS$ of S11.
+The corrected world C could not test SO$_{\mathrm{null}}$: as $\rho$ grows at fixed $L$, its reliability falls below the floor of 0.10, so only \FSOGFourTestable{} base has three estimable rows, and by the pre-registered rule this is not a kill. In worlds M and D both scores stay flat as $L$ varies (within a factor $\FSOMDRatio$ and $\FXCCMDRatio$).
+Against SING's order SO$_{\mathrm{null}}$ gives $\tau{=}\FSOTauE$ $\FSOTauECI$ on E12 and $\FSOTauS$ $\FSOTauSCI$ on S11: \FSOLabel. It also follows $\rho$ ($\FSORhoE$, $\FSORhoS$), and given $\rho$ its partial association is $\FSOPartE$ and $\FSOPartS$, with CIs that include 0.
+XCC$_{24}$ gives $\FXCCTauE$ and $\FXCCTauS$ (\FXCCLabel). The congruence of the full-null XCC with the text geometry is not inherited from the row-space geometry (\FInhStatement{} by the pre-registered rule): with the row-space class Gram projected out, it stays above 0.05 on $\FInhHigh$ of $\FInhN$ models.
+The thresholds were set after a three-model scratch run, which the pre-registration discloses (Appendix~\ref{app:r5}).
 
 \subsection{How AS grows with energy}
 \label{sec:geom}
@@ -433,7 +447,7 @@ Under $\ASF$ the effect is $\QCsixFairEff$ $\QCsixFairCI$, but correcting the SD
 \paragraph{What we can and cannot conclude.}
 SING's cross-model ranking is indistinguishable from the ranking by null energy.
 AS responds to null energy through a path that carries no image-specific content, and we can describe that path geometrically.
-The data cannot separate null energy from real null content as the source of SING's order: content-free surrogates and the content excess both reproduce it, AS per unit energy tracks the order with one translator family and not the other, the class-mean permutation leans toward energy without settling it (its raw numbers are all our pre-registration supports), and no estimator we tried meets all three calibration criteria.
+The data cannot separate null energy from real null content as the source of SING's order: content-free surrogates and the content excess both reproduce it, AS per unit energy tracks the order with one translator family and not the other, the class-mean permutation leans toward energy without settling it (its raw numbers are all our pre-registration supports), no estimator we tried meets all three calibration criteria, and a pre-registered score of null class organisation is inconclusive against the order.
 We do not conclude that SING's ranking is wrong, or that AS carries no semantic signal; AS responds to planted concepts at fixed energy.
 The claim we support is narrower: a cross-model AS comparison cannot be read as a comparison of null semantics, because energy and content are not separated by any control we have.
 
@@ -475,7 +489,7 @@ SING's order is digitised from a figure.
 Our retrained translators are ridge maps chosen by us.
 SING's training recipe may differ, and the equal-energy result depends on this choice.
 The energy-scan part of the leak-free test covers three models with $d_{\mathrm{null}}{=}1048$, and the planted strengths stop at $\alpha{=}0.3$, below the energy-equivalent strength at each model's own $\rho$ (at $\rho_t{=}0.01$, post hoc, content moves AS more than energy does on $\QPlantLowAbove$ of the three models).
-The calibration worlds are semi-synthetic, built on three bases by rescaling class-mean and residual null content; they test whether an estimator can separate the two, not whether real models differ in content.
+The calibration worlds are semi-synthetic, built on three bases by rescaling class-mean and residual null content; they test whether an estimator can separate the two, not whether real models differ in content. The organisation score's thresholds were set after a three-model scratch run, and its world-C gate could not be tested.
 The geometric account is consistent with two held-out models and with synthetic data that builds in its gain law; on the 13 models it is exploratory.
 The true DINO comparison uses our ridge translators, since SING released none for these models.
 The energy law does not cleanly separate energy from dimension, and its pre-registered flatness part fails.
@@ -502,7 +516,7 @@ A full rerun from features takes about 2~h on 8 CPU cores; feature extraction ne
 \section{Pre-registration ledger}
 \label{app:prereg}
 Table~\ref{tab:prereg} lists every pre-registered experiment and its outcome.
-E1 to E9 come from the original plan, R2 from the round-2 pre-registration and R3 from the round-3 one, each written after the previous round's results. Round 4 (R4, R4B and R4C, three files) is in Table~\ref{tab:prereg4}; the addenda R4B and R4C were written after the R4 results, and each lists the values known when it was written.
+E1 to E9 come from the original plan, R2 from the round-2 pre-registration and R3 from the round-3 one, each written after the previous round's results. Round 4 (R4, R4B and R4C, three files) is in Table~\ref{tab:prereg4}; the addenda R4B and R4C were written after the R4 results, and each lists the values known when it was written. Round 5 (\texttt{PREREG\_R5.md}) is in Table~\ref{tab:prereg5}.
 \begin{table}[H]
 \centering\footnotesize
 \input{tables/tab_prereg.tex}
@@ -515,6 +529,13 @@ E1 to E9 come from the original plan, R2 from the round-2 pre-registration and R
 \input{tables/tab_prereg_r4.tex}
 \caption{Round-4 pre-registered tests and outcomes (E12 / S11 unless stated). R4B and R4C rows come from addenda written after the R4 results. No kill fired.}
 \label{tab:prereg4}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\input{tables/tab_prereg_r5.tex}
+\caption{Round-5 pre-registered tests and outcomes (E12 / S11 unless stated). Thresholds were set after a three-model scratch run. No kill fired.}
+\label{tab:prereg5}
 \end{table}
 
 \section{Additional tables}
@@ -654,15 +675,52 @@ M1 orders the models much as $\rho$ does ($\tau{=}\NMOneRho$), as expected for a
 Its holdout validation favours it by construction (the plant is written along the projection it measures), so this agreement is not independent evidence about energy.
 We treat M1 as a candidate for a future pre-registered test, not as a validated score.
 
+\section{Round 5: calibration fix and organisation score}
+\label{app:r5}
+\paragraph{Calibration fix.} Round 4 built the worlds of \S\ref{sec:calib} from each image's own residual $r=c-\mu_y$. Within a class these residuals sum to zero, so a class mean estimated on one subset of images is the negative of the residual mean of the rest, which biases any estimator that compares class means across disjoint images. Round 5 permutes $r$ across all images (seed 99000) before rescaling, as pre-registered in \texttt{PREREG\_R5.md}; the round-4 results file is kept. $\FCalChanged$ of $\FCalTotal$ entries change (Table~\ref{tab:calib} against Table~\ref{tab:calibold}). The largest changes are NCM$_{\mathrm{null}}$ in world M on DINOv2-L (from $\FOldNcmCalMDino$ to $\FNcmCalMDino$, so it now misses the world-M criterion on that base; the round-4 range was $\FOldNcmCalMLo$--$\FOldNcmCalMHi$) and $X$ in world C on ResNet50 (from $\FOldXCalCRN$ to $\FNewXCalCRN$). The content-diagnostic verdict is unchanged (\FCalDiagOld{} before, \FCalDiagNew{} after). In world D, $\rho$ is no longer exactly constant, because the cross term between class means and permuted residuals is not exactly zero; its $\tau$ with $L$ is now defined and close to 0.
+
+\paragraph{Scores.} For SO$_{\mathrm{null}}$, the images are split into four class-stratified folds (seed 99200). Crossnobis distances between class means are computed from folds $\{0,1\}$ and from folds $\{2,3\}$~\citep{walther2016reliability}. Each distance matrix and the text dissimilarity $1-\cos$ are double-centred. SO$_{\mathrm{null}}$ is the mean Spearman correlation of the two halves with the text matrix, divided by the square root of their reliability $r_{\mathrm{rel}}$ (Spearman between halves), and is estimable if $r_{\mathrm{rel}}\ge0.10$. Double-centring was added after the scratch run, because without it a class-mean derangement left SO near its real value on ResNet50 (disclosed in the pre-registration). XCC$_{24}$ uses half-means from two image halves per class, centred, and the off-diagonal cross Gram, normalised against the centred text Gram, averaged over 50 Haar 24-frames (seeds $99100{+}s$). It is estimable if its self-term $z\ge5$ (10 class folds, seed 99600). Permutation nulls use 200 joint class permutations (seed 99300).
+
+\paragraph{Gates and outcomes.} G1 (exact invariance to $\beta\in\{0.1,10\}$ and an orthogonal map, seed 99500): SO \FSOGOne, XCC \FXCCGOne. G2 (class-mean derangement, seeds $94000{+}r$): no failures; the largest mean derangement score is $\FSODerMax$ (SO) and $\FXCCDerMax$ (XCC). G3 (world S, seed 99400): the semantic plant at $\alpha{=}0.3$ raises SO by at least $\FSOSemMin$ null SDs and the arbitrary plant changes it by at most $\FSOArbMax$ (it lowers it), on all 13 models. G4: SO testable on \FSOGFourTestable{} base, XCC on \FXCCGFourTestable{} (both pass where testable); not a kill. G5: estimable on all 13. No kill fired. Inheritance: F1-partial $\le0.05$ on $\FInhLow$ of $\FInhN$ models ($\FInhShare\%$, below the 75\% bar), with the plant check passed (minimum $\FInhPlantMin$), so the pre-registered statement is \FInhStatement.
+
+\begin{table}[H]
+\centering\footnotesize
+\resizebox{\linewidth}{!}{\input{tables/tab_r5_gates.tex}}
+\caption{Round-5 scores and gates per model. rel: split-half reliability of SO$_{\mathrm{null}}$; $z$: XCC self-term; G2: mean over 5 class-mean derangements; G3: change at $\alpha{=}0.3$ in null-SD units for the semantic / arbitrary plant; F1-partial: full-null XCC with the row-space class Gram projected out. True DINO models are values only.}
+\label{tab:r5gates}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\resizebox{\linewidth}{!}{\input{tables/tab_r5_worlds.tex}}
+\caption{Round-5 scores in the corrected worlds. G4 uses world C; worlds B (whole null part rescaled; truth: flat), M and D are descriptive. Ranges over estimable rows, count in parentheses.}
+\label{tab:r5worlds}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\input{tables/tab_r5_confirm.tex}
+\caption{Round-5 confirmatory test: Kendall $\tau$ with SING's order (model bootstrap, percentile 95\% CI), $\tau$ with $\rho$, and the partial Spearman given $\rho$. Labels: SO$_{\mathrm{null}}$ \FSOLabel, XCC$_{24}$ \FXCCLabel.}
+\label{tab:r5confirm}
+\end{table}
+
+\begin{table}[H]
+\centering\footnotesize
+\resizebox{\linewidth}{!}{\input{tables/tab_calib_insample.tex}}
+\caption{Round-4 calibration worlds with in-sample residuals, superseded by Table~\ref{tab:calib}; kept for comparison.}
+\label{tab:calibold}
+\end{table}
+
 \section{Reproducibility and compute}
 \label{app:repro}
 \texttt{make reproduce} regenerates every table, figure and number in this paper from committed aggregates in under a minute. This checks consistency, not the feature-level computation.
 \texttt{make reproduce-full} reruns the feature-level analyses from the private ImageNet features: about 2~h wall on 8 CPU cores, most of it the holdout.
 \texttt{make holdout-fast} runs the reduced holdout (36 min on 8 cores). It fails its pre-registered accuracy target on a deterministic quantity, so a faster machine cannot make it pass, and we did not re-time it. The timing itself may be affected by contention: the machine is shared, an earlier attempt was aborted because other jobs were running, the load average was not recorded for the timed run, and the job used about 7.3 of the 8 cores.
-The round-4 analyses (\texttt{r4/}) run on CPU from the same private features (\texttt{make reproduce-r4}); extracting the true DINO features needs a GPU.
+The round-4 analyses (\texttt{r4/}) run on CPU from the same private features (\texttt{make reproduce-r4}); extracting the true DINO features needs a GPU. The round-5 analyses (\texttt{r5/}, \texttt{make reproduce-r5}) take about 20 min for the corrected calibration worlds on 4 cores and 9 min for the organisation-score gates on 4 cores, on a shared machine.
 Feature extraction (13 models on the 10k subset, the Exp~1 features and the five ViT-L/16 candidates on the 50k validation set) needs ImageNet and a GPU. Two jobs were timed: the Exp~1 extraction (1.4 GPU-hours on one cloud GPU) and the re-extraction of the five ViT-L/16 candidates for the translator check (1.9 h on two T4 GPUs, about 3.8 GPU-hours including weight downloads). The other extraction jobs were not timed; we estimate under 10 GPU-hours for all extraction.
 \paragraph{Seeds.}
 Family A random draws $10000{+}r$ ($r<20$); family B $50000{+}r$; family C subspaces $30000{+}j$ and controls $60000{+}j$; Exp~1 20 seeds per $d$; E3 plants seed 0, bootstrap $10000\times$ seed 1; model bootstrap $2000\times$ seed 0; claim bootstrap $1000\times$ seed 0; E9 and holdout $\alpha$ seed 1; flatness bases $20000{+}j$; PC-band draws $40000{+}j$; A3 rotations $80000{+}j$; leak-free surrogates $70000{+}r$; translator split permutation seed 0.
 Round 4: surrogates $92000{+}r$ (zero-mean, isotropic, permuted) and $93000{+}r$ (within-class permutation); class-mean derangements $94000{+}r$; NCM shuffled labels $95000$; selectivity random rotations $96000{+}j$; NZS control $97000$; synthetic geometry model $98000$; geometry random subspaces $1000d{+}r$; selectivity and geometry image bootstraps seed 0.
+Round 5: calibration residual permutation $99000$; XCC Haar frames $99100{+}s$; SO folds $99200$; permutation nulls $99300$; world-S plants $99400$ and inheritance plant $99401$; G1 rotation $99500$; XCC self-term folds $99600$; class-mean derangements $94000{+}r$.
 
 \end{document}

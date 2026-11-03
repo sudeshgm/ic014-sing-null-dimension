@@ -7,7 +7,8 @@ OUT = os.path.join(R, 'paper_workshop', 'tables')
 J = lambda p: json.load(open(os.path.join(R, p)))
 S = J('r4/results/S_surrogates.json'); JA = J('r4/results/J_a1_stats.json'); JR = J('r4/results/J_retrained_a4.json')
 DN = J('r4/results/DN_dino.json'); P = J('r4/results/P_planted.json'); I1 = J('r4/results/I1_class_perm.json')
-I2 = J('r4/results/I2_calibration.json'); I3 = J('r4/results/I3_selectivity.json'); I5 = J('r4/results/I5_ncm_null.json')
+# I2: round-5 corrected worlds (residuals permuted across images, r4/calibration.py --resid perm)
+I2 = J('r4/results/I2_calibration_v2.json'); I3 = J('r4/results/I3_selectivity.json'); I5 = J('r4/results/I5_ncm_null.json')
 I6 = J('r4/results/I6_dino_addendum.json'); G = J('r4/results/B1_geometry.json'); B3 = J('r4/results/B3_nzs.json')
 B4 = J('r4/results/B4_is_energy.json'); CL = J('r2/results/fix8_claims_ci.json')
 FIX2 = list(csv.DictReader(open(os.path.join(R, 'r2/results/fix2_models.csv'))))
@@ -155,6 +156,12 @@ ex = [I2['bases'][b]['worlds'][W]['exponent']['a'] for b in BASES for W in 'CM']
 M('CalAMin', f(min(ex))); M('CalAMax', f(max(ex)))
 M('CalCrossA', f(I2['cross_model_exponent_E12']['a'])); M('CalCrossACI', ci(dict(pct=I2['cross_model_exponent_E12']['ci'])))
 M('CalDalC', f(max(I2['bases'][b]['worlds']['C']['tau']['D_align'] for b in BASES)))
+M('CalASCMin', f(min(I2['bases'][b]['worlds']['C']['tau']['AS'] for b in BASES)))
+NW = ('zero', 'one', 'two', 'three')
+M('NcmCalMPass', NW[sum(I2['bases'][b]['worlds']['M']['tau']['NCM_null'] >= 0.8 for b in BASES)])
+M('NcmCalDPass', NW[sum(I2['bases'][b]['worlds']['D']['tau']['NCM_null'] >= 0.6 for b in BASES)])
+M('CalXCPass', NW[sum(abs(I2['bases'][b]['worlds']['C']['tau']['X']) <= 0.2 for b in BASES)])
+M('CalResid', I2.get('resid', 'insample'))
 
 # ---- I5 NCM, I3 selectivity, I6
 for s, k in (('E12', 'E'), ('S11', 'S')):
