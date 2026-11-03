@@ -137,7 +137,7 @@ for e, lab in EST:
     for W in 'CMD':
         for b in BASES:
             v = I2['bases'][b]['worlds'][W]['tau'].get(e)
-            cells.append('--' if v is None or (isinstance(v, float) and math.isnan(v)) else mm(f(v)))
+            cells.append('--' if v is None or (isinstance(v, float) and math.isnan(v)) else mm(f(v)) + ('$^{\\dagger}$' if (e, W) == ('rho', 'D') else ''))
     body += f'{lab} & ' + ' & '.join(cells) + f' & {"yes" if I2["content_diagnostic"][e] else "no"} \\\\\n'
 body += '\\midrule\nexponent $a$ & ' + ' & '.join(mm(f(I2['bases'][b]['worlds'][W]['exponent']['a'])) for W in 'CM' for b in BASES) + ' & \\multicolumn{3}{c}{--} & \\\\\n'
 shC = [x['L'] / x['rho'] for b in BASES for x in I2['bases'][b]['worlds']['C']['rows']]

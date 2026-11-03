@@ -97,6 +97,28 @@ M('InhLow', str(len(I['low']))); M('InhHigh', str(len(I['estimable']) - len(I['l
 M('InhPlantMin', f(min(I['plant_partial_005'].values()), 3)); M('InhPlantCheck', 'pass' if I['plant_check'] else 'fail')
 M('FOneMin', f(min(P[n]['F1_partial'] for n in P), 3)); M('FOneMax', f(max(P[n]['F1_partial'] for n in P), 3))
 
+# ---- post-hoc descriptive checks (r5/posthoc_r5.py, from the committed aggregates)
+PH = J('r5/results/R5_posthoc.json')
+for key, s_ in (('XCC_full', 'XCCFull'), ('SO_row', 'SORow'), ('XCC_row', 'XCCRow'), ('SO_raw', 'SORaw')):
+    for st, sk in (('E12', 'E'), ('S11', 'S')):
+        M(f'{s_}Tau{sk}', f(PH[key][st]['tau']['tau'])); M(f'{s_}Tau{sk}CI', ci(PH[key][st]['tau'])); M(f'{s_}Rho{sk}', f(PH[key][st]['tau_vs_rho']))
+M('SOXCCTau', f(PH['tau_SO_XCC24_all13']))
+M('SOGThreeAlphaLow', str(PH['G3_alpha0.1_pass']['SO'])); M('XCCGThreeAlphaLow', str(PH['G3_alpha0.1_pass']['XCC24']))
+ih = PH['inheritance']; M('InhScratchMax', f(ih['scratch_max'], 3)); M('InhScratchPlantMin', f(ih['scratch_plant_min'], 3))
+M('InhCountTwelve', str(ih['counts']['0.12'])); M('InhCountTen', str(ih['counts']['0.1'])); M('InhMaxPartial', f(ih['max_partial']))
+FS = PH['SO_floor_sensitivity']; lo = [k for k in FS if float(k) < 0.1]
+M('SOFloorLabels', 'INCONCLUSIVE' if all(FS[k]['label'] == 'INCONCLUSIVE' for k in FS) else 'mixed')
+M('SOFloorKill', 'no' if not any(FS[k]['G4_kill'] for k in FS) else 'yes')
+M('SOFloorLowTestable', NW[min(FS[k]['G4_testable'] for k in lo)])
+M('SOFloorLowRatioMax', f(max(x['ratio'] for k in lo for x in FS[k]['G4'].values() if x['ratio'] is not None)))
+M('SOGFourDinoRhoLo', f(PH['G4_dinov2_rho_range'][0], 3)); M('SOGFourDinoRhoHi', f(PH['G4_dinov2_rho_range'][1], 3))
+M('DenseRho', f'{PH["densenet"]["rho"]:.1e}'.replace('e-0', '\\times10^{-') + '}'); M('DenseSO', f(PH['densenet']['SO'], 3))
+nc = list(PH['NCM_worldC'].values()); M('NcmCalCLo', f(min(nc))); M('NcmCalCHi', f(max(nc)))
+EN = dict(X='$X$', A1='A1', NCM_null='NCM$_{\\mathrm{null}}$', R='selectivity $R$', AS='AS', D_align='$\\Delta_{\\mathrm{align}}$', AS_gauss='AS$_{\\mathrm{gauss}}$', rho='$\\rho$')
+top = PH['calib_top_changes']; d0 = top[0]['abs_delta']; tied = [r for r in top if abs(r['abs_delta'] - d0) < 1e-9]
+M('CalTopChanges', '; '.join(f'{EN[r["estimator"]]} in world {r["world"]} on {NAME[r["base"]]} (${f(r["old"])}\\to{f(r["new"])}$)' for r in tied))
+M('CalTopDelta', f(d0)); M('CalTopN', NW[len(tied)])
+
 # ---- round-5 ledger
 q = lambda k: mac[k]
 L = [('R5-cal', 'world residuals permuted across images (seed 99000); report every changed value',
