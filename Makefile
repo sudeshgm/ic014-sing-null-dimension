@@ -8,7 +8,7 @@ SING ?= $(SING_ROOT)
 IC014_PRIVATE ?= $(CURDIR)/_private
 export IC014_PRIVATE
 
-.PHONY: reproduce reproduce-full reproduce-r4 reproduce-r5 paper sing verify-feats check-feats holdout-fast
+.PHONY: reproduce reproduce-full reproduce-r4 reproduce-r5 reproduce-r6 paper sing verify-feats check-feats holdout-fast
 
 reproduce:
 	PY=$(PY) scripts/reproduce.sh
@@ -63,6 +63,13 @@ reproduce-r4: sing verify-feats
 reproduce-r5: sing verify-feats
 	$(PY) r4/calibration.py --feats-root $(IC014_FEATS) --resid perm
 	$(PY) r5/organisation.py --feats-root $(IC014_FEATS) --sing-root $(SING) --part all
+	$(MAKE) reproduce
+
+# Round-6 audit of published null/residual scores (PREREG_R6.md), CPU; aggregates to r6/results (about 2.5 h wall with four
+# processes of 2 threads on a shared 8-core machine; the 4096-d VGG models take longest)
+reproduce-r6: sing verify-feats
+	$(PY) -m pytest -q r6/tests
+	$(PY) r6/audit_r6.py --feats-root $(IC014_FEATS) --sing-root $(SING) --models vgg16,vgg19,densenet,resnet,dinovit1,efficientnet,bitresnet,resnext,convnext,swin_large,dinov2,deit,eva02_large --worlds resnet,dinov2,resnext
 	$(MAKE) reproduce
 
 # Reduced holdout (PREREG_R3.md N10): about 36 min on 8 cores (target was < 30), resumable cache in $(IC014_PRIVATE)
