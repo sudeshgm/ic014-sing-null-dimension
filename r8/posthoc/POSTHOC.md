@@ -2,7 +2,7 @@
 
 **Post hoc, descriptive, not pre-registered.** These analyses were run after the ρ decomposition had been seen and before
 `r8/PREREG_R8.md` was frozen (09d6e48); the pre-registration lists them as known (§1). They change no pre-registered verdict.
-CPU only; no θ_sem, θ_cls or J_inn is computed here.
+CPU only. No θ_sem, θ_cls or J_inn is computed here.
 
 Scripts (features via `IC014_FEATS`, SING checkout via `SING_ROOT`, default `_ext/sing`):
 - `rho_decomp.py` → `rho_decomp.json`: exact uncentred plug-in identity ρ = ρ_offset + ρ_between + ρ_within per model
@@ -39,7 +39,7 @@ Scripts (features via `IC014_FEATS`, SING checkout via `SING_ROOT`, default `_ex
   ResNet50 1.38° of 1.68° (83%); EVA02-L 55%, DenseNet121 87% (AS negligible), ResNeXt101 14%, others 5–25%.
 
 ## Reading
-- "ρ alone reproduces SING's order" holds for uncentred ρ only; centred ρ gives 0.56 (0.48 / 0.49 on E12 / S11, CIs include 0).
+- "ρ alone reproduces SING's order" holds for uncentred ρ only. Centred ρ gives 0.56 (0.48 / 0.49 on E12 / S11, CIs include 0).
 - Content-free null energy at the centred level, passed through SING's released translators, still gives τ 0.61–0.67, so the
   broader energy reading does not depend on the offset.
 - For DeiT3-L and ResNet50 most of SING's AS comes from one constant null vector per model, which carries no image or class content.

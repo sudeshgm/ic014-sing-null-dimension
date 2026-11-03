@@ -14,8 +14,8 @@ Outputs:
 **θ_sem is NOT VALIDATED for T1.** Two of the eight pre-registered gates failed: G-noise (world C′) and G-derange. By the
 pre-registered rule the confirmatory τ is reported but **not read**.
 
-For the record, the raw τ is 0.64 on both E12 and S11, with percentile CI lower bounds above 0. Had the gates passed, the raw rule would have
-given TRACKS. We make no claim from this.
+The raw τ is 0.64 on both E12 and S11, with percentile CI lower bounds above 0. The raw rule would have given TRACKS had the gates
+passed. We make no claim from this.
 
 No kill: K0 did not fire. Class bootstrap coverage was 0.97 (signal scenario) and 0.99 (zero scenario), so the 'boot' method was used. Half-sampling
 coverage was 0.98 / 0.99.
@@ -78,7 +78,7 @@ with the centred class means.
 | DinoViT | 0.0006 [0.0005, 0.0007] | 0.001 | 0.155 | 0.005 | 0.0001 | 0.001 | 0.0005 | 0.0004 | 0.792 | 6.4 |
 | DenseNet121 | 2.5e-9 | 3.4e-9 | 0.291 | 1.8e-8 | 1.5e-8 | 9e-10 | 2.4e-9 | 9e-11 | 0.700 | 3.1 |
 
-Rows are ordered by SING's order (DeiT3-L first). The percentile CIs are often asymmetric around the point (e.g. Swin-L, DeiT3-L), which is the
+Rows are ordered by SING's order (DeiT3-L first). The percentile CIs are often asymmetric around the point (e.g. Swin-L, DeiT3-L), reflecting the
 small-sample bias of a ratio estimator. K0 coverage was nonetheless 0.97–0.99.
 
 ## Descriptives (no verdicts)
@@ -101,7 +101,7 @@ Composition × amount:
 - The constant offset that dominates DeiT3-L's and ResNet50's ρ does not enter θ_sem (gate 3, exact).
 
 Shadow/innovation:
-- For most models θ_sem is mostly shadow, i.e. null class signal linearly predictable from the row space.
+- In most models, the larger part of θ_sem is shadow, i.e. null class signal linearly predictable from the row space.
 - Swin-L (innovation 0.19 > shadow 0.11), DeiT3-L (0.18 vs 0.21) and EVA02-L carry a large innovation share.
 - The innovation order does not track SING (above).
 
