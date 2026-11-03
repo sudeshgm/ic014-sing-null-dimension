@@ -11,7 +11,7 @@ Registered seeds: 92000+ (surrogates), 93000+ (within-class permutation), 94000+
 | `planted.py` | R4 P | `P_planted.json` | Planted content against the energy range r_E; α*; ratios at each model's own ρ (DINOv2-L: ×1.17 at α = 0.3). |
 | `dino.py` | R4 DN | `DN_dino.json` | True DINO ViT-B/16 and ViT-S/16 (official linear heads) and a supervised AugReg ViT-B/16 control; ridge translators; ranks among 15 models. Needs GPU-extracted features. |
 | `class_perm.py` | R4B idea 1 | `I1_class_perm.json` | Class-mean derangement (energy preserved exactly); AS_cperm and Δ_align. |
-| `calibration.py` | R4B idea 2 | `I2_calibration.json` | Semi-synthetic worlds C, M, D for every estimator. |
+| `calibration.py` | R4B idea 2 (corrected in R5) | `I2_calibration_v2.json` (default `--resid perm`); `I2_calibration.json` (round 4, `--resid insample`) | Semi-synthetic worlds C, M, D for every estimator. Round 5 permutes the residuals across images (seed 99000); the in-sample residuals of round 4 sum to zero within class. |
 | `selectivity.py` | R4B idea 3 | `I3_selectivity.json` | Class-discriminative vs energy-matched random null removal (R). |
 | `ncm_null.py` | R4B idea 5 | `I5_ncm_null.json` | Translator-free nearest-class-mean decodability of the null coordinates. |
 | `dino_addendum.py` | R4B idea 6 | `I6_dino_addendum.json` | Δ_align and NCM_null for the DINO models against prediction intervals. |

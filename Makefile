@@ -8,7 +8,7 @@ SING ?= $(SING_ROOT)
 IC014_PRIVATE ?= $(CURDIR)/_private
 export IC014_PRIVATE
 
-.PHONY: reproduce reproduce-full reproduce-r4 paper sing verify-feats check-feats holdout-fast
+.PHONY: reproduce reproduce-full reproduce-r4 reproduce-r5 paper sing verify-feats check-feats holdout-fast
 
 reproduce:
 	PY=$(PY) scripts/reproduce.sh
@@ -57,6 +57,12 @@ reproduce-r4: sing verify-feats
 	$(PY) r4/geometry.py --feats-root $(IC014_FEATS) --part all
 	$(PY) r4/nzs.py --feats-root $(IC014_FEATS)
 	$(PY) r4/is_energy.py --feats-root $(IC014_FEATS)
+	$(MAKE) reproduce
+
+# Round-5 analyses (PREREG_R5.md) from the private features, CPU; writes only aggregate JSON to r4/results and r5/results
+reproduce-r5: sing verify-feats
+	$(PY) r4/calibration.py --feats-root $(IC014_FEATS) --resid perm
+	$(PY) r5/organisation.py --feats-root $(IC014_FEATS) --sing-root $(SING) --part all
 	$(MAKE) reproduce
 
 # Reduced holdout (PREREG_R3.md N10): about 36 min on 8 cores (target was < 30), resumable cache in $(IC014_PRIVATE)

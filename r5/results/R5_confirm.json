@@ -1,0 +1,288 @@
+{
+ "score_status": {
+  "SO": "alive",
+  "XCC24": "alive"
+ },
+ "SO": {
+  "all13": {
+   "models": [
+    "vgg16",
+    "vgg19",
+    "densenet",
+    "resnet",
+    "dinovit1",
+    "efficientnet",
+    "bitresnet",
+    "resnext",
+    "convnext",
+    "swin_large",
+    "dinov2",
+    "deit",
+    "eva02_large"
+   ],
+   "n": 13,
+   "tau": {
+    "tau": 0.3846153846153845,
+    "pct": [
+     -0.1111904761904762,
+     0.7534246575342467
+    ],
+    "bca": [
+     -0.25000000000000006,
+     0.7236059185320597
+    ],
+    "n": 13,
+    "B_used": 2000
+   },
+   "tau_vs_rho": 0.46153846153846145,
+   "tau_vs_eta2": 0.12820512820512817,
+   "partial_given_rho": {
+    "r": 0.04188102386332083,
+    "pct": [
+     -0.6162525057267186,
+     0.6766363237557054
+    ],
+    "B_used": 1999
+   }
+  },
+  "E12": {
+   "models": [
+    "vgg16",
+    "vgg19",
+    "resnet",
+    "dinovit1",
+    "efficientnet",
+    "bitresnet",
+    "resnext",
+    "convnext",
+    "swin_large",
+    "dinov2",
+    "deit",
+    "eva02_large"
+   ],
+   "n": 12,
+   "tau": {
+    "tau": 0.3333333333333333,
+    "pct": [
+     -0.2857748184019371,
+     0.7894736842105263
+    ],
+    "bca": [
+     -0.32154923443877925,
+     0.7586206896551724
+    ],
+    "n": 12,
+    "B_used": 2000
+   },
+   "tau_vs_rho": 0.4242424242424242,
+   "tau_vs_eta2": 0.0303030303030303,
+   "partial_given_rho": {
+    "r": 0.0253103731776277,
+    "pct": [
+     -0.6720362718529237,
+     0.737474242102297
+    ],
+    "B_used": 1997
+   }
+  },
+  "S11": {
+   "models": [
+    "vgg16",
+    "vgg19",
+    "resnet",
+    "dinovit1",
+    "efficientnet",
+    "resnext",
+    "convnext",
+    "swin_large",
+    "dinov2",
+    "deit",
+    "eva02_large"
+   ],
+   "n": 11,
+   "tau": {
+    "tau": 0.45454545454545453,
+    "pct": [
+     -0.20833333333333337,
+     0.8750000000000001
+    ],
+    "bca": [
+     -0.3371593853892935,
+     0.8139534883720931
+    ],
+    "n": 11,
+    "B_used": 2000
+   },
+   "tau_vs_rho": 0.5272727272727272,
+   "tau_vs_eta2": 0.05454545454545454,
+   "partial_given_rho": {
+    "r": 0.22790251428109104,
+    "pct": [
+     -0.4058253396178774,
+     0.8240167272053812
+    ],
+    "B_used": 1986
+   }
+  }
+ },
+ "XCC24": {
+  "all13": {
+   "models": [
+    "vgg16",
+    "vgg19",
+    "densenet",
+    "resnet",
+    "dinovit1",
+    "efficientnet",
+    "bitresnet",
+    "resnext",
+    "convnext",
+    "swin_large",
+    "dinov2",
+    "deit",
+    "eva02_large"
+   ],
+   "n": 13,
+   "tau": {
+    "tau": -0.12820512820512817,
+    "pct": [
+     -0.6858249496981891,
+     0.38894927536231855
+    ],
+    "bca": [
+     -0.6307692307692309,
+     0.4408604627923006
+    ],
+    "n": 13,
+    "B_used": 2000
+   },
+   "tau_vs_rho": -0.05128205128205127,
+   "tau_vs_eta2": -0.12820512820512817,
+   "partial_given_rho": {
+    "r": 0.10783504314401361,
+    "pct": [
+     -0.6459081082313839,
+     0.6931356481758957
+    ],
+    "B_used": 1999
+   }
+  },
+  "E12": {
+   "models": [
+    "vgg16",
+    "vgg19",
+    "resnet",
+    "dinovit1",
+    "efficientnet",
+    "bitresnet",
+    "resnext",
+    "convnext",
+    "swin_large",
+    "dinov2",
+    "deit",
+    "eva02_large"
+   ],
+   "n": 12,
+   "tau": {
+    "tau": -0.1212121212121212,
+    "pct": [
+     -0.7666666666666666,
+     0.43869715271785964
+    ],
+    "bca": [
+     -0.6979484979413416,
+     0.49152542372881364
+    ],
+    "n": 12,
+    "B_used": 2000
+   },
+   "tau_vs_rho": -0.0303030303030303,
+   "tau_vs_eta2": -0.1212121212121212,
+   "partial_given_rho": {
+    "r": 0.09128709291752768,
+    "pct": [
+     -0.7521742462096175,
+     0.7471088380873876
+    ],
+    "B_used": 1997
+   }
+  },
+  "S11": {
+   "models": [
+    "vgg16",
+    "vgg19",
+    "resnet",
+    "dinovit1",
+    "efficientnet",
+    "resnext",
+    "convnext",
+    "swin_large",
+    "dinov2",
+    "deit",
+    "eva02_large"
+   ],
+   "n": 11,
+   "tau": {
+    "tau": -0.05454545454545454,
+    "pct": [
+     -0.7307692307692308,
+     0.5419005102040805
+    ],
+    "bca": [
+     -0.673469387755102,
+     0.6
+    ],
+    "n": 11,
+    "B_used": 2000
+   },
+   "tau_vs_rho": 0.018181818181818184,
+   "tau_vs_eta2": -0.0909090909090909,
+   "partial_given_rho": {
+    "r": 0.14105972638023606,
+    "pct": [
+     -0.746878165806476,
+     0.7889630346126464
+    ],
+    "B_used": 1986
+   }
+  }
+ },
+ "outcome": {
+  "SO": "INCONCLUSIVE",
+  "XCC24": "ORGANISATION-DOES-NOT-TRACK"
+ },
+ "inheritance": {
+  "estimable": [
+   "vgg16",
+   "vgg19",
+   "densenet",
+   "resnet",
+   "dinovit1",
+   "efficientnet",
+   "bitresnet",
+   "resnext",
+   "convnext",
+   "swin_large",
+   "dinov2",
+   "deit",
+   "eva02_large"
+  ],
+  "low": [
+   "vgg19",
+   "densenet",
+   "resnet",
+   "dinovit1",
+   "resnext",
+   "dinov2",
+   "eva02_large"
+  ],
+  "share": 0.5384615384615384,
+  "plant_partial_005": {
+   "resnet": 0.10915682828618344,
+   "dinov2": 0.15710686179650898,
+   "resnext": 0.11854469215252533
+  },
+  "plant_check": true,
+  "statement": "NOT INHERITED"
+ }
+}
