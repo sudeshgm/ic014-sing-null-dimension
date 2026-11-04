@@ -297,7 +297,9 @@ def main():
     ap.add_argument('--out', required=True); ap.add_argument('--work', default=None); ap.add_argument('--synthetic', action='store_true')
     ap.add_argument('--reps-scale', type=float, default=1.0); ap.add_argument('--no-heads', action='store_true')
     ap.add_argument('--tag', default='r9'); ap.add_argument('--syn-n', type=int, default=8); ap.add_argument('--syn-d', type=int, default=96)
-    ap.add_argument('--syn-K', type=int, default=12); a = ap.parse_args()
+    ap.add_argument('--syn-K', type=int, default=12)
+    ap.add_argument('--only', nargs='*', help='compute only these models (parallel workers); model index and count stay those of the full list')
+    a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True); work = a.work or os.path.join(a.out, 'work'); os.makedirs(work, exist_ok=True)
     T = class_text(a.text_emb) if a.text_emb else None
     if a.synthetic:
@@ -314,11 +316,15 @@ def main():
         pc, pr = os.path.join(work, f'{n}_controls.json'), os.path.join(work, f'{n}_real.json')
         if os.path.exists(pc) and os.path.exists(pr):
             per_c[n] = json.load(open(pc)); per_r[n] = json.load(open(pr)); info[n] = per_r[n].pop('_info'); continue
+        if a.only is not None and n not in a.only:
+            continue
         t0 = time.time(); raw = get(n); mn, mv, info[n] = prepare(raw); print(n, info[n], flush=True)
         per_r[n] = real_one(i, raw, mn, mv, heads=not a.no_heads, log=lambda s: print(s, flush=True))
         per_c[n] = controls_one(i, len(names), mn, mv, reps_scale=a.reps_scale, log=lambda s: print(s, flush=True))
         json.dump(per_c[n], open(pc, 'w')); json.dump({**per_r[n], '_info': info[n]}, open(pr, 'w'))
         print(n, f'done {time.time() - t0:.0f}s', flush=True); del raw, mn, mv
+    if len(per_r) < len(names):
+        print('partial run: missing', [n for n in names if n not in per_r], '; no aggregate written', flush=True); return
     has_text = all('as_sing' in per_r[n]['null'] for n in names)
     ctrl = aggregate_controls(names, per_c); kill = kill_checks(ctrl, has_text=has_text)
     real = aggregate_real(names, per_r, sing); heads = aggregate_heads(names, per_r)
