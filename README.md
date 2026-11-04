@@ -1,6 +1,20 @@
-# IC014: an audit of SING's null-space leakage score
+# IC014: a sanity check for cross-model null-space scores, with SING as the case study
 
-This repo holds the code, committed result tables and the paper (`paper_workshop/main.tex`, TMLR format; `main.pdf`) auditing SING (arXiv 2603.14610, CVPR 2026).
+This repo holds the code, committed result tables and the paper (`paper_workshop/main.tex`, TMLR format; `main.pdf`). Scores that compare models through the null space of their linear heads, or through residual feature energy, can rank models by energy and a constant offset alone, without reading any content. The paper gives a cheap check for this and works it through on SING (arXiv 2603.14610, CVPR 2026), which ranks 13 ImageNet classifiers by null-space leakage.
+
+**The check** (`sanity_check/`, CPU only; see [Use the sanity check on your own score](#use-the-sanity-check-on-your-own-score)):
+1. *Centre.* Report the null-energy fraction ρ, the offset share ρ_off/ρ and centred ρ, and recompute the score with the null part replaced by its mean and with the mean removed.
+2. *Compare with matched-energy content-free surrogates.* Rank the models by ρ alone and by the score on zero-mean Gaussian or permuted null coordinates at each model's own energy, next to your score, with paired CIs.
+3. *Report head dependence.* Refit the head (e.g. nearest class mean, shrinkage LDA) on at least one backbone and report how ρ and the score move.
+
+**Three lessons from the SING case study.**
+* *The offset.* ρ is uncentred. Post hoc, one constant null vector per model makes up 92% of ρ for DeiT3-L and 85% for ResNet50 and produces 83% of their AS.
+* *The head.* Refitting the head on the same ResNet50 backbone moves ρ from 0.146 (released) to 0.014 (nearest class mean) or 0.930 (shrinkage LDA), so a null-space score is as much a property of the head as of the backbone (exploratory, three backbones).
+* *Criteria first.* In our calibration worlds the invariance (B), energy (C) and content (M) criteria cannot all be met by any score of the null and row energies, as an external reader pointed out; check criteria on an oracle before calibrating estimators against them.
+
+**What the case study shows, with its limits.** The null-energy fraction ρ alone reproduces SING's 13-model order as well as SING's own score (Kendall τ = 0.82 for both; paired difference CI [−0.36, 0.29]). Content-free surrogates at each model's null energy reproduce it too (τ 0.49–0.72), and so does the excess of real over surrogate AS (τ 0.62), so the order cannot be apportioned between energy and content. With 13 models every CI is wide, and we ran no equivalence test: "indistinguishable" means a paired interval covers zero. Two pre-registered direct measures of null content did not succeed (background edits: ARTEFACT on 4 of 4 models; target-first semantic share: NOT VALIDATED), and we report them as useful negatives. Energy suffices to reproduce SING's order; we do not show that it causes it. Within one model and one head, AS responds to planted concepts at fixed energy, so it carries a content signal there; the energy baseline matters for comparisons across models, whose null energies and offsets differ by orders of magnitude.
+
+## Results in detail (SING case study, in the order the analyses were run)
 
 **SING's cross-model leakage ranking is indistinguishable from a null-energy ranking.** The null-energy fraction ρ alone reproduces SING's 13-model order as well as SING's own score (Kendall τ = 0.82 for both; paired difference CI [−0.36, 0.29]; partial τ 0.61 both ways, so neither subsumes the other). ρ is uncentred, so it includes the mean of the null coordinates. Post hoc (`r8/posthoc/POSTHOC.md`), centred ρ gives τ 0.56 on all 13 (0.48 on E12, 0.49 on S11), content-free surrogates at centred energy give 0.67, and the null offset accounts for 83% of AS for DeiT3-L and for ResNet50.
 Interventions (rounds 3 and 4) show that AS has a path from null energy to the score that carries no image-specific content. They cannot separate null energy from real null content as the source of the agreement. Content-free surrogates with each model's null energy reproduce SING's order (τ 0.49–0.72 over five surrogates, all 13 models), and so does the excess of real over surrogate AS (τ 0.62). The data cannot apportion the order between the two. AS per unit null energy (A1) loses the agreement with SING's released translators (τ −0.03 / 0.09 on E12 / S11) but keeps it with retrained ridge translators (τ 0.61 / 0.75, the level of the round-3 KILL-R3 rule). Shuffling class means across classes, which preserves energy exactly, keeps the agreement (τ 0.64), which leans toward energy, with a caveat: the class-aligned part Δ_align has the stronger partial association given ρ (partial Spearman 0.76–0.88 vs 0.22–0.35), and Δ_align fails its own calibration. The pre-registration allows no stronger claim than these raw numbers. In the semi-synthetic calibration worlds (corrected in round 5, with residuals permuted across images), no estimator meets all three criteria. The translator-free NCM_null tracks content in world D on all three bases and in world M on two of three. As an external reader pointed out, the invariance (B), energy (C) and content (M) criteria cannot all be met by any score of the null and row energies, since B leaves only their ratio and C and M both move only that ratio; world C also holds content fixed per unit of total energy, so content rises 1.81× against the row space.
@@ -10,7 +24,26 @@ Round 7 (`r7/PREREG_R7.md`) tested controlled background edits on IN-9 under ind
 Round 8 (`r8/PREREG_R8.md`) stated a target first (T1, the share of text-predictable class signal in ker W) and a score θ_sem. G-noise and G-derange failed (6 of 8 gates pass), so θ_sem is NOT VALIDATED and its τ 0.636 with SING's order is reported, not read; the world-C′ gate was low-powered. Descriptively, the shadow of the null class means predicted from the row space tracks SING's order (τ 0.76 on E12) and the innovation does not (0.21); θ_sem's partial correlation with the order given content-free energy is −0.41 [−0.85, 0.18]; the head's self-duality gives τ −0.64; and refitting the head (NCM, shrinkage LDA) moves ρ and θ_sem by orders of magnitude. See `r8/README.md` and `r8/posthoc/POSTHOC.md`.
 Other results: two true DINO models rank 8th and 9th of 15 by AS, not lowest; SING's "DinoViT" translator matches the supervised timm AugReg ViT-L/16. Size-corrected rankings differ from SING's but do not reverse it with confidence. Every pre-registered outcome is reported, including failures; see `RESULTS.md` and the ledgers in the paper appendix.
 
+## Use the sanity check on your own score
+`sanity_check/null_sanity_check.py` wraps the repo's existing code (the ρ decomposition of `r8/posthoc/rho_decomp.py`, the AS surrogates of `r8/posthoc/offset_surr.py` via `r3/leakfree.py`, and the Kendall τ with model-bootstrap CIs of `r3/common.py`). It runs on CPU.
+
+1. Save one `.npz` per model with `F` (N×d penultimate features), `y` (N labels) and `W` (K×d linear head). For SING's AS and its content-free variants also add the translator `A`, `Ab`.
+2. Per-model decomposition (step 1 of the check), optionally with AS variants (step 2):
+   ```
+   python sanity_check/null_sanity_check.py features --npz feats/*.npz --out per_model.json [--as-variants --text class_text.npz]
+   ```
+   Each model gets `rho`, `rho_offset`, `rho_between`, `rho_within`, `rho_centred`, `share_offset` and, with `--as-variants`, `AS`, `off_nat` (offset only), `real_c` (offset removed), `zm_c` (zero-mean Gaussian at the centred energy) and `perm_c` (centred null coordinates permuted across images).
+3. Add your own score to each model's entry in `per_model.json` (e.g. `"my_score": 0.42`) and compare rankings against a reference order (a JSON `{model: value}`, higher = ranked higher; `sing` uses SING's digitised order):
+   ```
+   python sanity_check/null_sanity_check.py rank --per-model per_model.json --score my_score --reference ref.json --out tau.json
+   ```
+   It prints τ with percentile and BCa 95% CIs for every column and paired CIs of each column against your score. If ρ, centred ρ or the content-free surrogates order the models about as well as your score, the ranking alone does not show content. A paired interval that covers zero means "not separated", not "equivalent"; with few models, say so.
+4. Step 3 (head dependence) needs a refitted head: rerun step 2 with `W` replaced by, e.g., the class means (see `r8/` for the NCM and shrinkage-LDA heads).
+
+`python -m pytest -q sanity_check` checks that the wrapper reproduces the paper's post hoc offset results exactly (τ and paired CIs from `r8/posthoc/offset_tau.json` and `offset_surr_tau.json`). With `IC014_FEATS` set it also checks ResNet50's committed ρ decomposition (bit-identical) and AS variants (to 1e-9 relative).
+
 ## Layout
+* `sanity_check/` the sanity check as a script (`null_sanity_check.py`) with its test (`test_sanity_check.py`); see the section above.
 * `exp0b/` DinoViT identity (top-1 of five ViT-L candidates). `exp0/` digitisation of SING Supp. Fig. 12b (files keep an earlier name, `fig6b_*`) and null dims. `exp1/` within-model AS(d).
 * `e1/` energy law; `e2/` 13-model ranking and claim audit; `e3/` planted-concept sensitivity; `e8/` null concept probe (pre-registered, KILL); `e9/` score screen (pre-registered, KILL).
 * `r2/` round-2 analyses (`PREREG_R2.md`, `ROUND2_PLAN.md`); outputs in `r2/results/`. See `r2/README.md`.
