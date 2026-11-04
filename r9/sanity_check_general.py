@@ -30,6 +30,11 @@ Example
   from sanity_check_general import run_check, null_share_score
   out = run_check(models, null_share_score)
   print(out['verdict'])
+
+Command line (one npz per model with F, y, W and b; fit = first half of each class in file order unless the npz has
+a boolean 'fit'; the score is a function in a Python file, called with the model dict):
+  python sanity_check_general.py --npz m1.npz m2.npz ... --score my_score.py:score --out check.json
+  python sanity_check_general.py --demo
 """
 import copy
 import numpy as np
@@ -335,3 +340,89 @@ def split_first_half(y, per_class=None):
         if k < half: A[i] = True
         seen[c] = k + 1
     return A
+
+
+# ------------------------------------------------------------------ toy data and command line
+def toy_models(n=10, d=64, K=8, per_class=20, energy=None, content=None, seed=0):
+    """Toy models whose head reads K class means in a K-dim row space. The null part has an offset, noise of energy
+    energy[i] and class content of strength content[i] in [0, 1]."""
+    r = np.random.default_rng(seed)
+    energy = np.linspace(0.5, 3, n) if energy is None else np.asarray(energy, float)
+    content = np.zeros(n) if content is None else np.asarray(content, float)
+    y = np.repeat(np.arange(K), per_class); out = {}
+    for i in range(n):
+        Q = np.linalg.qr(r.standard_normal((d, d)))[0]; Vr, Vn = Q[:, :K], Q[:, K:]
+        Mr = 3 * r.standard_normal((K, K)); U = r.standard_normal((K, d - K)); U /= np.linalg.norm(U, axis=1, keepdims=True)
+        row = Mr[y] + r.standard_normal((len(y), K))
+        nul = 0.5 + np.sqrt(energy[i]) * (np.sqrt(1 - content[i] ** 2) * r.standard_normal((len(y), d - K)) / np.sqrt(d - K)
+                                           + content[i] * U[y])
+        F = row @ Vr.T + nul @ Vn.T
+        W = Mr @ Vr.T; b = -0.5 * np.sum(Mr ** 2, 1)
+        out[f'toy{i}'] = dict(F=F, y=y, W=W, b=b, fit=split_first_half(y))
+    return out
+
+
+def load_score(spec):
+    import importlib.util
+    path, _, fn = spec.rpartition(':')
+    sp = importlib.util.spec_from_file_location('user_score', path); mod = importlib.util.module_from_spec(sp)
+    sp.loader.exec_module(mod)
+    return getattr(mod, fn)
+
+
+def load_models(paths):
+    import os
+    out = {}
+    for p in paths:
+        z = np.load(p); m = dict(F=z['F'], y=z['y'].astype(int), W=z['W'].astype(np.float64),
+                                  b=(z['b'] if 'b' in z.files else z['bW']).astype(np.float64))
+        m['fit'] = z['fit'].astype(bool) if 'fit' in z.files else split_first_half(m['y'])
+        for k in z.files:
+            if k not in ('F', 'y', 'W', 'b', 'bW', 'fit'): m[k] = z[k]
+        out[os.path.splitext(os.path.basename(p))[0]] = m
+    return out
+
+
+def _jsonable(o):
+    if isinstance(o, dict): return {str(k): _jsonable(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)): return [_jsonable(v) for v in o]
+    if isinstance(o, np.ndarray): return _jsonable(o.tolist())
+    if isinstance(o, (np.floating, float)): return None if not np.isfinite(o) else float(o)
+    if isinstance(o, (np.integer,)): return int(o)
+    if isinstance(o, (np.bool_,)): return bool(o)
+    return o
+
+
+def summary(out):
+    lines = []
+    for k, o in out['scores'].items():
+        t = o['step2']['tau_E']
+        lines.append(f"{k}: {o['verdict']}  tau_E {t['tau']:.2f} [{t['bca'][0]:.2f}, {t['bca'][1]:.2f}]"
+                     f"  offset-dominated {o['step1']['offset_dominated']}")
+        for h, d in o.get('step3', {}).items():
+            lines.append(f"    head {h}: {d['n_matched']}/{d['n']} matched, {d['reading']}")
+    return '\n'.join(lines)
+
+
+def main(argv=None):
+    import argparse, json
+    ap = argparse.ArgumentParser(description='three-step sanity check for a subspace score')
+    ap.add_argument('--npz', nargs='*'); ap.add_argument('--score', help='file.py:function')
+    ap.add_argument('--draws', type=int, default=3); ap.add_argument('--no-heads', action='store_true')
+    ap.add_argument('--seed', type=int, default=0); ap.add_argument('--out'); ap.add_argument('--demo', action='store_true')
+    a = ap.parse_args(argv)
+    if a.demo:
+        models, fn = toy_models(), null_share_score
+    else:
+        if not a.npz or not a.score: ap.error('--npz and --score are required (or --demo)')
+        models, fn = load_models(a.npz), load_score(a.score)
+    out = run_check(models, fn, draws=a.draws, seed=a.seed, heads=not a.no_heads)
+    print(summary(out))
+    if a.out:
+        json.dump(_jsonable({k: v for k, v in out.items() if k != 'per_model'} | {'per_model': out['per_model']}),
+                  open(a.out, 'w'), indent=1)
+    return out
+
+
+if __name__ == '__main__':
+    main()

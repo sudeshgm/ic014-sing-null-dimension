@@ -23,7 +23,8 @@ def test_general_tool_imports_only_numpy_scipy_sklearn():
     for n in ast.walk(tree):
         if isinstance(n, ast.Import): mods |= {a.name.split('.')[0] for a in n.names}
         if isinstance(n, ast.ImportFrom): mods.add(n.module.split('.')[0])
-    assert mods <= {'numpy', 'scipy', 'sklearn', 'copy'}, mods
+    stdlib = {'copy', 'importlib', 'os', 'argparse', 'json'}  # standard library, command line only
+    assert mods <= {'numpy', 'scipy', 'sklearn'} | stdlib, mods
 
 
 def test_ktau_rows_matches_scipy():
