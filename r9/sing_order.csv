@@ -1,0 +1,14 @@
+model,ratio_IS_over_AS
+densenet,70.71
+dinovit1,70.16
+eva02_large,54.32
+bitresnet,47.21
+convnext,37.38
+efficientnet,36.28
+swin_large,29.18
+resnet,24.81
+vgg16,24.26
+vgg19,19.89
+dinov2,16.61
+resnext,13.88
+deit,9.51

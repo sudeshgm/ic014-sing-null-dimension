@@ -1,0 +1,13 @@
+vgg16
+vgg19
+densenet
+resnet
+dinovit1
+efficientnet
+bitresnet
+resnext
+convnext
+swin_large
+dinov2
+deit
+eva02_large
