@@ -1,5 +1,5 @@
 """Round 9 unit tests (synthetic data only)."""
-import ast, os, sys
+import ast, json, os, sys
 import numpy as np
 import pytest
 from scipy.stats import kendalltau
@@ -123,3 +123,19 @@ def test_runner_end_to_end_synthetic(tmp_path):
     assert r.returncode == 0, r.stderr[-2000:]
     for f in ('r9_controls.json', 'r9_real_checks.json', 'r9_head_swap.json', 'r9_per_model.json'):
         assert (tmp_path / f).exists()
+
+
+def test_parallel_workers_match_single_run(tmp_path):
+    """--only workers sharing a work folder give the same per-model results as one process over the full list."""
+    import subprocess
+    run = os.path.join(HERE, 'run_r9.py'); base = [sys.executable, run, '--synthetic', '--syn-n', '6', '--syn-d', '48',
+                                                    '--syn-K', '6', '--reps-scale', '0.05', '--no-heads']
+    one, par = tmp_path / 'one', tmp_path / 'par'
+    subprocess.run(base + ['--out', str(one)], check=True, capture_output=True)
+    for names in (['m0', 'm2', 'm4'], ['m1', 'm3', 'm5']):
+        subprocess.run(base + ['--out', str(par), '--only', *names], check=True, capture_output=True)
+    subprocess.run(base + ['--out', str(par)], check=True, capture_output=True)
+    for n in ('m0', 'm3', 'm5'):
+        a = json.load(open(one / 'work' / f'{n}_controls.json')); b = json.load(open(par / 'work' / f'{n}_controls.json'))
+        assert a == b
+    assert json.load(open(one / 'r9_controls.json'))['kill'] == json.load(open(par / 'r9_controls.json'))['kill']
